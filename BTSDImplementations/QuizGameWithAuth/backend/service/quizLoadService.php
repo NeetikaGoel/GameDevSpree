@@ -176,9 +176,7 @@ class QuizLoadService
         //try to get game config from db and if there is some error then we will log that error and then we will use the default values for question count target and question id list allowed can be error in fetching thats why try catch
         try
         {
-            $gameConfigCurrent=$gameConfigRepository->getGameConfigFromName(
-                GAME_CONFIG_NAME_DEFAULT
-            );
+            $gameConfigCurrent=$gameConfigRepository->getActiveGameConfig();
 
             if ($gameConfigCurrent!==null) //if we got game config with that name in db
                 {

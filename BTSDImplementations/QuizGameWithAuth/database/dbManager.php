@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
 require_once __DIR__ . '/dbConnect.php';
 
 //now this file will directly talk to db okayyyy
@@ -13,6 +12,7 @@ class DBManager
         global $conn;
         $result=mysqli_query($conn,$sql);
         $rows=[];
+
         while ($row=mysqli_fetch_assoc($result))
             {
                 $rows[]=$row;
@@ -26,7 +26,12 @@ class DBManager
     {
         global $conn;
         $query=$conn->prepare($sql);
-        $query->bind_param($types,...$params); //connect types and params in the query 
+
+        if ($types!=='' && count($params)>0)
+            {
+                $query->bind_param($types,...$params); //connect types and params in the query
+            }
+
         $query->execute(); //execute the command
         $result=$query->get_result(); //whatever result we get from query
 
@@ -44,7 +49,12 @@ class DBManager
     {
         global $conn;
         $query=$conn->prepare($sql);
-        $query->bind_param($types,...$params);
+
+        if ($types!=='' && count($params)>0)
+            {
+                $query->bind_param($types,...$params);
+            }
+
         $query->execute();
         $result=$query->get_result();
         $row=mysqli_fetch_assoc($result);
@@ -58,12 +68,16 @@ class DBManager
         return $row;
     }
 
-
     public function runQuery(string $sql,string $types,array $params):void //NO NEED TO RETURN ANYTHING JUST EXECUTE LIKE IF WE MARK ROW AS COMPLETE WHEN THAT SESSION GETS OVER!!
     {
         global $conn;
         $query=$conn->prepare($sql); //take sql line
-        $query->bind_param($types,...$params); //types of values taht will be added into query and params the actual values that need to be binded with the query
+
+        if ($types!=='' && count($params)>0)
+            {
+                $query->bind_param($types,...$params); //types of values taht will be added into query and params the actual values that need to be binded with the query
+            }
+
         $query->execute();
         $query->close();
     }
@@ -73,16 +87,18 @@ class DBManager
     {
         global $conn;
         $query=$conn->prepare($sql); //take sql line
-        $query->bind_param($types,...$params); //types of values taht will be added into query and params the actual values that need to be binded with the query
+
+        if ($types!=='' && count($params)>0)
+            {
+                $query->bind_param($types,...$params); //types of values taht will be added into query and params the actual values that need to be binded with the query
+            }
+
         $query->execute();
         $insertId=$conn->insert_id;
         //THIS INSERT ID IS GONNA ACT LIKE QUIZATTEMPT ID FOR US SO IT IS VEYR VERY IMPORTANT!!!!!!
         $query->close();
         return $insertId;
     }
-
-
-
 }
 
 ?>
