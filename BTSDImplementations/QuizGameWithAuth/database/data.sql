@@ -40,7 +40,12 @@ secret_key=VALUES(secret_key);
 
 
 
-INSERT IGNORE INTO users(uid,user_id,login_type,email,name,password_hash,created_at,updated_at) VALUES (1,'user_admin_001','registered','admin1@example.com','AdminABC','$2y$12$hc80YWvyMbFDN.hEx6oLIOkYhALs5WzJeVUR4VnPtPdsWB9eZNNee',NOW(),NOW());
+INSERT IGNORE INTO users(uid,user_id,login_type,email,name,password_hash,created_at,updated_at) VALUES (1,'user_admin_001','registered','admin1@example.com','AdminABC','$2y$12$vr2hxA8txTiDkURhbAPzEOhDuOrYFXlI6EANiZtB68nThOC8Mjh2y',NOW(),NOW());
+
+UPDATE users
+SET password_hash = '$2y$12$vr2hxA8txTiDkURhbAPzEOhDuOrYFXlI6EANiZtB68nThOC8Mjh2y',
+    updated_at = NOW()
+WHERE uid = 1;
 
 INSERT IGNORE INTO user_permissions(id,uid,permission_group,created_at,updated_at) VALUES (1,1,'admin',NOW(),NOW());
 

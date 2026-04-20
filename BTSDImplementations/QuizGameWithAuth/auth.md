@@ -70,6 +70,8 @@ tsc login.ts --target ES2020 --module ES2020
 tsc register.ts --target ES2020 --module ES2020
 tsc quiz.ts --target ES2020 --module ES2020
 tsc questionAdd.ts --target ES2020 --module ES2020
+tsc questionSetCreate.ts --target ES2020 --module ES2020
+tsc questionSetEdit.ts --target ES2020 --module ES2020
 
 mysql -u root -p < database/schema.sql
 mysql -u root -p < database/data.sql
@@ -114,7 +116,7 @@ php -S 127.0.0.1:8005
 
 
 new hash after secret key
-php -r "echo password_hash('admin123::myProjectSecretKey123', PASSWORD_DEFAULT) . PHP_EOL;"
+php -r "echo password_hash('admin123::neetikagoel12345', PASSWORD_DEFAULT) . PHP_EOL;"
 
 
 

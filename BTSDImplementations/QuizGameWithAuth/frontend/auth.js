@@ -110,6 +110,8 @@ export function authNavbarUpdate() {
     const navRegisterLinkElement = document.getElementById("nav-register-link");
     const navLogoutButtonElement = document.getElementById("nav-logout-button");
     const navAddQuestionLinkElement = document.getElementById("nav-add-question-link");
+    const navQuestionSetCreateLinkElement = document.getElementById("nav-question-set-create-link");
+    const navQuestionSetEditLinkElement = document.getElementById("nav-question-set-edit-link");
     const navUserTextElement = document.getElementById("nav-user-text");
     if (navUserTextElement) {
         navUserTextElement.textContent = authCurrentUserDisplayTextGet();
@@ -129,5 +131,11 @@ export function authNavbarUpdate() {
     }
     if (navAddQuestionLinkElement) {
         navAddQuestionLinkElement.style.display = authIsAdmin() ? "inline-block" : "none";
+    }
+    if (navQuestionSetCreateLinkElement) {
+        navQuestionSetCreateLinkElement.style.display = authIsAdmin() ? "inline-block" : "none";
+    }
+    if (navQuestionSetEditLinkElement) {
+        navQuestionSetEditLinkElement.style.display = authIsAdmin() ? "inline-block" : "none";
     }
 }
