@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIZ RESULT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="page-shell">
+            <div class="page-top-bar">
+                <div class="page-title-block">
+                    <h1 class="heading">QUIZ RESULT</h1>
+                    <div class="page-user-text" id="nav-user-text">Not logged in</div>
+                </div>
+
+                <div class="page-nav">
+                    <a id="nav-login-link" href="login.html">
+                        <button type="button">Login</button>
+                    </a>
+
+                    <a id="nav-register-link" href="register.html">
+                        <button type="button">Register</button>
+                    </a>
+
+                    <a id="nav-add-question-link" href="questionAdd.html" style="display:none;">
+                        <button type="button">Add Question</button>
+                    </a>
+
+                    <button type="button" id="nav-logout-button" style="display:none;">Logout</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="game-quiz-container">
+                    <div class="game-question-container">
+                        <h1>Quiz Completed!!</h1>
+                    </div>
+
+                    <div class="game-question-container">
+                        <h1>Score: <span id="quiz-result-score">0</span></h1>
+                        <h1>Questions Done: <span id="quiz-result-questions-done">0</span></h1>
+                        <h1>Total Questions: <span id="quiz-result-question-count-total">0</span></h1>
+                        <h1>Wrong Answers: <span id="quiz-result-answer-count-wrong">0</span></h1>
+                        <h1>Score Percentage: <span id="quiz-result-score-percentage">0</span>%</h1>
+                        <h1 id="quiz-result-text">Loading result...</h1>
+                    </div>
+
+                    <div class="next-button-container">
+                        <a href="index.html">
+                            <button type="button">Play Again!</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="quiz.js"></script>
+</body>
+</html>

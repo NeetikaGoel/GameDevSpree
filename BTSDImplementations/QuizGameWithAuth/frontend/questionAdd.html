@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADD QUESTION</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="page-shell">
+            <div class="page-top-bar">
+                <div class="page-title-block">
+                    <h1 class="heading">ADD QUESTION</h1>
+                    <div class="page-user-text" id="nav-user-text">Not logged in</div>
+                </div>
+
+                <div class="page-nav">
+                    <a id="nav-login-link" href="login.html">
+                        <button type="button">Login</button>
+                    </a>
+
+                    <a id="nav-register-link" href="register.html">
+                        <button type="button">Register</button>
+                    </a>
+
+                    <a id="nav-add-question-link" href="questionAdd.html" style="display:none;">
+                        <button type="button">Add Question</button>
+                    </a>
+
+                    <button type="button" id="nav-logout-button" style="display:none;">Logout</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="game-quiz-container">
+                    <div class="game-question-container">
+                        <h1>Add a new quiz question below</h1>
+                    </div>
+
+                    <form id="question-add-form">
+                        <div class="form-row">
+                            <h1>Question Text</h1>
+                            <input type="text" id="question-text-input" name="questionText">
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Question Type</h1>
+                            <input type="text" id="question-type-input" name="questionType" value="mcq">
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Answer Option 1 Text</h1>
+                            <input type="text" id="answer-option-1-text-input" name="answerOption1Text">
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Answer Option 1 Type</h1>
+                            <input type="text" id="answer-option-1-type-input" name="answerOption1Type" value="mcq">
+                        </div>
+
+                        <div class="form-row question-add-correct-row">
+                            <label>
+                                <input type="radio" name="answerOptionCorrectIndex" value="0">
+                                Mark Answer Option 1 as Correct
+                            </label>
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Answer Option 2 Text</h1>
+                            <input type="text" id="answer-option-2-text-input" name="answerOption2Text">
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Answer Option 2 Type</h1>
+                            <input type="text" id="answer-option-2-type-input" name="answerOption2Type" value="mcq">
+                        </div>
+
+                        <div class="form-row question-add-correct-row">
+                            <label>
+                                <input type="radio" name="answerOptionCorrectIndex" value="1">
+                                Mark Answer Option 2 as Correct
+                            </label>
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Answer Option 3 Text</h1>
+                            <input type="text" id="answer-option-3-text-input" name="answerOption3Text">
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Answer Option 3 Type</h1>
+                            <input type="text" id="answer-option-3-type-input" name="answerOption3Type" value="mcq">
+                        </div>
+
+                        <div class="form-row question-add-correct-row">
+                            <label>
+                                <input type="radio" name="answerOptionCorrectIndex" value="2">
+                                Mark Answer Option 3 as Correct
+                            </label>
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Answer Option 4 Text</h1>
+                            <input type="text" id="answer-option-4-text-input" name="answerOption4Text">
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Answer Option 4 Type</h1>
+                            <input type="text" id="answer-option-4-type-input" name="answerOption4Type" value="mcq">
+                        </div>
+
+                        <div class="form-row question-add-correct-row">
+                            <label>
+                                <input type="radio" name="answerOptionCorrectIndex" value="3">
+                                Mark Answer Option 4 as Correct
+                            </label>
+                        </div>
+
+                        <div class="next-button-container">
+                            <button type="submit">Add Question</button>
+                        </div>
+                    </form>
+
+                    <div class="compact-info-box">
+                        <h1 id="question-add-message-text">Only admin can add questions.</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="questionAdd.js"></script>
+</body>
+</html>

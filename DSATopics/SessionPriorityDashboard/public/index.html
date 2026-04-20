@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Priority Dashboard</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Session Priority Dashboard</h1>
+    <p class="subtitle">
+      Drag the given tasks UP/DOWN to decide what should be processed first in this session!!
+    </p>
+
+    <div id="dashboardLayout" class="dashboard-layout">
+      <div class="left-panel">
+        <div id="taskList" class="task-list">
+
+          <div class="task-card" draggable="true" data-id="notifications">
+            <span class="rank">1</span>
+            <div>
+              <h3>Notifications</h3>
+              <p>Show notifications first -></p>
+            </div>
+          </div>
+
+          <div class="task-card" draggable="true" data-id="email_update">
+            <span class="rank">2</span>
+            <div>
+              <h3>Email Update</h3>
+              <p>Check and update email -></p>
+            </div>
+          </div>
+
+          <div class="task-card" draggable="true" data-id="security_check">
+            <span class="rank">3</span>
+            <div>
+              <h3>Security Check</h3>
+              <p>Run security verification -></p>
+            </div>
+          </div>
+
+          <div class="task-card" draggable="true" data-id="content_suggestions">
+            <span class="rank">4</span>
+            <div>
+              <h3>Content Suggestions</h3>
+              <p>Load suggestions for the content -></p>
+            </div>
+          </div>
+
+          <div class="task-card" draggable="true" data-id="open_apps">
+            <span class="rank">5</span>
+            <div>
+              <h3>Open Apps</h3>
+              <p>Initialize useful apps -></p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="processingPanel" class="right-panel hidden">
+        <div class="processing-box">
+          <h2>Live Processing :-</h2>
+          <p class="processing-subtitle">Tasks will be processed in the selected priority order!</p>
+          <div id="liveStatusArea"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-row">
+      <button id="createSessionBtn">Create Session</button>
+      <button id="savePriorityBtn" disabled>Save Priority</button>
+      <button id="startProcessingBtn" disabled>Start Processing</button>
+    </div>
+
+    <div class="info-box">
+      <p><strong>Session ID:</strong> <span id="sessionIdText">Not created</span></p>
+      <p><strong>Status:</strong> <span id="statusText">Waiting</span></p>
+    </div>
+  </div>
+
+  <script type="module" src="./outputs/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<?php
+declare(strict_types=1);
+
+// Based on BSTD14 v3.1 Section 5.2
+
+const QUESTION_COUNT_TOTAL=5;
+const QUESTION_TYPES_TOTAL=2;
+
+// Feature flag fallback default
+const QUESTION_ORDER_RANDOM_ENABLED_DEFAULT=false;
+
+// Game config fallback defaults
+const GAME_CONFIG_NAME_DEFAULT='default_quiz';
+const GAME_CONFIG_QUESTION_COUNT_TARGET_DEFAULT=5;
+const GAME_CONFIG_QUESTION_ID_LIST_ALLOWED_DEFAULT=[1, 2, 3, 4, 5];
+const PASSWORD_SECRET_KEY_SEPARATOR='::';
+
+// Some defaults for logging hehe
+const LOG_SERVICE_NAME_DEFAULT='quizApi';
+const LOG_DURATION_DEFAULT_MS=0;
+
+
+//http response status codes-
+const HTTP_STATUS_OK=200;
+const HTTP_STATUS_BAD_REQUEST=400;
+const HTTP_STATUS_UNAUTHORIZED=401;
+const HTTP_STATUS_FORBIDDEN=403;
+const HTTP_STATUS_INTERNAL_SERVER_ERROR=500;
+const HTTP_STATUS_NOT_FOUND=404;
+const HTTP_STATUS_METHOD_NOT_ALLOWED=405;
+const HTTP_STATUS_TOO_MANY_REQUESTS=429;
+const HTTP_STATUS_CONFLICT=409;
+
+
+//login and user constants
+const USER_LOGIN_TYPE_GUEST='guest';
+const USER_LOGIN_TYPE_REGISTERED='registered';
+
+const USER_PERMISSION_GROUP_GUEST='guest';
+const USER_PERMISSION_GROUP_ADMIN='admin';
+const USER_PERMISSION_GROUP_USER='user';
+
+const USER_ID_PREFIX_GUEST='guest_';
+const USER_ID_PREFIX_USER='user_';
+
+
+const USER_ID_GENERATION_ATTEMPT_LIMIT=5;
+
+

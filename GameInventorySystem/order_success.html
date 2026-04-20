@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Success</title>
+  <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body class="game-body">
+  <div class="container py-5 text-center text-white">
+    <h1 class="mb-4">Order Placed Successfully!</h1>
+    <p class="mb-4">Your order has been saved in the database.</p>
+    <a href="index.html" class="btn btn-warning me-2">Back to Home</a>
+    <a href="product_history.html" class="btn btn-outline-light">View Purchase History</a>
+  </div>
+
+  <script>
+    localStorage.removeItem("game_cart");
+  </script>
+</body>
+</html>

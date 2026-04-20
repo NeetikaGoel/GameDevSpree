@@ -1,0 +1,12 @@
+//To tell how to convert ts to js file since browser runs js so we will control that convrsion here
+
+{
+  "compilerOptions": {
+    "target": "ES2020", //modern java version
+    "module": "ES2020", //syntax use
+    "outDir": "./public/outputs", //where to put compiled js files
+    "rootDir": ".", //curr project root
+    "strict": true //will enable strict type checking
+  },
+  "include": ["main.ts"] //onlly this file needs tobe compiled
+}

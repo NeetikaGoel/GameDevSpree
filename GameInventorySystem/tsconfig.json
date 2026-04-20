@@ -1,0 +1,14 @@
+{
+  "compilerOptions": 
+  {
+    "target": "ES2017",
+    "module": "ES2020",
+    "rootDir": "./ts",
+    "outDir": "./js",
+    "strict": true,
+    "removeComments": false,
+    "skipLibCheck": true
+  },
+  
+  "include": ["ts/**/*.ts"]
+}

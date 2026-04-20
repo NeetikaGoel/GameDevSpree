@@ -1,0 +1,159 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  color: #1f2937;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1 {
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  margin-top: 0;
+  color: #6b7280;
+}
+
+.dashboard-layout {
+  display: block;
+  margin-top: 24px;
+}
+
+.dashboard-layout.processing-mode {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.left-panel,
+.right-panel {
+  min-width: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #e1f0fc;
+  border: 1px solid #5c12cb;
+  border-radius: 10px;
+  padding: 14px;
+  cursor: grab;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
+}
+
+.task-card.dragging {
+  opacity: 0.5;
+}
+
+.rank {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #7725eb;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.task-card h3 {
+  margin: 0 0 4px 0;
+}
+
+.task-card p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.processing-box {
+  background: #ffffff;
+  border: 1px solid #d6e0ee;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.processing-subtitle {
+  margin-top: 0;
+  color: #6b7280;
+}
+
+.live-status-item {
+  background: #ffffff;
+  border: 1px solid #d6e0ee;
+  border-left: 5px solid #b77b13;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.live-status-item.done {
+  border-left-color: #0e6a4b;
+  background: #ecfdf5;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  background: #085962;
+  color: white;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #9dbcf5;
+  cursor: not-allowed;
+}
+
+.info-box,
+.log-box {
+  background: #ffffff;
+  border: 1px solid #d6e0ee;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.log-item {
+  background: #eef6ff;
+  border: 1px solid #cfe2ff;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-layout.processing-mode {
+    grid-template-columns: 1fr;
+  }
+}

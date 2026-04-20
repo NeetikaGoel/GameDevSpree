@@ -1,0 +1,273 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: black;
+    color: white;
+    min-height: 100vh;
+}
+
+main {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('bg.jpg') no-repeat center;
+    background-size: cover;
+    padding: 16px;
+}
+
+.page-shell {
+    width: 100%;
+    max-width: 44rem;
+    background-color: rgba(203, 203, 203, 0.96);
+    color: #460404;
+    border-radius: 16px;
+    padding: 18px 22px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.page-top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.page-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.heading {
+    color: #460404;
+    font-size: 1.9rem;
+    line-height: 1.2;
+}
+
+.page-user-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.page-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.page-nav a {
+    text-decoration: none;
+}
+
+.page-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.game-quiz-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    text-align: center;
+    color: #460404;
+}
+
+.game-question-container {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+}
+
+.game-question-container h1 {
+    font-size: 1.05rem;
+    line-height: 1.45;
+}
+
+.game-details-container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 0;
+}
+
+.game-details-container h1 {
+    font-size: 0.98rem;
+    flex: 1 1 180px;
+}
+
+.next-button-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+    width: 100%;
+}
+
+.next-button-container a {
+    text-decoration: none;
+}
+
+.next-button-container button,
+.page-nav button {
+    min-width: 8.8rem;
+    height: 2.5rem;
+    padding: 0 14px;
+    border: 1px solid #460404;
+    border-radius: 8px;
+    background-color: white;
+    color: #460404;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.92rem;
+}
+
+.next-button-container button:hover,
+.page-nav button:hover {
+    background-color: rgb(158, 15, 118);
+    color: white;
+    border-color: rgb(158, 15, 118);
+}
+
+.quiz-option-row {
+    margin: 8px 0;
+    text-align: left;
+    width: 100%;
+    padding: 10px 12px;
+    background-color: rgba(255, 255, 255, 0.65);
+    border-radius: 10px;
+}
+
+.quiz-option-row label {
+    font-size: 0.98rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.quiz-option-row input {
+    margin-right: 6px;
+}
+
+#quiz-answer-options-container {
+    width: 100%;
+}
+
+#quiz-message-container {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-row {
+    width: 100%;
+    text-align: left;
+}
+
+.form-row h1 {
+    font-size: 1rem;
+    margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #999;
+    border-radius: 8px;
+    font-size: 0.96rem;
+    background-color: white;
+}
+
+.compact-info-box {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+}
+
+#guest-login-message-text,
+#login-message-text,
+#register-message-text,
+#quiz-message-text,
+#quiz-result-text {
+    word-break: break-word;
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 10px;
+    }
+
+    .page-shell {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .page-top-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .page-nav {
+        justify-content: flex-start;
+    }
+
+    .heading {
+        font-size: 1.55rem;
+    }
+
+    .game-details-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .next-button-container button,
+    .page-nav button {
+        width: 100%;
+    }
+}
+
+.question-add-correct-row {
+    width: 100%;
+    text-align: left;
+    padding: 4px 0 10px 0;
+}
+
+.question-add-correct-row label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}

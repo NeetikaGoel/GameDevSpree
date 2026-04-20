@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Game Inventory Management Shop" />
+    <meta name="author" content="" />
+    <title>Game Inventory Management</title>
+
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body class="game-body">
+    <nav class="navbar navbar-expand-lg navbar-dark game-navbar sticky-top">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand fw-bold" href="index.html">GAME INVENTORY SHOP</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="product_history.html">Purchase History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products_table.html">Products Table</a></li>
+                </ul>
+
+                <button class="btn btn-outline-light game-cart-btn" type="button">
+                    <i class="bi-cart-fill me-1"></i>
+                    Cart
+                    <span class="badge bg-danger text-white ms-1 rounded-pill">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-5 fw-bolder">GET READY FOR YOUR GAME</h1>
+                <p class="lead fw-normal text-light mb-4">
+                    Buy weapons, armors, shields, and potions for your inventory!!
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <section class="py-4 category-strip">
+        <div class="container px-4 px-lg-5">
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <span class="badge rounded-pill category-badge" data-category="weapons">Weapons</span>
+                <span class="badge rounded-pill category-badge" data-category="armors">Armors</span>
+                <span class="badge rounded-pill category-badge" data-category="shields">Shields</span>
+                <span class="badge rounded-pill category-badge" data-category="potions">Potions</span>
+                <span class="badge rounded-pill category-badge" data-category="all">Show All</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 products-section">
+        <div class="container px-4 px-lg-5 mt-3">
+            <div class="text-center mb-5">
+                <h2 class="fw-bolder text-white">Game Products</h2>
+                <p class="text-light-50">ADD YOUR FAVOURITES TO CART!!</p>
+            </div>
+
+            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4 justify-content-center">
+
+                <div class="col mb-5">
+                    <div class="card h-100 game-card" data-id="1" data-category="weapons" data-name="Flame Sword" data-price="120" data-rarity="Legendary">
+                        <div class="badge bg-warning text-dark position-absolute rarity-badge">Legendary</div>
+                        <img class="card-img-top" src="https://t3.ftcdn.net/jpg/03/95/55/66/360_F_395556636_dDyNTM4Vhu6eL697gTiSh2tiR9Pw4NrY.jpg" alt="Flame Sword" />
+                        <div class="card-body p-4 text-center">
+                            <small class="text-uppercase text-muted">Weapons</small>
+                            <h5 class="fw-bolder text-white mt-2">Flame Sword</h5>
+                            <span class="text-warning fw-bold">$120</span>
+                        </div>
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                            <button class="btn btn-outline-warning mt-auto w-100 add-to-cart-btn" type="button">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col mb-5">
+                    <div class="card h-100 game-card" data-id="2" data-category="armors" data-name="Shadow Armor" data-price="95" data-rarity="Epic">
+                        <div class="badge bg-primary text-white position-absolute rarity-badge">Epic</div>
+                        <img class="card-img-top" src="https://www.gmbinder.com/images/6Chdoes.jpg" alt="Shadow Armor" />
+                        <div class="card-body p-4 text-center">
+                            <small class="text-uppercase text-muted">Armors</small>
+                            <h5 class="fw-bolder text-white mt-2">Shadow Armor</h5>
+                            <span class="text-info fw-bold">$95</span>
+                        </div>
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                            <button class="btn btn-outline-info mt-auto w-100 add-to-cart-btn" type="button">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col mb-5">
+                    <div class="card h-100 game-card" data-id="3" data-category="shields" data-name="Guardian Shield" data-price="70" data-rarity="Rare">
+                        <div class="badge bg-success text-white position-absolute rarity-badge">Rare</div>
+                        <img class="card-img-top" src="https://m.media-amazon.com/images/I/71tMw47I99L._AC_UF1000,1000_QL80_.jpg" alt="Guardian Shield" />
+                        <div class="card-body p-4 text-center">
+                            <small class="text-uppercase text-muted">Shields</small>
+                            <h5 class="fw-bolder text-white mt-2">Guardian Shield</h5>
+                            <span class="text-success fw-bold">$70</span>
+                        </div>
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                            <button class="btn btn-outline-success mt-auto w-100 add-to-cart-btn" type="button">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col mb-5">
+                    <div class="card h-100 game-card" data-id="4" data-category="potions" data-name="Health Potion" data-price="20" data-rarity="Consumable">
+                        <div class="badge bg-danger text-white position-absolute rarity-badge">Consumable</div>
+                        <img class="card-img-top" src="https://pics.craiyon.com/2023-06-29/a4d18f91b1d64ef59f65d0ef2b618bae.webp" alt="Health Potion" />
+                        <div class="card-body p-4 text-center">
+                            <small class="text-uppercase text-muted">Potions</small>
+                            <h5 class="fw-bolder text-white mt-2">Health Potion</h5>
+                            <span class="text-danger fw-bold">$20</span>
+                        </div>
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent text-center">
+                            <button class="btn btn-outline-danger mt-auto w-100 add-to-cart-btn" type="button">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-5 game-footer">
+        <div class="container">
+            <p class="m-0 text-center text-white">
+                Copyright &copy; Game Inventory Management 2026
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/script.js"></script>
+</body>
+</html>
