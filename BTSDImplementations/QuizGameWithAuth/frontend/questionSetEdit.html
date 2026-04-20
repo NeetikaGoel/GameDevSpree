@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDIT QUESTION SET</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="page-shell">
+            <div class="page-top-bar">
+                <div class="page-title-block">
+                    <h1 class="heading">EDIT QUESTION SET</h1>
+                    <div class="page-user-text" id="nav-user-text">Not logged in</div>
+                </div>
+
+                <div class="page-nav">
+                    <a id="nav-login-link" href="login.html">
+                        <button type="button">Login</button>
+                    </a>
+
+                    <a id="nav-register-link" href="register.html">
+                        <button type="button">Register</button>
+                    </a>
+
+                    <a id="nav-add-question-link" href="questionAdd.html" style="display:none;">
+                        <button type="button">Add Question</button>
+                    </a>
+
+                    <a id="nav-question-set-create-link" href="questionSetCreate.html" style="display:none;">
+                        <button type="button">Create Question Set</button>
+                    </a>
+
+                    <a id="nav-question-set-edit-link" href="questionSetEdit.html" style="display:none;">
+                        <button type="button">Edit Question Set</button>
+                    </a>
+
+                    <button type="button" id="nav-logout-button" style="display:none;">Logout</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="game-quiz-container">
+                    <div class="game-question-container">
+                        <h1>Edit an existing question set below</h1>
+                    </div>
+
+                    <form id="question-set-edit-form">
+                        <div class="form-row">
+                            <h1>Question Set Name</h1>
+                            <input type="text" id="question-set-edit-name-input" name="gameConfigName">
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Question Count Target</h1>
+                            <input type="text" id="question-set-edit-count-input" name="questionCountTarget">
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Allowed Question Id List (comma separated)</h1>
+                            <input type="text" id="question-set-edit-id-list-input" name="questionIdListAllowed">
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Secret Key</h1>
+                            <input type="text" id="question-set-edit-secret-key-input" name="secretKey">
+                        </div>
+
+                        <div class="next-button-container">
+                            <button type="submit">Edit Question Set</button>
+                        </div>
+                    </form>
+
+                    <div class="compact-info-box">
+                        <h1 id="question-set-edit-message-text">Only admin can edit question sets.</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="questionSetEdit.js"></script>
+</body>
+</html>

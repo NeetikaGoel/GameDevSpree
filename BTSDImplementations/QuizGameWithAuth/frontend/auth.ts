@@ -1,7 +1,5 @@
 export {}; 
 
-
-
 // shared auth helper file!!
 
 // set/get/delete cookies
@@ -174,6 +172,8 @@ export function authNavbarUpdate():void
     const navRegisterLinkElement=document.getElementById("nav-register-link") as HTMLAnchorElement | null;
     const navLogoutButtonElement=document.getElementById("nav-logout-button") as HTMLButtonElement | null;
     const navAddQuestionLinkElement=document.getElementById("nav-add-question-link") as HTMLAnchorElement | null;
+    const navQuestionSetCreateLinkElement=document.getElementById("nav-question-set-create-link") as HTMLAnchorElement | null;
+    const navQuestionSetEditLinkElement=document.getElementById("nav-question-set-edit-link") as HTMLAnchorElement | null;
     const navUserTextElement=document.getElementById("nav-user-text");
 
     if (navUserTextElement)
@@ -205,5 +205,15 @@ export function authNavbarUpdate():void
     if (navAddQuestionLinkElement)
         {
             navAddQuestionLinkElement.style.display=authIsAdmin() ? "inline-block" : "none";
+        }
+
+    if (navQuestionSetCreateLinkElement)
+        {
+            navQuestionSetCreateLinkElement.style.display=authIsAdmin() ? "inline-block" : "none";
+        }
+
+    if (navQuestionSetEditLinkElement)
+        {
+            navQuestionSetEditLinkElement.style.display=authIsAdmin() ? "inline-block" : "none";
         }
 }

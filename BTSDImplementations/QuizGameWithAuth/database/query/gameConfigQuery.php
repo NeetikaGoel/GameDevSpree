@@ -20,5 +20,32 @@ class GameConfigQuery
             LIMIT 1
         '; //limit 1 coz what if we get multiple rows with same name so choose the 1st hehe
     }
+
+    public function getInsertGameConfigSqlQuery():string
+    {
+        return '
+            INSERT INTO game_configs
+            (
+                game_config_name,
+                question_count_target,
+                question_id_list_allowed_json,
+                secret_key
+            )
+            VALUES
+            (?,?,?,?)
+        ';
+    }
+
+    public function getUpdateGameConfigFromNameSqlQuery():string
+    {
+        return '
+            UPDATE game_configs
+            SET
+                question_count_target=?,
+                question_id_list_allowed_json=?,
+                secret_key=?
+            WHERE game_config_name=?
+        ';
+    }
 }
 ?>

@@ -133,18 +133,17 @@ function questionSetEditHandle():void
      3. VALIDATE
      4. SANITIZE
      */
-    
-
     if (
         !isset($_POST['uid']) ||
-        !isset($_POST['questionText']) ||
-        !isset($_POST['questionType']) ||
-        !isset($_POST['answerOptions'])
+        !isset($_POST['gameConfigName']) ||
+        !isset($_POST['questionCountTarget']) ||
+        !isset($_POST['questionIdListAllowed']) ||
+        !isset($_POST['secretKey'])
     )
         {
             http_response_code(HTTP_STATUS_BAD_REQUEST);
             echo json_encode([
-                'error'=>'uid, questionText, questionType and answerOptions are required!!'
+                'error'=>'uid, gameConfigName, questionCountTarget, questionIdListAllowed and secretKey are required!!'
             ]);
 
             questionSetEditAuditLog('question_set_edit_validation_failed',[
@@ -154,9 +153,10 @@ function questionSetEditHandle():void
         }
 
     $uidRaw=trim((string)$_POST['uid']);
-    $questionText=trim((string)$_POST['questionText']);
-    $questionType=trim((string)$_POST['questionType']);
-    $answerOptionsRaw=(string)$_POST['answerOptions'];
+    $gameConfigName=trim((string)$_POST['gameConfigName']);
+    $questionCountTargetRaw=trim((string)$_POST['questionCountTarget']);
+    $questionIdListAllowedRaw=(string)$_POST['questionIdListAllowed'];
+    $secretKey=trim((string)$_POST['secretKey']);
 
     if ($uidRaw==='' || !is_numeric($uidRaw))
         {
@@ -187,11 +187,11 @@ function questionSetEditHandle():void
             exit;
         }
 
-    if ($questionText==='' || $questionType==='' || $answerOptionsRaw==='')
+    if ($gameConfigName==='' || $questionCountTargetRaw==='' || $questionIdListAllowedRaw==='' || $secretKey==='')
         {
             http_response_code(HTTP_STATUS_BAD_REQUEST);
             echo json_encode([
-                'error'=>'questionText, questionType and answerOptions cannot be empty!!'
+                'error'=>'gameConfigName, questionCountTarget, questionIdListAllowed and secretKey cannot be empty!!'
             ]);
 
             questionSetEditAuditLog('question_set_edit_validation_failed',[
@@ -200,50 +200,61 @@ function questionSetEditHandle():void
             exit;
         }
 
-    $answerOptions=json_decode($answerOptionsRaw,true);
-
-    if (!is_array($answerOptions) || count($answerOptions)===0)
+    if (!is_numeric($questionCountTargetRaw))
         {
             http_response_code(HTTP_STATUS_BAD_REQUEST);
             echo json_encode([
-                'error'=>'answerOptions must be a valid non-empty json array!!'
+                'error'=>'questionCountTarget must be numeric!!'
             ]);
 
             questionSetEditAuditLog('question_set_edit_validation_failed',[
-                'reason'=>'answer options invalid json'
+                'reason'=>'question count target invalid'
             ]);
             exit;
         }
 
-    foreach ($answerOptions as $answerOption)
+    $questionCountTarget=(int)$questionCountTargetRaw;
+
+    if ($questionCountTarget<=0)
         {
-            if (
-                !is_array($answerOption) ||
-                !isset($answerOption['text']) ||
-                !isset($answerOption['type']) ||
-                !array_key_exists('isCorrect',$answerOption)
-            )
+            http_response_code(HTTP_STATUS_BAD_REQUEST);
+            echo json_encode([
+                'error'=>'questionCountTarget must be a positive integer!!'
+            ]);
+
+            questionSetEditAuditLog('question_set_edit_validation_failed',[
+                'reason'=>'question count target non positive',
+                'questionCountTarget'=>$questionCountTarget
+            ]);
+            exit;
+        }
+
+    $questionIdListAllowed=json_decode($questionIdListAllowedRaw,true);
+
+    if (!is_array($questionIdListAllowed) || count($questionIdListAllowed)===0)
+        {
+            http_response_code(HTTP_STATUS_BAD_REQUEST);
+            echo json_encode([
+                'error'=>'questionIdListAllowed must be a valid non-empty json array!!'
+            ]);
+
+            questionSetEditAuditLog('question_set_edit_validation_failed',[
+                'reason'=>'question id list allowed invalid json'
+            ]);
+            exit;
+        }
+
+    foreach ($questionIdListAllowed as $questionIdCurrent)
+        {
+            if (!is_numeric((string)$questionIdCurrent) || (int)$questionIdCurrent<=0)
                 {
                     http_response_code(HTTP_STATUS_BAD_REQUEST);
                     echo json_encode([
-                        'error'=>'Each answer option must contain text, type and isCorrect!!'
+                        'error'=>'Each question id must be a positive integer!!'
                     ]);
 
                     questionSetEditAuditLog('question_set_edit_validation_failed',[
-                        'reason'=>'answer option structure invalid'
-                    ]);
-                    exit;
-                }
-
-            if (trim((string)$answerOption['text'])==='' || trim((string)$answerOption['type'])==='')
-                {
-                    http_response_code(HTTP_STATUS_BAD_REQUEST);
-                    echo json_encode([
-                        'error'=>'Answer option text and type cannot be empty!!'
-                    ]);
-
-                    questionSetEditAuditLog('question_set_edit_validation_failed',[
-                        'reason'=>'answer option fields empty'
+                        'reason'=>'question id invalid'
                     ]);
                     exit;
                 }
@@ -284,8 +295,13 @@ function questionSetEditHandle():void
     /**
      7. DELEGATE
      */
-    $questionSetEditService=new questionSetEditService();
-    $responseData=$questionSetEditService->questionSetEditService(***);
+    $questionSetEditService=new QuestionSetEditService();
+    $responseData=$questionSetEditService->questionSetEditService(
+        $gameConfigName,
+        $questionCountTarget,
+        $questionIdListAllowed,
+        $secretKey
+    );
 
     /**
      8. RESPOND
@@ -298,8 +314,7 @@ function questionSetEditHandle():void
      */
     questionSetEditAuditLog('question_set_edit_success',[
         'uid'=>$uid,
-        'questionId'=>$responseData['questionId'] ?? 0,
-        'questionType'=>$responseData['questionType'] ?? ''
+        'gameConfigName'=>$responseData['gameConfigName'] ?? ''
     ]);
 }
 
@@ -333,7 +348,7 @@ catch (RuntimeException $exception)
     Logger::logError(
         'questionSetEditApi',
         'Runtime failure while editing a question set!!',
-        'QUESTION_SET_EDIT_UNHANDLED_EXCEPTION',
+        'QUESTION_SET_EDIT_RUNTIME_FAILURE',
         $exception,
         []
     );

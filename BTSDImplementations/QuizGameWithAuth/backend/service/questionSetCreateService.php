@@ -6,70 +6,98 @@ require_once __DIR__ . '/logging.php';
 
 require_once __DIR__ . '/../../database/repository/gameConfigRepository.php';
 require_once __DIR__ . '/../../database/repository/questionRepository.php';
-require_once __DIR__ . '/../../database/repository/answerOptionRepository.php';
 
 
 class QuestionSetCreateService
 {
-    public function questionSetCreateService(***):array
+    public function questionSetCreateService(string $gameConfigName,int $questionCountTarget,array $questionIdListAllowed,string $secretKey):array
     {
+        $gameConfigRepository=new GameConfigRepository();
         $questionRepository=new QuestionRepository();
-        $answerOptionRepository=new AnswerOptionRepository();
 
-        $correctAnswerCount=0;
+        $gameConfigCurrent=$gameConfigRepository->getGameConfigFromName($gameConfigName);
 
-        foreach ($answerOptions as $answerOption)
+        if ($gameConfigCurrent!==null)
             {
-                if (
-                    isset($answerOption['isCorrect']) &&
-                    (bool)$answerOption['isCorrect']===true
-                )
+                throw new InvalidArgumentException('A question set with this name already exists!!');
+            }
+
+        if ($questionCountTarget<=0)
+            {
+                throw new InvalidArgumentException('Question count target must be positive!!');
+            }
+
+        if (count($questionIdListAllowed)===0)
+            {
+                throw new InvalidArgumentException('Question id list allowed cannot be empty!!');
+            }
+
+        if ($secretKey==='')
+            {
+                throw new InvalidArgumentException('Secret key cannot be empty!!');
+            }
+
+        $questionIdListAllowedSanitized=[];
+        $questionIdListAllowedSeen=[];
+
+        foreach ($questionIdListAllowed as $questionIdCurrent)
+            {
+                $questionIdCurrent=(int)$questionIdCurrent;
+
+                if ($questionIdCurrent<=0)
                     {
-                        $correctAnswerCount++;
+                        throw new InvalidArgumentException('Each question id must be a positive integer!!');
+                    }
+
+                if (!isset($questionIdListAllowedSeen[$questionIdCurrent]))
+                    {
+                        $questionIdListAllowedSeen[$questionIdCurrent]=true;
+                        $questionIdListAllowedSanitized[]=$questionIdCurrent;
                     }
             }
 
-        if ($correctAnswerCount!==1)
+        if ($questionCountTarget>count($questionIdListAllowedSanitized))
             {
-                throw new InvalidArgumentException('Exactly one correct answer option is required!!');
+                throw new InvalidArgumentException('Question count target cannot be more than allowed question ids count!!');
             }
 
-        $questionId=$questionRepository->createQuestion($questionText,$questionType);
+        $questionListCurrent=$questionRepository->getQuestionsFromQuestionIdListAllowed(
+            $questionIdListAllowedSanitized,
+            count($questionIdListAllowedSanitized)
+        );
 
-        if ($questionId<=0)
+        if (count($questionListCurrent)!==count($questionIdListAllowedSanitized))
             {
-                throw new RuntimeException('Question creation failed!!');
+                throw new InvalidArgumentException('One or more question ids do not exist in database!!');
             }
 
-        foreach ($answerOptions as $answerOption)
-            {
-                $answerOptionId=$answerOptionRepository->createAnswerOption(
-                    (string)$answerOption['text'],
-                    (string)$answerOption['type'],
-                    $questionId,
-                    (bool)$answerOption['isCorrect']
-                );
+        $gameConfigId=$gameConfigRepository->createGameConfig(
+            $gameConfigName,
+            $questionCountTarget,
+            $questionIdListAllowedSanitized,
+            $secretKey
+        );
 
-                if ($answerOptionId<=0)
-                    {
-                        throw new RuntimeException('Answer option creation failed!!');
-                    }
+        if ($gameConfigId<=0)
+            {
+                throw new RuntimeException('Question set creation failed!!');
             }
 
         Logger::logInfo(
             'questionSetCreateService',
-            'Question add completed successfully!!',
+            'Question set create completed successfully!!',
             [
-                'questionId'=>$questionId,
-                'questionType'=>$questionType
+                'gameConfigId'=>$gameConfigId,
+                'gameConfigName'=>$gameConfigName
             ]
         );
 
         return [
-            'questionId'=>$questionId,
-            'questionText'=>$questionText,
-            'questionType'=>$questionType,
-            'answerOptionCount'=>count($answerOptions),
+            'gameConfigId'=>$gameConfigId,
+            'gameConfigName'=>$gameConfigName,
+            'questionCountTarget'=>$questionCountTarget,
+            'questionIdListAllowed'=>$questionIdListAllowedSanitized,
+            'secretKey'=>$secretKey,
             'isCreated'=>true
         ];
     }

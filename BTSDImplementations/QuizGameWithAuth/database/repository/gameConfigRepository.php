@@ -37,5 +37,67 @@ class GameConfigRepository
 
         return $gameConfig;
     }
+
+    public function createGameConfig(string $gameConfigName,int $questionCountTarget,array $questionIdListAllowed,string $secretKey):int
+    {
+        if ($gameConfigName==='' || $questionCountTarget<=0 || count($questionIdListAllowed)===0 || $secretKey==='')
+            {
+                return 0;
+            }
+
+        $questionIdListAllowedJson=json_encode(array_map('intval',$questionIdListAllowed));
+
+        if ($questionIdListAllowedJson===false)
+            {
+                return 0;
+            }
+
+        $gameConfigQuery=new GameConfigQuery();
+        $ormManager=new OrmManager();
+
+        $sql=$gameConfigQuery->getInsertGameConfigSqlQuery();
+
+        return $ormManager->insertQuery(
+            $sql,
+            'siss',
+            [
+                $gameConfigName,
+                $questionCountTarget,
+                $questionIdListAllowedJson,
+                $secretKey
+            ]
+        );
+    }
+
+    public function updateGameConfigFromName(string $gameConfigName,int $questionCountTarget,array $questionIdListAllowed,string $secretKey):void
+    {
+        if ($gameConfigName==='' || $questionCountTarget<=0 || count($questionIdListAllowed)===0 || $secretKey==='')
+            {
+                return;
+            }
+
+        $questionIdListAllowedJson=json_encode(array_map('intval',$questionIdListAllowed));
+
+        if ($questionIdListAllowedJson===false)
+            {
+                return;
+            }
+
+        $gameConfigQuery=new GameConfigQuery();
+        $ormManager=new OrmManager();
+
+        $sql=$gameConfigQuery->getUpdateGameConfigFromNameSqlQuery();
+
+        $ormManager->runQuery(
+            $sql,
+            'isss',
+            [
+                $questionCountTarget,
+                $questionIdListAllowedJson,
+                $secretKey,
+                $gameConfigName
+            ]
+        );
+    }
 }
 ?>

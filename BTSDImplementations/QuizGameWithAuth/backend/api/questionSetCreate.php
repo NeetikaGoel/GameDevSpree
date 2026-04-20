@@ -133,18 +133,17 @@ function questionSetCreateHandle():void
      3. VALIDATE
      4. SANITIZE
      */
-    
-
     if (
         !isset($_POST['uid']) ||
-        !isset($_POST['questionText']) ||
-        !isset($_POST['questionType']) ||
-        !isset($_POST['answerOptions'])
+        !isset($_POST['gameConfigName']) ||
+        !isset($_POST['questionCountTarget']) ||
+        !isset($_POST['questionIdListAllowed']) ||
+        !isset($_POST['secretKey'])
     )
         {
             http_response_code(HTTP_STATUS_BAD_REQUEST);
             echo json_encode([
-                'error'=>'uid, questionText, questionType and answerOptions are required!!'
+                'error'=>'uid, gameConfigName, questionCountTarget, questionIdListAllowed and secretKey are required!!'
             ]);
 
             questionSetCreateAuditLog('question_set_create_validation_failed',[
@@ -154,9 +153,10 @@ function questionSetCreateHandle():void
         }
 
     $uidRaw=trim((string)$_POST['uid']);
-    $questionText=trim((string)$_POST['questionText']);
-    $questionType=trim((string)$_POST['questionType']);
-    $answerOptionsRaw=(string)$_POST['answerOptions'];
+    $gameConfigName=trim((string)$_POST['gameConfigName']);
+    $questionCountTargetRaw=trim((string)$_POST['questionCountTarget']);
+    $questionIdListAllowedRaw=(string)$_POST['questionIdListAllowed'];
+    $secretKey=trim((string)$_POST['secretKey']);
 
     if ($uidRaw==='' || !is_numeric($uidRaw))
         {
@@ -187,11 +187,11 @@ function questionSetCreateHandle():void
             exit;
         }
 
-    if ($questionText==='' || $questionType==='' || $answerOptionsRaw==='')
+    if ($gameConfigName==='' || $questionCountTargetRaw==='' || $questionIdListAllowedRaw==='' || $secretKey==='')
         {
             http_response_code(HTTP_STATUS_BAD_REQUEST);
             echo json_encode([
-                'error'=>'questionText, questionType and answerOptions cannot be empty!!'
+                'error'=>'gameConfigName, questionCountTarget, questionIdListAllowed and secretKey cannot be empty!!'
             ]);
 
             questionSetCreateAuditLog('question_set_create_validation_failed',[
@@ -200,50 +200,61 @@ function questionSetCreateHandle():void
             exit;
         }
 
-    $answerOptions=json_decode($answerOptionsRaw,true);
-
-    if (!is_array($answerOptions) || count($answerOptions)===0)
+    if (!is_numeric($questionCountTargetRaw))
         {
             http_response_code(HTTP_STATUS_BAD_REQUEST);
             echo json_encode([
-                'error'=>'answerOptions must be a valid non-empty json array!!'
+                'error'=>'questionCountTarget must be numeric!!'
             ]);
 
             questionSetCreateAuditLog('question_set_create_validation_failed',[
-                'reason'=>'answer options invalid json'
+                'reason'=>'question count target invalid'
             ]);
             exit;
         }
 
-    foreach ($answerOptions as $answerOption)
+    $questionCountTarget=(int)$questionCountTargetRaw;
+
+    if ($questionCountTarget<=0)
         {
-            if (
-                !is_array($answerOption) ||
-                !isset($answerOption['text']) ||
-                !isset($answerOption['type']) ||
-                !array_key_exists('isCorrect',$answerOption)
-            )
+            http_response_code(HTTP_STATUS_BAD_REQUEST);
+            echo json_encode([
+                'error'=>'questionCountTarget must be a positive integer!!'
+            ]);
+
+            questionSetCreateAuditLog('question_set_create_validation_failed',[
+                'reason'=>'question count target non positive',
+                'questionCountTarget'=>$questionCountTarget
+            ]);
+            exit;
+        }
+
+    $questionIdListAllowed=json_decode($questionIdListAllowedRaw,true);
+
+    if (!is_array($questionIdListAllowed) || count($questionIdListAllowed)===0)
+        {
+            http_response_code(HTTP_STATUS_BAD_REQUEST);
+            echo json_encode([
+                'error'=>'questionIdListAllowed must be a valid non-empty json array!!'
+            ]);
+
+            questionSetCreateAuditLog('question_set_create_validation_failed',[
+                'reason'=>'question id list allowed invalid json'
+            ]);
+            exit;
+        }
+
+    foreach ($questionIdListAllowed as $questionIdCurrent)
+        {
+            if (!is_numeric((string)$questionIdCurrent) || (int)$questionIdCurrent<=0)
                 {
                     http_response_code(HTTP_STATUS_BAD_REQUEST);
                     echo json_encode([
-                        'error'=>'Each answer option must contain text, type and isCorrect!!'
+                        'error'=>'Each question id must be a positive integer!!'
                     ]);
 
                     questionSetCreateAuditLog('question_set_create_validation_failed',[
-                        'reason'=>'answer option structure invalid'
-                    ]);
-                    exit;
-                }
-
-            if (trim((string)$answerOption['text'])==='' || trim((string)$answerOption['type'])==='')
-                {
-                    http_response_code(HTTP_STATUS_BAD_REQUEST);
-                    echo json_encode([
-                        'error'=>'Answer option text and type cannot be empty!!'
-                    ]);
-
-                    questionSetCreateAuditLog('question_set_create_validation_failed',[
-                        'reason'=>'answer option fields empty'
+                        'reason'=>'question id invalid'
                     ]);
                     exit;
                 }
@@ -284,8 +295,13 @@ function questionSetCreateHandle():void
     /**
      7. DELEGATE
      */
-    $questionSetCreateService=new questionSetCreateService();
-    $responseData=$questionSetCreateService->questionSetCreateService(***);
+    $questionSetCreateService=new QuestionSetCreateService();
+    $responseData=$questionSetCreateService->questionSetCreateService(
+        $gameConfigName,
+        $questionCountTarget,
+        $questionIdListAllowed,
+        $secretKey
+    );
 
     /**
      8. RESPOND
@@ -298,8 +314,8 @@ function questionSetCreateHandle():void
      */
     questionSetCreateAuditLog('question_set_create_success',[
         'uid'=>$uid,
-        'questionId'=>$responseData['questionId'] ?? 0,
-        'questionType'=>$responseData['questionType'] ?? ''
+        'gameConfigId'=>$responseData['gameConfigId'] ?? 0,
+        'gameConfigName'=>$responseData['gameConfigName'] ?? ''
     ]);
 }
 
@@ -347,7 +363,7 @@ catch (Throwable $exception)
 
     Logger::logFatal(
         'questionSetCreateApi',
-        'Unhandled exception while adding question!!',
+        'Unhandled exception while creating a new question set!!',
         'QUESTION_SET_CREATE_UNHANDLED_EXCEPTION',
         $exception,
         []
