@@ -19,8 +19,7 @@ class GameConfigRepository
                 return null;
             }
 
-        
-            //but if name is provided then we will make a query to the database to fetch the game config with that name and then we will return the game config object if found otherwise we will return null
+        //but if name is provided then we will make a query to the database to fetch the game config with that name and then we will return the game config object if found otherwise we will return null
         $gameConfigQuery=new GameConfigQuery();
         $gameConfigMapper=new GameConfigMapper();
         $ormManager=new OrmManager();
@@ -38,7 +37,36 @@ class GameConfigRepository
         return $gameConfig;
     }
 
-    public function createGameConfig(string $gameConfigName,int $questionCountTarget,array $questionIdListAllowed,string $secretKey):int
+    public function getActiveGameConfig():?GameConfig
+    {
+        $gameConfigQuery=new GameConfigQuery();
+        $gameConfigMapper=new GameConfigMapper();
+        $ormManager=new OrmManager();
+
+        $sql=$gameConfigQuery->getSelectActiveGameConfigSqlQuery();
+
+        $gameConfig=$ormManager->ormManageForOneRow($sql,'',[],$gameConfigMapper);
+
+        if (!$gameConfig instanceof GameConfig)
+            {
+                return null;
+            }
+
+        return $gameConfig;
+    }
+
+    public function getAllGameConfigs():array
+    {
+        $gameConfigQuery=new GameConfigQuery();
+        $gameConfigMapper=new GameConfigMapper();
+        $ormManager=new OrmManager();
+
+        $sql=$gameConfigQuery->getSelectAllGameConfigsSqlQuery();
+
+        return $ormManager->ormManage($sql,$gameConfigMapper);
+    }
+
+    public function createGameConfig(string $gameConfigName,int $questionCountTarget,array $questionIdListAllowed,string $secretKey,bool $isActive):int
     {
         if ($gameConfigName==='' || $questionCountTarget<=0 || count($questionIdListAllowed)===0 || $secretKey==='')
             {
@@ -59,19 +87,20 @@ class GameConfigRepository
 
         return $ormManager->insertQuery(
             $sql,
-            'siss',
+            'sissi',
             [
                 $gameConfigName,
                 $questionCountTarget,
                 $questionIdListAllowedJson,
-                $secretKey
+                $secretKey,
+                $isActive ? 1 : 0
             ]
         );
     }
 
-    public function updateGameConfigFromName(string $gameConfigName,int $questionCountTarget,array $questionIdListAllowed,string $secretKey):void
+    public function updateGameConfigFromId(int $gameConfigId,string $gameConfigName,int $questionCountTarget,array $questionIdListAllowed,bool $isActive):void
     {
-        if ($gameConfigName==='' || $questionCountTarget<=0 || count($questionIdListAllowed)===0 || $secretKey==='')
+        if ($gameConfigId<=0 || $gameConfigName==='' || $questionCountTarget<=0 || count($questionIdListAllowed)===0)
             {
                 return;
             }
@@ -86,17 +115,47 @@ class GameConfigRepository
         $gameConfigQuery=new GameConfigQuery();
         $ormManager=new OrmManager();
 
-        $sql=$gameConfigQuery->getUpdateGameConfigFromNameSqlQuery();
+        $sql=$gameConfigQuery->getUpdateGameConfigFromIdSqlQuery();
 
         $ormManager->runQuery(
             $sql,
-            'isss',
+            'sisii',
             [
+                $gameConfigName,
                 $questionCountTarget,
                 $questionIdListAllowedJson,
-                $secretKey,
-                $gameConfigName
+                $isActive ? 1 : 0,
+                $gameConfigId
             ]
+        );
+    }
+
+    public function deactivateAllGameConfigs():void
+    {
+        $gameConfigQuery=new GameConfigQuery();
+        $ormManager=new OrmManager();
+
+        $sql=$gameConfigQuery->getDeactivateAllGameConfigsSqlQuery();
+
+        $ormManager->runQuery($sql,'',[]);
+    }
+
+    public function activateGameConfigFromId(int $gameConfigId):void
+    {
+        if ($gameConfigId<=0)
+            {
+                return;
+            }
+
+        $gameConfigQuery=new GameConfigQuery();
+        $ormManager=new OrmManager();
+
+        $sql=$gameConfigQuery->getActivateGameConfigFromIdSqlQuery();
+
+        $ormManager->runQuery(
+            $sql,
+            'i',
+            [$gameConfigId]
         );
     }
 }

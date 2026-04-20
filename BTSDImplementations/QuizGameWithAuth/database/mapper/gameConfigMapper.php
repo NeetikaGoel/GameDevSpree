@@ -13,19 +13,19 @@ class GameConfigMapper
         $questionIdListAllowed=[];
 
         //if there is a value set already then decode the json to question id list allowed array and true is given to get it in an associative array format
-        if (isset($row['question_id_list_allowed_json'])) {
-            $questionIdListAllowed=json_decode($row['question_id_list_allowed_json'], true);
+        if (isset($row['question_id_list_allowed_json']))
+            {
+                $questionIdListAllowed=json_decode($row['question_id_list_allowed_json'], true);
 
-            if (!is_array($questionIdListAllowed)) //if there is no array on that location then we will get null and we want to convert that to empty array
-            {
-                $questionIdListAllowed=[];
-            } 
-            
-            else //if there is an array then we want to make sure that all the values in that array are integers because they represent question ids
-            {
-                $questionIdListAllowed=array_map('intval', $questionIdListAllowed);
+                if (!is_array($questionIdListAllowed)) //if there is no array on that location then we will get null and we want to convert that to empty array
+                    {
+                        $questionIdListAllowed=[];
+                    } 
+                else //if there is an array then we want to make sure that all the values in that array are integers because they represent question ids
+                    {
+                        $questionIdListAllowed=array_map('intval', $questionIdListAllowed);
+                    }
             }
-        }
 
         //and then we will return the game config object with all the values from the row and the question id list allowed that we just processed
         return new GameConfig(
@@ -33,7 +33,10 @@ class GameConfigMapper
             $row['game_config_name'] ?? '', //?? because if no value for that col then it will get null
             (int)($row['question_count_target'] ?? 0), //same for that
             $questionIdListAllowed,
-            $row['secret_key'] ?? ''
+            $row['secret_key'] ?? '',
+            (bool)($row['is_active'] ?? false),
+            $row['created_at'] ?? '',
+            $row['updated_at'] ?? ''
         );
     }
 
@@ -41,9 +44,10 @@ class GameConfigMapper
     public function getMappingRows(array $rows): array
     {
         $data=[];
-        foreach ($rows as $row) {
-            $data[]=$this->getMappingSingleRow($row);
-        }
+        foreach ($rows as $row)
+            {
+                $data[]=$this->getMappingSingleRow($row);
+            }
         return $data;
     }
 }
