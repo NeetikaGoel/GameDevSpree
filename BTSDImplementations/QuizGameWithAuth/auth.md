@@ -82,7 +82,9 @@ php -S 127.0.0.1:8005
 
 //now checking all tables
 
-in terminal:::
+
+
+in terminal :::
 
 mysql -u root -p
 USE quizGame;
