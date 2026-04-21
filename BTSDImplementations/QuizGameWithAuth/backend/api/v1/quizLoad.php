@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../params/quizLoadParams.php';
-require_once __DIR__ . '/../service/logging.php';
-require_once __DIR__ . '/../service/quizLoadService.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../params/quizLoadParams.php';
+require_once __DIR__ . '/../../service/logging.php';
+require_once __DIR__ . '/../../service/quizLoadService.php';
 
 
-require_once __DIR__ . '/../../database/repository/userRepository.php';
-require_once __DIR__ . '/../../database/repository/userPermissionRepository.php';
+require_once __DIR__ . '/../../../database/repository/userRepository.php';
+require_once __DIR__ . '/../../../database/repository/userPermissionRepository.php';
 
 //this will tell the browser to treat the response as json data and not as html/text/anything else
 header('Content-Type:application/json');

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../service/logging.php';
-require_once __DIR__ . '/../service/questionSetEditService.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../service/logging.php';
+require_once __DIR__ . '/../../service/questionSetEditService.php';
 
-require_once __DIR__ . '/../../database/repository/userRepository.php';
-require_once __DIR__ . '/../../database/repository/userPermissionRepository.php';
+require_once __DIR__ . '/../../../database/repository/userRepository.php';
+require_once __DIR__ . '/../../../database/repository/userPermissionRepository.php';
 
 header('Content-Type:application/json');
 
@@ -18,8 +18,8 @@ function questionSetEditAuthenticate(int $uid): bool
         return false;
     }
 
-    $userRepository=new UserRepository();
-    $userCurrent=$userRepository->getUserFromUid($uid);
+    $userRepository = new UserRepository();
+    $userCurrent = $userRepository->getUserFromUid($uid);
 
     if ($userCurrent === null) {
         return false;
@@ -35,8 +35,8 @@ function questionSetEditAuthorize(int $uid): bool
         return false;
     }
 
-    $userPermissionRepository=new UserPermissionRepository();
-    $userPermissionCurrent=$userPermissionRepository->getUserPermissionFromUid($uid);
+    $userPermissionRepository = new UserPermissionRepository();
+    $userPermissionCurrent = $userPermissionRepository->getUserPermissionFromUid($uid);
 
     if ($userPermissionCurrent === null) {
         return false;
@@ -74,12 +74,12 @@ function questionSetEditHandle(): void
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(HTTP_STATUS_METHOD_NOT_ALLOWED);
         echo json_encode([
-            'error'=>'Only POST method is allowed!!'
+            'error' => 'Only POST method is allowed!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_validation_failed', [
-            'reason'=>'invalid request method',
-            'requestMethod'=>$_SERVER['REQUEST_METHOD'] ?? ''
+            'reason' => 'invalid request method',
+            'requestMethod' => $_SERVER['REQUEST_METHOD'] ?? ''
         ]);
         exit;
     }
@@ -87,20 +87,20 @@ function questionSetEditHandle(): void
     /**
      1. AUTHENTICATE
      */
-    $uidTemp=0;
+    $uidTemp = 0;
 
     if (isset($_POST['uid']) && is_numeric((string)$_POST['uid'])) {
-        $uidTemp=(int)$_POST['uid'];
+        $uidTemp = (int)$_POST['uid'];
     }
 
     if (questionSetEditAuthenticate($uidTemp) !== true) {
         http_response_code(HTTP_STATUS_UNAUTHORIZED);
         echo json_encode([
-            'error'=>'Authentication failed!!'
+            'error' => 'Authentication failed!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_authentication_failed', [
-            'uid'=>$uidTemp
+            'uid' => $uidTemp
         ]);
         exit;
     }
@@ -111,11 +111,11 @@ function questionSetEditHandle(): void
     if (questionSetEditAuthorize($uidTemp) !== true) {
         http_response_code(HTTP_STATUS_FORBIDDEN);
         echo json_encode([
-            'error'=>'Authorization failed!!'
+            'error' => 'Authorization failed!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_authorization_failed', [
-            'uid'=>$uidTemp
+            'uid' => $uidTemp
         ]);
         exit;
     }
@@ -132,44 +132,44 @@ function questionSetEditHandle(): void
     ) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'uid, gameConfigId, gameConfigName and questionIdListAllowed are required!!'
+            'error' => 'uid, gameConfigId, gameConfigName and questionIdListAllowed are required!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_validation_failed', [
-            'reason'=>'required fields missing'
+            'reason' => 'required fields missing'
         ]);
         exit;
     }
 
-    $uidRaw=trim((string)$_POST['uid']);
-    $gameConfigIdRaw=trim((string)$_POST['gameConfigId']);
-    $gameConfigName=trim((string)$_POST['gameConfigName']);
-    $questionIdListAllowedRaw=(string)$_POST['questionIdListAllowed'];
-    $makeActiveRaw=isset($_POST['makeActive']) ? trim((string)$_POST['makeActive']) : 'false';
+    $uidRaw = trim((string)$_POST['uid']);
+    $gameConfigIdRaw = trim((string)$_POST['gameConfigId']);
+    $gameConfigName = trim((string)$_POST['gameConfigName']);
+    $questionIdListAllowedRaw = (string)$_POST['questionIdListAllowed'];
+    $makeActiveRaw = isset($_POST['makeActive']) ? trim((string)$_POST['makeActive']) : 'false';
 
     if ($uidRaw === '' || !is_numeric($uidRaw)) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'uid must be numeric!!'
+            'error' => 'uid must be numeric!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_validation_failed', [
-            'reason'=>'uid invalid'
+            'reason' => 'uid invalid'
         ]);
         exit;
     }
 
-    $uid=(int)$uidRaw;
+    $uid = (int)$uidRaw;
 
     if ($uid <= 0) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'uid must be a positive integer!!'
+            'error' => 'uid must be a positive integer!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_validation_failed', [
-            'reason'=>'uid non positive',
-            'uid'=>$uid
+            'reason' => 'uid non positive',
+            'uid' => $uid
         ]);
         exit;
     }
@@ -177,26 +177,26 @@ function questionSetEditHandle(): void
     if ($gameConfigIdRaw === '' || !is_numeric($gameConfigIdRaw)) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'gameConfigId must be numeric!!'
+            'error' => 'gameConfigId must be numeric!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_validation_failed', [
-            'reason'=>'game config id invalid'
+            'reason' => 'game config id invalid'
         ]);
         exit;
     }
 
-    $gameConfigId=(int)$gameConfigIdRaw;
+    $gameConfigId = (int)$gameConfigIdRaw;
 
     if ($gameConfigId <= 0) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'gameConfigId must be a positive integer!!'
+            'error' => 'gameConfigId must be a positive integer!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_validation_failed', [
-            'reason'=>'game config id non positive',
-            'gameConfigId'=>$gameConfigId
+            'reason' => 'game config id non positive',
+            'gameConfigId' => $gameConfigId
         ]);
         exit;
     }
@@ -204,25 +204,49 @@ function questionSetEditHandle(): void
     if ($gameConfigName === '' || $questionIdListAllowedRaw === '') {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'gameConfigName and questionIdListAllowed cannot be empty!!'
+            'error' => 'gameConfigName and questionIdListAllowed cannot be empty!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_validation_failed', [
-            'reason'=>'empty payload fields'
+            'reason' => 'empty payload fields'
         ]);
         exit;
     }
 
-    $questionIdListAllowed=json_decode($questionIdListAllowedRaw, true);
+    if (mb_strlen($gameConfigName) > 100) {
+        http_response_code(HTTP_STATUS_BAD_REQUEST);
+        echo json_encode([
+            'error' => 'Question set name is too long!!'
+        ]);
+
+        questionSetEditAuditLog('question_set_edit_validation_failed', [
+            'reason' => 'game config name too long'
+        ]);
+        exit;
+    }
+
+    if (!preg_match('/^[A-Za-z0-9 _,\-().&]+$/', $gameConfigName)) {
+        http_response_code(HTTP_STATUS_BAD_REQUEST);
+        echo json_encode([
+            'error' => 'Question set name contains invalid characters!!'
+        ]);
+
+        questionSetEditAuditLog('question_set_edit_validation_failed', [
+            'reason' => 'game config name invalid characters'
+        ]);
+        exit;
+    }
+
+    $questionIdListAllowed = json_decode($questionIdListAllowedRaw, true);
 
     if (!is_array($questionIdListAllowed) || count($questionIdListAllowed) === 0) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'questionIdListAllowed must be a valid non-empty json array!!'
+            'error' => 'questionIdListAllowed must be a valid non-empty json array!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_validation_failed', [
-            'reason'=>'question id list allowed invalid json'
+            'reason' => 'question id list allowed invalid json'
         ]);
         exit;
     }
@@ -231,24 +255,24 @@ function questionSetEditHandle(): void
         if (!is_numeric((string)$questionIdCurrent) || (int)$questionIdCurrent <= 0) {
             http_response_code(HTTP_STATUS_BAD_REQUEST);
             echo json_encode([
-                'error'=>'Each question id must be a positive integer!!'
+                'error' => 'Each question id must be a positive integer!!'
             ]);
 
             questionSetEditAuditLog('question_set_edit_validation_failed', [
-                'reason'=>'question id invalid'
+                'reason' => 'question id invalid'
             ]);
             exit;
         }
     }
 
-    $makeActive=false;
+    $makeActive = false;
 
     if (
         $makeActiveRaw === 'true' ||
         $makeActiveRaw === '1' ||
         strtolower($makeActiveRaw) === 'yes'
     ) {
-        $makeActive=true;
+        $makeActive = true;
     }
 
     /**
@@ -257,11 +281,11 @@ function questionSetEditHandle(): void
     if (questionSetEditRateLimitCheck($uid) !== true) {
         http_response_code(HTTP_STATUS_TOO_MANY_REQUESTS);
         echo json_encode([
-            'error'=>'Rate limit exceeded!!'
+            'error' => 'Rate limit exceeded!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_rate_limit_failed', [
-            'uid'=>$uid
+            'uid' => $uid
         ]);
         exit;
     }
@@ -272,11 +296,11 @@ function questionSetEditHandle(): void
     if (questionSetEditIdempotencyCheck($uid) !== true) {
         http_response_code(HTTP_STATUS_CONFLICT);
         echo json_encode([
-            'error'=>'Duplicate request detected!!'
+            'error' => 'Duplicate request detected!!'
         ]);
 
         questionSetEditAuditLog('question_set_edit_idempotency_failed', [
-            'uid'=>$uid
+            'uid' => $uid
         ]);
         exit;
     }
@@ -284,8 +308,8 @@ function questionSetEditHandle(): void
     /**
      7. DELEGATE
      */
-    $questionSetEditService=new QuestionSetEditService();
-    $responseData=$questionSetEditService->questionSetEditService(
+    $questionSetEditService = new QuestionSetEditService();
+    $responseData = $questionSetEditService->questionSetEditService(
         $gameConfigId,
         $gameConfigName,
         $questionIdListAllowed,
@@ -302,10 +326,10 @@ function questionSetEditHandle(): void
      9. AUDIT-LOG
      */
     questionSetEditAuditLog('question_set_edit_success', [
-        'uid'=>$uid,
-        'gameConfigId'=>$responseData['gameConfigId'] ?? 0,
-        'gameConfigName'=>$responseData['gameConfigName'] ?? '',
-        'isActive'=>$responseData['isActive'] ?? false
+        'uid' => $uid,
+        'gameConfigId' => $responseData['gameConfigId'] ?? 0,
+        'gameConfigName' => $responseData['gameConfigName'] ?? '',
+        'isActive' => $responseData['isActive'] ?? false
     ]);
 }
 
@@ -314,7 +338,7 @@ try {
 } catch (InvalidArgumentException $exception) {
     http_response_code(HTTP_STATUS_BAD_REQUEST);
     echo json_encode([
-        'error'=>'Invalid request input!!'
+        'error' => 'Invalid request input!!'
     ]);
 
     Logger::logWarn(
@@ -322,13 +346,13 @@ try {
         'Invalid argument while editing a question set!!',
         'INVALID_ARGUMENT',
         [
-            'errorMessage'=>$exception->getMessage()
+            'errorMessage' => $exception->getMessage()
         ]
     );
 } catch (RuntimeException $exception) {
     http_response_code(HTTP_STATUS_INTERNAL_SERVER_ERROR);
     echo json_encode([
-        'error'=>'Runtime failure while editing a question set!!'
+        'error' => 'Runtime failure while editing a question set!!'
     ]);
 
     Logger::logError(
@@ -341,7 +365,7 @@ try {
 } catch (Throwable $exception) {
     http_response_code(HTTP_STATUS_INTERNAL_SERVER_ERROR);
     echo json_encode([
-        'error'=>'Unexpected server error while editing a question set!!'
+        'error' => 'Unexpected server error while editing a question set!!'
     ]);
 
     Logger::logFatal(

@@ -11,67 +11,63 @@ require_once __DIR__ . '/../../database/repository/questionRepository.php';
 class QuestionSetEditService
 {
     //WE WILL COME AFTER SELECTING QUESTION SET HERE HEHE
-    public function questionSetEditService(int $gameConfigId,string $gameConfigName,array $questionIdListAllowed,bool $makeActive): array
+    public function questionSetEditService(int $gameConfigId, string $gameConfigName, array $questionIdListAllowed, bool $makeActive): array
     {
-        $gameConfigRepository=new GameConfigRepository();
-        $questionRepository=new QuestionRepository();
+        $gameConfigRepository = new GameConfigRepository();
+        $questionRepository = new QuestionRepository();
 
-        $gameConfigCurrent=$gameConfigRepository->getGameConfigFromId($gameConfigId);
+        $gameConfigCurrent = $gameConfigRepository->getGameConfigFromId($gameConfigId);
 
-        if ($gameConfigCurrent===null) 
-        {
+        if ($gameConfigCurrent === null) {
             throw new InvalidArgumentException('Question set with this id was not found!!');
         }
 
-        $gameConfigExistingFromName=$gameConfigRepository->getGameConfigFromName($gameConfigName);
+        $gameConfigExistingFromName = $gameConfigRepository->getGameConfigFromName($gameConfigName);
 
-        if ($gameConfigExistingFromName!==null && $gameConfigExistingFromName->getId()!==$gameConfigId) 
-        {
+        if ($gameConfigExistingFromName !== null && $gameConfigExistingFromName->getId() !== $gameConfigId) {
             throw new InvalidArgumentException('Another question set with this name already exists!!');
         }
 
-        if (count($questionIdListAllowed)===0) 
-        {
+        if (count($questionIdListAllowed) === 0) {
             throw new InvalidArgumentException('Question id list allowed cannot be empty!!');
         }
 
-        $questionIdListAllowedSanitized=[];
-        $questionIdListAllowedSeen=[];
+        $questionIdListAllowedSanitized = [];
+        $questionIdListAllowedSeen = [];
 
-        foreach ($questionIdListAllowed as $questionIdCurrent) 
-        {
-            $questionIdCurrent=(int)$questionIdCurrent;
+        foreach ($questionIdListAllowed as $questionIdCurrent) {
+            $questionIdCurrent = (int)$questionIdCurrent;
 
-            if (!isset($questionIdListAllowedSeen[$questionIdCurrent])) 
-            {
-                $questionIdListAllowedSeen[$questionIdCurrent]=true;
-                $questionIdListAllowedSanitized[]=$questionIdCurrent;
+            if ($questionIdCurrent <= 0) {
+                throw new InvalidArgumentException('Each question id must be a positive integer!!');
+            }
+
+            if (!isset($questionIdListAllowedSeen[$questionIdCurrent])) {
+                $questionIdListAllowedSeen[$questionIdCurrent] = true;
+                $questionIdListAllowedSanitized[] = $questionIdCurrent;
             }
         }
 
-        $questionCountTarget=count($questionIdListAllowedSanitized);
+        $questionCountTarget = count($questionIdListAllowedSanitized);
 
-        if ($questionCountTarget<=0) 
-        {
+        if ($questionCountTarget <= 0) {
             throw new InvalidArgumentException('Question count target must be positive!!');
         }
 
-        $questionListCurrent=$questionRepository->getQuestionsFromQuestionIdListAllowed(
+        $questionListCurrent = $questionRepository->getQuestionsFromQuestionIdListAllowed(
             $questionIdListAllowedSanitized,
             $questionCountTarget
         );
 
-        if (count($questionListCurrent)!==count($questionIdListAllowedSanitized)) 
-        {
+        if (count($questionListCurrent) !== count($questionIdListAllowedSanitized)) {
             throw new InvalidArgumentException('One or more question ids do not exist in database!!');
         }
 
-        $finalIsActive=$gameConfigCurrent->getIsActive();
+        $finalIsActive = $gameConfigCurrent->getIsActive();
 
-        if ($makeActive===true) 
-        {
+        if ($makeActive === true) {
             $gameConfigRepository->deactivateAllGameConfigs();
-            $finalIsActive=true;
+            $finalIsActive = true;
         }
 
         $gameConfigRepository->updateGameConfigFromId(
@@ -86,19 +82,19 @@ class QuestionSetEditService
             'questionSetEditService',
             'Question set edit completed successfully!!',
             [
-                'gameConfigId'=>$gameConfigId,
-                'gameConfigName'=>$gameConfigName,
-                'isActive'=>$finalIsActive
+                'gameConfigId' => $gameConfigId,
+                'gameConfigName' => $gameConfigName,
+                'isActive' => $finalIsActive
             ]
         );
 
         return [
-            'gameConfigId'=>$gameConfigId,
-            'gameConfigName'=>$gameConfigName,
-            'questionCountTarget'=>$questionCountTarget,
-            'questionIdListAllowed'=>$questionIdListAllowedSanitized,
-            'isActive'=>$finalIsActive,
-            'isUpdated'=>true
+            'gameConfigId' => $gameConfigId,
+            'gameConfigName' => $gameConfigName,
+            'questionCountTarget' => $questionCountTarget,
+            'questionIdListAllowed' => $questionIdListAllowedSanitized,
+            'isActive' => $finalIsActive,
+            'isUpdated' => true
         ];
     }
 }

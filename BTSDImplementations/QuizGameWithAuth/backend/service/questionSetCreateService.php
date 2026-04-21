@@ -14,102 +14,69 @@ class QuestionSetCreateService
     //WE WILL COME HERE AFTER SELECTING QUESTIONS!!!!!!
     public function questionSetCreateService(string $gameConfigName, array $questionIdListAllowed, bool $makeActive): array
     {
-        $gameConfigRepository=new GameConfigRepository();
-        $questionRepository=new QuestionRepository();
+        $gameConfigRepository = new GameConfigRepository();
+        $questionRepository = new QuestionRepository();
 
-        //REMOVE WHATEVER SPACES ARE THERE
-        $gameConfigName=trim($gameConfigName);
+        $gameConfigCurrent = $gameConfigRepository->getGameConfigFromName($gameConfigName);
 
-        if ($gameConfigName==='') 
-        {
-            throw new InvalidArgumentException('Question set name cannot be empty!!');
-        }
-
-        if (mb_strlen($gameConfigName)>100) 
-        {
-            throw new InvalidArgumentException('Question set name is too long!!');
-        }
-
-
-        
-
-        if (!preg_match('/^[A-Za-z0-9 _,\-().&]+$/', $gameConfigName)) 
-        {
-            throw new InvalidArgumentException('Question set name contains invalid characters!!');
-        }
-
-        $gameConfigCurrent=$gameConfigRepository->getGameConfigFromName($gameConfigName);
-
-        if ($gameConfigCurrent!==null) 
-        {
+        if ($gameConfigCurrent !== null) {
             throw new InvalidArgumentException('A question set with this name already exists!!');
         }
 
-        if (count($questionIdListAllowed)===0) 
-        {
+        if (count($questionIdListAllowed) === 0) {
             throw new InvalidArgumentException('Question id list allowed cannot be empty!!');
         }
 
-        $questionIdListAllowedSanitized=[];
-        $questionIdListAllowedSeen=[];
+        $questionIdListAllowedSanitized = [];
+        $questionIdListAllowedSeen = [];
 
-        foreach ($questionIdListAllowed as $questionIdCurrent) 
-        {
-            $questionIdCurrent=(int)$questionIdCurrent;
+        foreach ($questionIdListAllowed as $questionIdCurrent) {
+            $questionIdCurrent = (int)$questionIdCurrent;
 
-            if ($questionIdCurrent<=0) 
-            {
+            if ($questionIdCurrent <= 0) {
                 throw new InvalidArgumentException('Each question id must be a positive integer!!');
             }
 
-            if (!isset($questionIdListAllowedSeen[$questionIdCurrent])) 
-            {
-                $questionIdListAllowedSeen[$questionIdCurrent]=true;
-                $questionIdListAllowedSanitized[]=$questionIdCurrent;
+            if (!isset($questionIdListAllowedSeen[$questionIdCurrent])) {
+                $questionIdListAllowedSeen[$questionIdCurrent] = true;
+                $questionIdListAllowedSanitized[] = $questionIdCurrent;
             }
         }
 
-        $questionCountTarget=count($questionIdListAllowedSanitized);
+        $questionCountTarget = count($questionIdListAllowedSanitized);
 
-        if ($questionCountTarget<=0) 
-        {
+        if ($questionCountTarget <= 0) {
             throw new InvalidArgumentException('Question count target must be positive!!');
         }
 
-        $questionListCurrent=$questionRepository->getQuestionsFromQuestionIdListAllowed(
+        $questionListCurrent = $questionRepository->getQuestionsFromQuestionIdListAllowed(
             $questionIdListAllowedSanitized,
             $questionCountTarget
         );
 
-        if (count($questionListCurrent)!==count($questionIdListAllowedSanitized)) 
-        {
+        if (count($questionListCurrent) !== count($questionIdListAllowedSanitized)) {
             throw new InvalidArgumentException('One or more question ids do not exist in database!!');
         }
 
-        $secretKey='';
+        $secretKey = '';
 
-        $activeGameConfigCurrent=$gameConfigRepository->getActiveGameConfig();
+        $activeGameConfigCurrent = $gameConfigRepository->getActiveGameConfig();
 
-        if ($activeGameConfigCurrent!==null && $activeGameConfigCurrent->getSecretKey()!=='') 
-        {
-            $secretKey=$activeGameConfigCurrent->getSecretKey();
-        } 
-        
-        else 
-        {
-            $defaultGameConfigCurrent=$gameConfigRepository->getGameConfigFromName(GAME_CONFIG_NAME_DEFAULT);
+        if ($activeGameConfigCurrent !== null && $activeGameConfigCurrent->getSecretKey() !== '') {
+            $secretKey = $activeGameConfigCurrent->getSecretKey();
+        } else {
+            $defaultGameConfigCurrent = $gameConfigRepository->getGameConfigFromName(GAME_CONFIG_NAME_DEFAULT);
 
-            if ($defaultGameConfigCurrent!==null && $defaultGameConfigCurrent->getSecretKey()!=='') {
-                $secretKey=$defaultGameConfigCurrent->getSecretKey();
+            if ($defaultGameConfigCurrent !== null && $defaultGameConfigCurrent->getSecretKey() !== '') {
+                $secretKey = $defaultGameConfigCurrent->getSecretKey();
             }
         }
 
-        if ($secretKey==='') 
-        {
+        if ($secretKey === '') {
             throw new RuntimeException('Secret key could not be resolved from existing configs!!');
         }
 
-        $gameConfigId=$gameConfigRepository->createGameConfig(
+        $gameConfigId = $gameConfigRepository->createGameConfig(
             $gameConfigName,
             $questionCountTarget,
             $questionIdListAllowedSanitized,
@@ -117,37 +84,35 @@ class QuestionSetCreateService
             false
         );
 
-        if ($gameConfigId<=0) 
-        {
+        if ($gameConfigId <= 0) {
             throw new RuntimeException('Question set creation failed!!');
         }
 
-        $isActive=false;
+        $isActive = false;
 
-        if ($makeActive===true) 
-        {
+        if ($makeActive === true) {
             $gameConfigRepository->deactivateAllGameConfigs();
             $gameConfigRepository->activateGameConfigFromId($gameConfigId);
-            $isActive=true;
+            $isActive = true;
         }
 
         Logger::logInfo(
             'questionSetCreateService',
             'Question set create completed successfully!!',
             [
-                'gameConfigId'=>$gameConfigId,
-                'gameConfigName'=>$gameConfigName,
-                'isActive'=>$isActive
+                'gameConfigId' => $gameConfigId,
+                'gameConfigName' => $gameConfigName,
+                'isActive' => $isActive
             ]
         );
 
         return [
-            'gameConfigId'=>$gameConfigId,
-            'gameConfigName'=>$gameConfigName,
-            'questionCountTarget'=>$questionCountTarget,
-            'questionIdListAllowed'=>$questionIdListAllowedSanitized,
-            'isActive'=>$isActive,
-            'isCreated'=>true
+            'gameConfigId' => $gameConfigId,
+            'gameConfigName' => $gameConfigName,
+            'questionCountTarget' => $questionCountTarget,
+            'questionIdListAllowed' => $questionIdListAllowedSanitized,
+            'isActive' => $isActive,
+            'isCreated' => true
         ];
     }
 }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../service/logging.php';
-require_once __DIR__ . '/../service/questionSetShowService.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../service/logging.php';
+require_once __DIR__ . '/../../service/questionSetShowService.php';
 
-require_once __DIR__ . '/../../database/repository/userRepository.php';
-require_once __DIR__ . '/../../database/repository/userPermissionRepository.php';
+require_once __DIR__ . '/../../../database/repository/userRepository.php';
+require_once __DIR__ . '/../../../database/repository/userPermissionRepository.php';
 
 header('Content-Type:application/json');
 
@@ -73,12 +73,12 @@ function questionSetShowHandle(): void
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         http_response_code(HTTP_STATUS_METHOD_NOT_ALLOWED);
         echo json_encode([
-            'error'=>'Only GET method is allowed!!'
+            'error' => 'Only GET method is allowed!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_validation_failed', [
-            'reason'=>'invalid request method',
-            'requestMethod'=>$_SERVER['REQUEST_METHOD'] ?? ''
+            'reason' => 'invalid request method',
+            'requestMethod' => $_SERVER['REQUEST_METHOD'] ?? ''
         ]);
         exit;
     }
@@ -90,11 +90,11 @@ function questionSetShowHandle(): void
     if ($uidRaw === '' || !is_numeric($uidRaw)) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'uid must be numeric!!'
+            'error' => 'uid must be numeric!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_validation_failed', [
-            'reason'=>'uid invalid'
+            'reason' => 'uid invalid'
         ]);
         exit;
     }
@@ -104,12 +104,12 @@ function questionSetShowHandle(): void
     if ($uid <= 0) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'uid must be a positive integer!!'
+            'error' => 'uid must be a positive integer!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_validation_failed', [
-            'reason'=>'uid non positive',
-            'uid'=>$uid
+            'reason' => 'uid non positive',
+            'uid' => $uid
         ]);
         exit;
     }
@@ -117,11 +117,11 @@ function questionSetShowHandle(): void
     if (!is_numeric($cursorRaw)) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'cursor must be numeric!!'
+            'error' => 'cursor must be numeric!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_validation_failed', [
-            'reason'=>'cursor invalid'
+            'reason' => 'cursor invalid'
         ]);
         exit;
     }
@@ -129,11 +129,11 @@ function questionSetShowHandle(): void
     if (!is_numeric($limitRaw)) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'limit must be numeric!!'
+            'error' => 'limit must be numeric!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_validation_failed', [
-            'reason'=>'limit invalid'
+            'reason' => 'limit invalid'
         ]);
         exit;
     }
@@ -144,12 +144,12 @@ function questionSetShowHandle(): void
     if ($cursor < 0) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'cursor cannot be negative!!'
+            'error' => 'cursor cannot be negative!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_validation_failed', [
-            'reason'=>'cursor negative',
-            'cursor'=>$cursor
+            'reason' => 'cursor negative',
+            'cursor' => $cursor
         ]);
         exit;
     }
@@ -157,12 +157,12 @@ function questionSetShowHandle(): void
     if ($limit <= 0 || $limit > 20) {
         http_response_code(HTTP_STATUS_BAD_REQUEST);
         echo json_encode([
-            'error'=>'limit must be between 1 and 20!!'
+            'error' => 'limit must be between 1 and 20!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_validation_failed', [
-            'reason'=>'limit out of range',
-            'limit'=>$limit
+            'reason' => 'limit out of range',
+            'limit' => $limit
         ]);
         exit;
     }
@@ -170,11 +170,11 @@ function questionSetShowHandle(): void
     if (questionSetShowAuthenticate($uid) !== true) {
         http_response_code(HTTP_STATUS_UNAUTHORIZED);
         echo json_encode([
-            'error'=>'Authentication failed!!'
+            'error' => 'Authentication failed!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_authentication_failed', [
-            'uid'=>$uid
+            'uid' => $uid
         ]);
         exit;
     }
@@ -182,11 +182,11 @@ function questionSetShowHandle(): void
     if (questionSetShowAuthorize($uid) !== true) {
         http_response_code(HTTP_STATUS_FORBIDDEN);
         echo json_encode([
-            'error'=>'Authorization failed!!'
+            'error' => 'Authorization failed!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_authorization_failed', [
-            'uid'=>$uid
+            'uid' => $uid
         ]);
         exit;
     }
@@ -194,11 +194,11 @@ function questionSetShowHandle(): void
     if (questionSetShowRateLimitCheck($uid) !== true) {
         http_response_code(HTTP_STATUS_TOO_MANY_REQUESTS);
         echo json_encode([
-            'error'=>'Rate limit exceeded!!'
+            'error' => 'Rate limit exceeded!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_rate_limit_failed', [
-            'uid'=>$uid
+            'uid' => $uid
         ]);
         exit;
     }
@@ -206,11 +206,11 @@ function questionSetShowHandle(): void
     if (questionSetShowIdempotencyCheck($uid) !== true) {
         http_response_code(HTTP_STATUS_CONFLICT);
         echo json_encode([
-            'error'=>'Duplicate request detected!!'
+            'error' => 'Duplicate request detected!!'
         ]);
 
         questionSetShowAuditLog('question_set_show_idempotency_failed', [
-            'uid'=>$uid
+            'uid' => $uid
         ]);
         exit;
     }
@@ -222,10 +222,10 @@ function questionSetShowHandle(): void
     echo json_encode($responseData);
 
     questionSetShowAuditLog('question_set_show_success', [
-        'uid'=>$uid,
-        'cursor'=>$cursor,
-        'limit'=>$limit,
-        'returnedGameConfigCount'=>count($responseData['gameConfigs'] ?? [])
+        'uid' => $uid,
+        'cursor' => $cursor,
+        'limit' => $limit,
+        'returnedGameConfigCount' => count($responseData['gameConfigs'] ?? [])
     ]);
 }
 
@@ -234,7 +234,7 @@ try {
 } catch (InvalidArgumentException $exception) {
     http_response_code(HTTP_STATUS_BAD_REQUEST);
     echo json_encode([
-        'error'=>'Invalid request input!!'
+        'error' => 'Invalid request input!!'
     ]);
 
     Logger::logWarn(
@@ -242,13 +242,13 @@ try {
         'Invalid argument while showing question sets!!',
         'INVALID_ARGUMENT',
         [
-            'errorMessage'=>$exception->getMessage()
+            'errorMessage' => $exception->getMessage()
         ]
     );
 } catch (RuntimeException $exception) {
     http_response_code(HTTP_STATUS_INTERNAL_SERVER_ERROR);
     echo json_encode([
-        'error'=>'Runtime failure while showing question sets!!'
+        'error' => 'Runtime failure while showing question sets!!'
     ]);
 
     Logger::logError(
@@ -261,7 +261,7 @@ try {
 } catch (Throwable $exception) {
     http_response_code(HTTP_STATUS_INTERNAL_SERVER_ERROR);
     echo json_encode([
-        'error'=>'Unexpected server error while showing question sets!!'
+        'error' => 'Unexpected server error while showing question sets!!'
     ]);
 
     Logger::logFatal(

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../service/logging.php';
-require_once __DIR__ . '/../service/questionSetCreateService.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../service/logging.php';
+require_once __DIR__ . '/../../service/questionSetCreateService.php';
 
-require_once __DIR__ . '/../../database/repository/userRepository.php';
-require_once __DIR__ . '/../../database/repository/userPermissionRepository.php';
+require_once __DIR__ . '/../../../database/repository/userRepository.php';
+require_once __DIR__ . '/../../../database/repository/userPermissionRepository.php';
 
 header('Content-Type:application/json');
 
@@ -180,6 +180,30 @@ function questionSetCreateHandle(): void
 
         questionSetCreateAuditLog('question_set_create_validation_failed', [
             'reason' => 'empty payload fields'
+        ]);
+        exit;
+    }
+
+    if (mb_strlen($gameConfigName) > 100) {
+        http_response_code(HTTP_STATUS_BAD_REQUEST);
+        echo json_encode([
+            'error' => 'Question set name is too long!!'
+        ]);
+
+        questionSetCreateAuditLog('question_set_create_validation_failed', [
+            'reason' => 'game config name too long'
+        ]);
+        exit;
+    }
+
+    if (!preg_match('/^[A-Za-z0-9 _,\-().&]+$/', $gameConfigName)) {
+        http_response_code(HTTP_STATUS_BAD_REQUEST);
+        echo json_encode([
+            'error' => 'Question set name contains invalid characters!!'
+        ]);
+
+        questionSetCreateAuditLog('question_set_create_validation_failed', [
+            'reason' => 'game config name invalid characters'
         ]);
         exit;
     }

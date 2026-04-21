@@ -46,25 +46,53 @@
                         <h1>Edit an existing question set below</h1>
                     </div>
 
+                    <div class="game-question-container">
+                        <h1>Select a question set first</h1>
+                    </div>
+
+                    <div id="question-set-edit-config-list-container">
+                        <!-- TypeScript will insert config list here -->
+                    </div>
+
+                    <div class="next-button-container">
+                        <button type="button" id="question-set-edit-config-prev-button">Previous Sets</button>
+                        <button type="button" id="question-set-edit-config-next-button">Next Sets</button>
+                    </div>
+
                     <form id="question-set-edit-form">
+                        <div class="form-row">
+                            <h1>Question Set Id</h1>
+                            <input type="text" id="question-set-edit-id-input" readonly>
+                        </div>
+
                         <div class="form-row">
                             <h1>Question Set Name</h1>
                             <input type="text" id="question-set-edit-name-input" name="gameConfigName">
                         </div>
 
                         <div class="form-row">
-                            <h1>Question Count Target</h1>
-                            <input type="text" id="question-set-edit-count-input" name="questionCountTarget">
+                            <h1>Selected Question Count</h1>
+                            <input type="text" id="question-set-edit-count-input" readonly>
                         </div>
 
-                        <div class="form-row">
-                            <h1>Allowed Question Id List (comma separated)</h1>
-                            <input type="text" id="question-set-edit-id-list-input" name="questionIdListAllowed">
+                        <div class="form-row question-add-correct-row">
+                            <label>
+                                <input type="checkbox" id="question-set-edit-make-active-input">
+                                Make this question set active now
+                            </label>
                         </div>
 
-                        <div class="form-row">
-                            <h1>Secret Key</h1>
-                            <input type="text" id="question-set-edit-secret-key-input" name="secretKey">
+                        <div class="game-question-container">
+                            <h1>Choose questions for this set</h1>
+                        </div>
+
+                        <div id="question-set-edit-question-list-container">
+                            <!-- TypeScript will insert paginated question list here -->
+                        </div>
+
+                        <div class="next-button-container">
+                            <button type="button" id="question-set-edit-question-prev-button">Previous Questions</button>
+                            <button type="button" id="question-set-edit-question-next-button">Next Questions</button>
                         </div>
 
                         <div class="next-button-container">

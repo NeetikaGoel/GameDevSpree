@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../params/quizSubmitParams.php';
-require_once __DIR__ . '/../service/logging.php';
-require_once __DIR__ . '/../service/quizSubmitService.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../params/quizSubmitParams.php';
+require_once __DIR__ . '/../../service/logging.php';
+require_once __DIR__ . '/../../service/quizSubmitService.php';
 
-require_once __DIR__ . '/../../database/repository/userRepository.php';
-require_once __DIR__ . '/../../database/repository/userPermissionRepository.php';
+require_once __DIR__ . '/../../../database/repository/userRepository.php';
+require_once __DIR__ . '/../../../database/repository/userPermissionRepository.php';
 
 //same to tell the frontend that the response will be in json format
 header('Content-Type:application/json');

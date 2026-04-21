@@ -53,18 +53,28 @@
                         </div>
 
                         <div class="form-row">
-                            <h1>Question Count Target</h1>
-                            <input type="text" id="question-set-create-count-input" name="questionCountTarget">
+                            <h1>Selected Question Count</h1>
+                            <input type="text" id="question-set-create-count-input" readonly>
                         </div>
 
-                        <div class="form-row">
-                            <h1>Allowed Question Id List (comma separated)</h1>
-                            <input type="text" id="question-set-create-id-list-input" name="questionIdListAllowed">
+                        <div class="form-row question-add-correct-row">
+                            <label>
+                                <input type="checkbox" id="question-set-create-make-active-input">
+                                Make this question set active now
+                            </label>
                         </div>
 
-                        <div class="form-row">
-                            <h1>Secret Key</h1>
-                            <input type="text" id="question-set-create-secret-key-input" name="secretKey">
+                        <div class="game-question-container">
+                            <h1>Choose questions for this set</h1>
+                        </div>
+
+                        <div id="question-set-create-question-list-container">
+                            <!-- TypeScript will insert paginated question list here -->
+                        </div>
+
+                        <div class="next-button-container">
+                            <button type="button" id="question-set-create-prev-button">Previous Questions</button>
+                            <button type="button" id="question-set-create-next-button">Next Questions</button>
                         </div>
 
                         <div class="next-button-container">

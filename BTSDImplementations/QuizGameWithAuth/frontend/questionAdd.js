@@ -1,5 +1,5 @@
 import { authUidGet, authPermissionGroupGet, authNavbarUpdate } from "./auth.js";
-const questionAddApiUrl = "../backend/api/questionAdd.php";
+const questionAddApiUrl = "../backend/api/v1/questionAdd.php";
 function questionAddMessageTextSet(message) {
     const questionAddMessageTextElement = document.getElementById("question-add-message-text");
     if (questionAddMessageTextElement) {

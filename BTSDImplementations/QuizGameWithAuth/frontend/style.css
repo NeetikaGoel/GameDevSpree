@@ -271,3 +271,57 @@ input[type="password"] {
     gap: 10px;
     cursor: pointer;
 }
+
+
+.question-set-card
+{
+    border:1px solid #d0d0d0;
+    border-radius:8px;
+    padding:16px;
+    margin-bottom:14px;
+    background:#fafafa;
+}
+
+.question-set-card h1
+{
+    margin-bottom:8px;
+}
+
+.question-set-card p
+{
+    margin-bottom:10px;
+}
+
+.question-set-checkbox-row
+{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+.question-set-answer-option-list
+{
+    margin-left:28px;
+    margin-top:8px;
+    margin-bottom:0;
+}
+
+#question-set-edit-config-list-container,
+#question-set-edit-question-list-container
+{
+    margin-top:16px;
+    margin-bottom:16px;
+}
+
+
+#question-set-create-question-list-container { margin-top:16px; margin-bottom:16px; }
+
+#question-set-create-count-input { background-color:#f0f0f0; font-weight:600; }
+
+#question-set-create-make-active-input { margin-right:8px; }
+
+.form-row { margin-bottom:14px; }
+.game-question-container h1 { margin-bottom:10px; }

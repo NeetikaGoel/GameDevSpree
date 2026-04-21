@@ -1,6 +1,6 @@
 import { authUserSessionSave, authUserSessionClear, authUidGet, authLoginTypeGet, authIsLoggedIn, authNavbarUpdate } from "./auth.js";
-const loginGuestApiUrl = "../backend/api/loginGuest.php";
-const loginUserApiUrl = "../backend/api/loginUser.php";
+const loginGuestApiUrl = "../backend/api/v1/loginGuest.php";
+const loginUserApiUrl = "../backend/api/v1/loginUser.php";
 function loginMessageTextSet(message) {
     const guestLoginMessageTextElement = document.getElementById("guest-login-message-text");
     const loginMessageTextElement = document.getElementById("login-message-text");

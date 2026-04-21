@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../service/logging.php';
-require_once __DIR__ . '/../service/questionShowService.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../service/logging.php';
+require_once __DIR__ . '/../../service/questionShowService.php';
 
-require_once __DIR__ . '/../../database/repository/userRepository.php';
-require_once __DIR__ . '/../../database/repository/userPermissionRepository.php';
+require_once __DIR__ . '/../../../database/repository/userRepository.php';
+require_once __DIR__ . '/../../../database/repository/userPermissionRepository.php';
 
 header('Content-Type:application/json');
 

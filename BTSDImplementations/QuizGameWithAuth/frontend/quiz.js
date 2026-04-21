@@ -1,8 +1,8 @@
 import { authUidGet, authNavbarUpdate, authIsLoggedIn } from "./auth.js";
 //first defining api endpoints of backend which frontend will call
-const quizApiLoadUrl = "../backend/api/quizLoad.php";
-const quizApiSubmitUrl = "../backend/api/quizSubmit.php";
-const quizApiResultUrl = "../backend/api/quizResultShow.php";
+const quizApiLoadUrl = "../backend/api/v1/quizLoad.php";
+const quizApiSubmitUrl = "../backend/api/v1/quizSubmit.php";
+const quizApiResultUrl = "../backend/api/v1/quizResultShow.php";
 //COPIED EVEYRHITNG ABOVE FROM THE PHP FILES HEHE
 //NOW FUNCTION TO CALL BACKEND AND UPDATE FRONTEND WITH CURRENT QUESTION AND ANSWER OPTIONS
 async function quizQuestionCurrentLoad() {
