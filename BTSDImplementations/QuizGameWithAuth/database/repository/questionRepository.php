@@ -81,5 +81,30 @@ class QuestionRepository
             ]
         );
     }
+
+
+    //NEW FUNCTION FOR THE PURPOSE OF GETTING QUESTIONS IN PAGINATED FORM
+    public function getQuestionPageAfterId(int $cursor, int $limit): array
+    {
+        if ($cursor < 0 || $limit <= 0) {
+            return [];
+        }
+
+        $questionQuery=new QuestionQuery();
+        $questionMapper=new QuestionMapper();
+        $ormManager=new OrmManager();
+
+        $sql=$questionQuery->getQuestionPageAfterIdSqlQuery();
+
+        return $ormManager->ormManageWithParams(
+            $sql,
+            'ii',
+            [
+                $cursor,
+                $limit
+            ],
+            $questionMapper
+        );
+    }
 }
 ?>

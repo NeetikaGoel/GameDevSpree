@@ -42,5 +42,21 @@ class QuestionQuery
             (?, ?)
         ';
     }
+
+
+    //NEW FUNCTION ADDED FOR THE PURPOSE OF NEW ADMIN SPECIFIC API!!!!!!
+    public function getQuestionPageAfterIdSqlQuery():string
+    {
+        return '
+            SELECT
+                id,
+                text,
+                type
+            FROM questions
+            WHERE id>?
+            ORDER BY id ASC
+            LIMIT ?
+        ';
+    }
 }
 ?>

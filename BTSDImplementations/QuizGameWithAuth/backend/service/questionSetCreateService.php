@@ -1,94 +1,143 @@
 <?php
+
 declare(strict_types=1);
 
+//ADD IMPORTS FIRST
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/logging.php';
 
 require_once __DIR__ . '/../../database/repository/gameConfigRepository.php';
 require_once __DIR__ . '/../../database/repository/questionRepository.php';
 
-
 class QuestionSetCreateService
 {
-    public function questionSetCreateService(string $gameConfigName,int $questionCountTarget,array $questionIdListAllowed,string $secretKey):array
+    //WE WILL COME HERE AFTER SELECTING QUESTIONS!!!!!!
+    public function questionSetCreateService(string $gameConfigName, array $questionIdListAllowed, bool $makeActive): array
     {
         $gameConfigRepository=new GameConfigRepository();
         $questionRepository=new QuestionRepository();
 
+        //REMOVE WHATEVER SPACES ARE THERE
+        $gameConfigName=trim($gameConfigName);
+
+        if ($gameConfigName==='') 
+        {
+            throw new InvalidArgumentException('Question set name cannot be empty!!');
+        }
+
+        if (mb_strlen($gameConfigName)>100) 
+        {
+            throw new InvalidArgumentException('Question set name is too long!!');
+        }
+
+
+        
+
+        if (!preg_match('/^[A-Za-z0-9 _,\-().&]+$/', $gameConfigName)) 
+        {
+            throw new InvalidArgumentException('Question set name contains invalid characters!!');
+        }
+
         $gameConfigCurrent=$gameConfigRepository->getGameConfigFromName($gameConfigName);
 
-        if ($gameConfigCurrent!==null)
-            {
-                throw new InvalidArgumentException('A question set with this name already exists!!');
-            }
+        if ($gameConfigCurrent!==null) 
+        {
+            throw new InvalidArgumentException('A question set with this name already exists!!');
+        }
 
-        if ($questionCountTarget<=0)
-            {
-                throw new InvalidArgumentException('Question count target must be positive!!');
-            }
-
-        if (count($questionIdListAllowed)===0)
-            {
-                throw new InvalidArgumentException('Question id list allowed cannot be empty!!');
-            }
-
-        if ($secretKey==='')
-            {
-                throw new InvalidArgumentException('Secret key cannot be empty!!');
-            }
+        if (count($questionIdListAllowed)===0) 
+        {
+            throw new InvalidArgumentException('Question id list allowed cannot be empty!!');
+        }
 
         $questionIdListAllowedSanitized=[];
         $questionIdListAllowedSeen=[];
 
-        foreach ($questionIdListAllowed as $questionIdCurrent)
+        foreach ($questionIdListAllowed as $questionIdCurrent) 
+        {
+            $questionIdCurrent=(int)$questionIdCurrent;
+
+            if ($questionIdCurrent<=0) 
             {
-                $questionIdCurrent=(int)$questionIdCurrent;
-
-                if ($questionIdCurrent<=0)
-                    {
-                        throw new InvalidArgumentException('Each question id must be a positive integer!!');
-                    }
-
-                if (!isset($questionIdListAllowedSeen[$questionIdCurrent]))
-                    {
-                        $questionIdListAllowedSeen[$questionIdCurrent]=true;
-                        $questionIdListAllowedSanitized[]=$questionIdCurrent;
-                    }
+                throw new InvalidArgumentException('Each question id must be a positive integer!!');
             }
 
-        if ($questionCountTarget>count($questionIdListAllowedSanitized))
+            if (!isset($questionIdListAllowedSeen[$questionIdCurrent])) 
             {
-                throw new InvalidArgumentException('Question count target cannot be more than allowed question ids count!!');
+                $questionIdListAllowedSeen[$questionIdCurrent]=true;
+                $questionIdListAllowedSanitized[]=$questionIdCurrent;
             }
+        }
+
+        $questionCountTarget=count($questionIdListAllowedSanitized);
+
+        if ($questionCountTarget<=0) 
+        {
+            throw new InvalidArgumentException('Question count target must be positive!!');
+        }
 
         $questionListCurrent=$questionRepository->getQuestionsFromQuestionIdListAllowed(
             $questionIdListAllowedSanitized,
-            count($questionIdListAllowedSanitized)
+            $questionCountTarget
         );
 
-        if (count($questionListCurrent)!==count($questionIdListAllowedSanitized))
-            {
-                throw new InvalidArgumentException('One or more question ids do not exist in database!!');
+        if (count($questionListCurrent)!==count($questionIdListAllowedSanitized)) 
+        {
+            throw new InvalidArgumentException('One or more question ids do not exist in database!!');
+        }
+
+        $secretKey='';
+
+        $activeGameConfigCurrent=$gameConfigRepository->getActiveGameConfig();
+
+        if ($activeGameConfigCurrent!==null && $activeGameConfigCurrent->getSecretKey()!=='') 
+        {
+            $secretKey=$activeGameConfigCurrent->getSecretKey();
+        } 
+        
+        else 
+        {
+            $defaultGameConfigCurrent=$gameConfigRepository->getGameConfigFromName(GAME_CONFIG_NAME_DEFAULT);
+
+            if ($defaultGameConfigCurrent!==null && $defaultGameConfigCurrent->getSecretKey()!=='') {
+                $secretKey=$defaultGameConfigCurrent->getSecretKey();
             }
+        }
+
+        if ($secretKey==='') 
+        {
+            throw new RuntimeException('Secret key could not be resolved from existing configs!!');
+        }
 
         $gameConfigId=$gameConfigRepository->createGameConfig(
             $gameConfigName,
             $questionCountTarget,
             $questionIdListAllowedSanitized,
-            $secretKey
+            $secretKey,
+            false
         );
 
-        if ($gameConfigId<=0)
-            {
-                throw new RuntimeException('Question set creation failed!!');
-            }
+        if ($gameConfigId<=0) 
+        {
+            throw new RuntimeException('Question set creation failed!!');
+        }
+
+        $isActive=false;
+
+        if ($makeActive===true) 
+        {
+            $gameConfigRepository->deactivateAllGameConfigs();
+            $gameConfigRepository->activateGameConfigFromId($gameConfigId);
+            $isActive=true;
+        }
 
         Logger::logInfo(
             'questionSetCreateService',
             'Question set create completed successfully!!',
             [
                 'gameConfigId'=>$gameConfigId,
-                'gameConfigName'=>$gameConfigName
+                'gameConfigName'=>$gameConfigName,
+                'isActive'=>$isActive
             ]
         );
 
@@ -97,9 +146,8 @@ class QuestionSetCreateService
             'gameConfigName'=>$gameConfigName,
             'questionCountTarget'=>$questionCountTarget,
             'questionIdListAllowed'=>$questionIdListAllowedSanitized,
-            'secretKey'=>$secretKey,
+            'isActive'=>$isActive,
             'isCreated'=>true
         ];
     }
 }
-?>
