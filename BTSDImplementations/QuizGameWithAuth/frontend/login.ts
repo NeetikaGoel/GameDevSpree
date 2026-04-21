@@ -9,8 +9,8 @@ import {
     authNavbarUpdate
 } from "./auth.js";
 
-const loginGuestApiUrl="../backend/api/loginGuest.php";
-const loginUserApiUrl="../backend/api/loginUser.php";
+const loginGuestApiUrl="../backend/api/v1/loginGuest.php";
+const loginUserApiUrl="../backend/api/v1/loginUser.php";
 
 type LoginGuestResponse=
 {

@@ -19,6 +19,8 @@ const PASSWORD_SECRET_KEY_SEPARATOR='::';
 const LOG_SERVICE_NAME_DEFAULT='quizApi';
 const LOG_DURATION_DEFAULT_MS=0;
 
+const GAME_CONFIG_SECRET_KEY='neetikagoel12345';
+
 
 //http response status codes-
 const HTTP_STATUS_OK=200;

@@ -6,7 +6,7 @@ import {
     authNavbarUpdate
 } from "./auth.js";
 
-const questionSetEditApiUrl="../backend/api/questionSetEdit.php";
+const questionSetEditApiUrl="../backend/api/v1/questionSetEdit.php";
 
 type QuestionSetEditResponse=
 {

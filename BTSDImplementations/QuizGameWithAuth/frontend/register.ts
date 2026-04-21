@@ -8,8 +8,8 @@ import {
     authNavbarUpdate
 } from "./auth.js";
 
-const registerUserApiUrl="../backend/api/registerUser.php";
-const loginGuestApiUrl="../backend/api/loginGuest.php";
+const registerUserApiUrl="../backend/api/v1/registerUser.php";
+const loginGuestApiUrl="../backend/api/v1/loginGuest.php";
 
 type RegisterUserResponse=
 {

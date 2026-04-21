@@ -6,7 +6,7 @@ import {
     authNavbarUpdate
 } from "./auth.js";
 
-const questionAddApiUrl="../backend/api/questionAdd.php";
+const questionAddApiUrl="../backend/api/v1/questionAdd.php";
 
 type QuestionAddResponse=
 {

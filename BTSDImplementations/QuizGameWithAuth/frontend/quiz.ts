@@ -7,9 +7,9 @@ import {
 } from "./auth.js";
 
 //first defining api endpoints of backend which frontend will call
-const quizApiLoadUrl="../backend/api/quizLoad.php";
-const quizApiSubmitUrl="../backend/api/quizSubmit.php";
-const quizApiResultUrl="../backend/api/quizResultShow.php";
+const quizApiLoadUrl="../backend/api/v1/quizLoad.php";
+const quizApiSubmitUrl="../backend/api/v1/quizSubmit.php";
+const quizApiResultUrl="../backend/api/v1/quizResultShow.php";
 
 
 //now type blocks to specify what shape will json come in from backend - helps to understand backend fields that will be returned

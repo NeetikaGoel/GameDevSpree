@@ -6,7 +6,7 @@ import {
     authNavbarUpdate
 } from "./auth.js";
 
-const questionSetCreateApiUrl="../backend/api/questionSetCreate.php";
+const questionSetCreateApiUrl="../backend/api/v1/questionSetCreate.php";
 
 type QuestionSetCreateResponse=
 {
