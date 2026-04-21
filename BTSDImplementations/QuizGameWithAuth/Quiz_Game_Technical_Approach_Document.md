@@ -1,5 +1,67 @@
 # QuizGameWithAuth — End-to-End API and Flow Document
 
+## Table of Contents
+
+| Section | Title | Link |
+|---|---|---|
+| 1 | Purpose of this document | [Go to Section 1](#section-1-purpose-of-this-document) |
+| 2 | High-level architecture | [Go to Section 2](#section-2-high-level-architecture) |
+| 2.1 | Layers in the project | [Go to Section 2.1](#section-21-layers-in-the-project) |
+| 3 | Global end-to-end application flow | [Go to Section 3](#section-3-global-end-to-end-application-flow) |
+| 3.1 | Current user journey | [Go to Section 3.1](#section-31-current-user-journey) |
+| 4 | Current frontend flow | [Go to Section 4](#section-4-current-frontend-flow) |
+| 4.1 | Shared auth helper | [Go to Section 4.1](#section-41-shared-auth-helper) |
+| 4.2 | Frontend pages and API calls | [Go to Section 4.2](#section-42-frontend-pages-and-api-calls) |
+| 5 | Current database tables and their purpose | [Go to Section 5](#section-5-current-database-tables-and-their-purpose) |
+| 5.1 | `users` | [Go to Section 5.1](#section-51-users) |
+| 5.2 | `user_permissions` | [Go to Section 5.2](#section-52-user_permissions) |
+| 5.3 | `user_progress_states` | [Go to Section 5.3](#section-53-user_progress_states) |
+| 5.4 | `questions` | [Go to Section 5.4](#section-54-questions) |
+| 5.5 | `answer_options` | [Go to Section 5.5](#section-55-answer_options) |
+| 5.6 | `game_configs` | [Go to Section 5.6](#section-56-game_configs) |
+| 6 | API versioning note | [Go to Section 6](#section-6-api-versioning-note) |
+| 7 | Current API-by-API documentation | [Go to Section 7](#section-7-current-api-by-api-documentation) |
+| 7.1 | API: Guest Login | [Go to Section 7.1](#section-71-api-guest-login) |
+| 7.2 | API: Registered User Login | [Go to Section 7.2](#section-72-api-registered-user-login) |
+| 7.3 | API: Register User | [Go to Section 7.3](#section-73-api-register-user) |
+| 7.4 | API: Quiz Load | [Go to Section 7.4](#section-74-api-quiz-load) |
+| 7.5 | API: Quiz Submit | [Go to Section 7.5](#section-75-api-quiz-submit) |
+| 7.6 | API: Quiz Result Show | [Go to Section 7.6](#section-76-api-quiz-result-show) |
+| 7.7 | API: Question Add | [Go to Section 7.7](#section-77-api-question-add) |
+| 7.8 | API: Question Set Create *(current state, planned refactor)* | [Go to Section 7.8](#section-78-api-question-set-create-current-state-planned-refactor) |
+| 7.9 | API: Question Set Edit *(current state, planned refactor)* | [Go to Section 7.9](#section-79-api-question-set-edit-current-state-planned-refactor) |
+| 8 | Proposed new admin APIs for manager approval | [Go to Section 8](#section-8-proposed-new-admin-apis-for-manager-approval) |
+| 8.1 | Proposed API: Question Show | [Go to Section 8.1](#section-81-proposed-api-question-show) |
+| 8.2 | Proposed API: Question Set Show / Game Config Show | [Go to Section 8.2](#section-82-proposed-api-question-set-show--game-config-show) |
+| 9 | Final desired admin workflows | [Go to Section 9](#section-9-final-desired-admin-workflows) |
+| 9.1 | Create question-set flow | [Go to Section 9.1](#section-91-create-question-set-flow) |
+| 9.2 | Edit question-set flow | [Go to Section 9.2](#section-92-edit-question-set-flow) |
+| 9.3 | Question show workflow *(final desired admin workflow)* | [Go to Section 9.3](#section-93-question-show-workflow-final-desired-admin-workflow) |
+| 9.4 | Question-set show workflow *(final desired admin workflow)* | [Go to Section 9.4](#section-94-question-set-show-workflow-final-desired-admin-workflow) |
+| 10 | Recommended final contracts for question-set APIs | [Go to Section 10](#section-10-recommended-final-contracts-for-question-set-apis) |
+| 10.1 | Recommended final create API contract | [Go to Section 10.1](#section-101-recommended-final-create-api-contract) |
+| 10.2 | Recommended final edit API contract | [Go to Section 10.2](#section-102-recommended-final-edit-api-contract) |
+| 11 | Flowchart-style text diagrams | [Go to Section 11](#section-11-flowchart-style-text-diagrams) |
+| 11.1 | Main application flow | [Go to Section 11.1](#section-111-main-application-flow) |
+| 11.2 | Quiz flow | [Go to Section 11.2](#section-112-quiz-flow) |
+| 11.3 | Admin create question-set flow *(proposed)* | [Go to Section 11.3](#section-113-admin-create-question-set-flow-proposed) |
+| 11.4 | Admin edit question-set flow *(proposed)* | [Go to Section 11.4](#section-114-admin-edit-question-set-flow-proposed) |
+| 11.5 | Question show API flow *(proposed)* | [Go to Section 11.5](#section-115-question-show-api-flow-proposed) |
+| 11.6 | Question-set show API flow *(proposed)* | [Go to Section 11.6](#section-116-question-set-show-api-flow-proposed) |
+| 12 | API summary table | [Go to Section 12](#section-12-api-summary-table) |
+| 13 | Key implementation observations for manager review | [Go to Section 13](#section-13-key-implementation-observations-for-manager-review) |
+| 13.1 | What is already strong | [Go to Section 13.1](#section-131-what-is-already-strong) |
+| 13.2 | What still needs refinement for question-set feature | [Go to Section 13.2](#section-132-what-still-needs-refinement-for-question-set-feature) |
+| 13.3 | Recommended implementation sequence | [Go to Section 13.3](#section-133-recommended-implementation-sequence) |
+| 14 | Future improvements / enhancements | [Go to Section 14](#section-14-future-improvements--enhancements) |
+| 14.1 | Better toggle UX for `is_active` | [Go to Section 14.1](#section-141-better-toggle-ux-for-is_active) |
+| 14.2 | More metadata fields for configs | [Go to Section 14.2](#section-142-more-metadata-fields-for-configs) |
+| 14.3 | Stronger naming constraints for configs | [Go to Section 14.3](#section-143-stronger-naming-constraints-for-configs) |
+| 14.4 | Better pagination controls | [Go to Section 14.4](#section-144-better-pagination-controls) |
+| 14.5 | Config activation by date window | [Go to Section 14.5](#section-145-config-activation-by-date-window) |
+| 15 | Final approval-oriented summary | [Go to Section 15](#section-15-final-approval-oriented-summary) |
+
+<a id="section-1-purpose-of-this-document"></a>
 ## 1. Purpose of this document
 
 This document explains the complete current end-to-end flow of the **QuizGameWithAuth** project, from frontend page actions to backend APIs, services, repositories, queries, mappers, ORM layer, and database tables.
@@ -16,9 +78,11 @@ This document is written as a **technical README-style design document** so it c
 
 ---
 
-# 2. High-level architecture
+<a id="section-2-high-level-architecture"></a>
+## 2. High-level architecture
 
-## 2.1 Layers in the project
+<a id="section-21-layers-in-the-project"></a>
+### 2.1 Layers in the project
 
 The project is organized into these layers.
 
@@ -106,9 +170,11 @@ Tables currently used:
 
 ---
 
-# 3. Global end-to-end application flow
+<a id="section-3-global-end-to-end-application-flow"></a>
+## 3. Global end-to-end application flow
 
-## 3.1 Current user journey
+<a id="section-31-current-user-journey"></a>
+### 3.1 Current user journey
 
 ### Landing page
 File: `frontend/index.html`
@@ -179,9 +245,11 @@ Partially implemented / planned:
 
 ---
 
-# 4. Current frontend flow
+<a id="section-4-current-frontend-flow"></a>
+## 4. Current frontend flow
 
-## 4.1 Shared auth helper
+<a id="section-41-shared-auth-helper"></a>
+### 4.1 Shared auth helper
 
 **File:** `frontend/auth.ts` / `frontend/auth.js`
 
@@ -221,7 +289,8 @@ So the current architecture is:
 
 ---
 
-## 4.2 Frontend pages and API calls
+<a id="section-42-frontend-pages-and-api-calls"></a>
+### 4.2 Frontend pages and API calls
 
 ### `index.html` + `login.js`
 Triggers:
@@ -265,9 +334,11 @@ Planned to call:
 
 ---
 
-# 5. Current database tables and their purpose
+<a id="section-5-current-database-tables-and-their-purpose"></a>
+## 5. Current database tables and their purpose
 
-## 5.1 `users`
+<a id="section-51-users"></a>
+### 5.1 `users`
 Stores user identity.
 
 Used by:
@@ -288,7 +359,8 @@ Important columns:
 
 ---
 
-## 5.2 `user_permissions`
+<a id="section-52-user_permissions"></a>
+### 5.2 `user_permissions`
 Stores authorization role.
 
 Possible values:
@@ -303,7 +375,8 @@ Used by:
 
 ---
 
-## 5.3 `user_progress_states`
+<a id="section-53-user_progress_states"></a>
+### 5.3 `user_progress_states`
 Stores active quiz state for each user.
 
 Used by:
@@ -324,7 +397,8 @@ This table is the main reason the quiz is **stateful in DB**, but **stateless ov
 
 ---
 
-## 5.4 `questions`
+<a id="section-54-questions"></a>
+### 5.4 `questions`
 Stores question master data.
 
 Used by:
@@ -335,7 +409,8 @@ Used by:
 
 ---
 
-## 5.5 `answer_options`
+<a id="section-55-answer_options"></a>
+### 5.5 `answer_options`
 Stores answer choices for each question.
 
 Used by:
@@ -346,7 +421,8 @@ Used by:
 
 ---
 
-## 5.6 `game_configs`
+<a id="section-56-game_configs"></a>
+### 5.6 `game_configs`
 Stores question-set / config definitions.
 
 ### Current purpose
@@ -387,14 +463,13 @@ This is a **validation and UX recommendation**, not a current backend behavior c
 
 ---
 
-# 6. API versioning note
+<a id="section-6-api-versioning-note"></a>
+## 6. API versioning note
 
 For documentation consistency and future-proofing, all APIs in this document are shown under a **v1 versioned path**.
 
 ### Standard form used in this document
 `/backend/api/v1/<apiName>.php`
-
-This is a documentation-level structure alignment so that all APIs follow one consistent versioning convention.
 
 ### Current logic impact
 This is a **format and path organization change only** in this document.
@@ -402,11 +477,13 @@ It does **not** change the business logic of any existing API.
 
 ---
 
-# 7. Current API-by-API documentation
+<a id="section-7-current-api-by-api-documentation"></a>
+## 7. Current API-by-API documentation
 
 ---
 
-## 7.1 API: Guest Login
+<a id="section-71-api-guest-login"></a>
+### 7.1 API: Guest Login
 
 ### URL
 `POST /backend/api/v1/loginGuest.php`
@@ -482,7 +559,8 @@ Frontend button → `loginGuest.php` → `LoginGuestService` → repositories �
 
 ---
 
-## 7.2 API: Registered User Login
+<a id="section-72-api-registered-user-login"></a>
+### 7.2 API: Registered User Login
 
 ### URL
 `POST /backend/api/v1/loginUser.php`
@@ -578,7 +656,8 @@ Frontend login form → `loginUser.php` → `LoginUserService` → `users` + `ga
 
 ---
 
-## 7.3 API: Register User
+<a id="section-73-api-register-user"></a>
+### 7.3 API: Register User
 
 ### URL
 `POST /backend/api/v1/registerUser.php`
@@ -693,7 +772,8 @@ Supports both:
 
 ---
 
-## 7.4 API: Quiz Load
+<a id="section-74-api-quiz-load"></a>
+### 7.4 API: Quiz Load
 
 ### URL
 `GET /backend/api/v1/quizLoad.php?uid={uid}`
@@ -813,7 +893,8 @@ That means quiz content is driven by whichever config is currently active.
 
 ---
 
-## 7.5 API: Quiz Submit
+<a id="section-75-api-quiz-submit"></a>
+### 7.5 API: Quiz Submit
 
 ### URL
 `POST /backend/api/v1/quizSubmit.php`
@@ -917,7 +998,8 @@ Boundary file performs:
 
 ---
 
-## 7.6 API: Quiz Result Show
+<a id="section-76-api-quiz-result-show"></a>
+### 7.6 API: Quiz Result Show
 
 ### URL
 `GET /backend/api/v1/quizResultShow.php?uid={uid}`
@@ -996,7 +1078,8 @@ Boundary file performs:
 
 ---
 
-## 7.7 API: Question Add
+<a id="section-77-api-question-add"></a>
+### 7.7 API: Question Add
 
 ### URL
 `POST /backend/api/v1/questionAdd.php`
@@ -1086,7 +1169,8 @@ Boundary file performs:
 
 ---
 
-## 7.8 API: Question Set Create *(current state, planned refactor)*
+<a id="section-78-api-question-set-create-current-state-planned-refactor"></a>
+### 7.8 API: Question Set Create *(current state, planned refactor)*
 
 ### URL
 `POST /backend/api/v1/questionSetCreate.php`
@@ -1170,7 +1254,8 @@ This API should ultimately receive a clean admin-selected question-set payload a
 
 ---
 
-## 7.9 API: Question Set Edit *(current state, planned refactor)*
+<a id="section-79-api-question-set-edit-current-state-planned-refactor"></a>
+### 7.9 API: Question Set Edit *(current state, planned refactor)*
 
 ### URL
 `POST /backend/api/v1/questionSetEdit.php`
@@ -1248,13 +1333,15 @@ Final workflow requires:
 
 ---
 
-# 8. Proposed new admin APIs for manager approval
+<a id="section-8-proposed-new-admin-apis-for-manager-approval"></a>
+## 8. Proposed new admin APIs for manager approval
 
 These APIs are the correct additional APIs needed to support the desired admin workflow.
 
 ---
 
-## 8.1 Proposed API: Question Show
+<a id="section-81-proposed-api-question-show"></a>
+### 8.1 Proposed API: Question Show
 
 ### URL
 `GET /backend/api/v1/questionShow.php`
@@ -1356,7 +1443,8 @@ Frontend question-set page → `questionShow.php` → service fetches paginated 
 
 ---
 
-## 8.2 Proposed API: Question Set Show / Game Config Show
+<a id="section-82-proposed-api-question-set-show--game-config-show"></a>
+### 8.2 Proposed API: Question Set Show / Game Config Show
 
 ### URL
 `GET /backend/api/v1/questionSetShow.php`
@@ -1465,9 +1553,11 @@ Admin edit flow first needs to choose which config to edit.
 
 ---
 
-# 9. Final desired admin workflows
+<a id="section-9-final-desired-admin-workflows"></a>
+## 9. Final desired admin workflows
 
-## 9.1 Create question-set flow
+<a id="section-91-create-question-set-flow"></a>
+### 9.1 Create question-set flow
 
 ### Frontend flow
 1. Admin clicks **Create Question Set**.
@@ -1527,7 +1617,8 @@ The secret-key handling requirement belongs to backend validation and internal l
 
 ---
 
-## 9.2 Edit question-set flow
+<a id="section-92-edit-question-set-flow"></a>
+### 9.2 Edit question-set flow
 
 ### Frontend flow
 1. Admin clicks **Edit Question Set**.
@@ -1589,7 +1680,8 @@ The service layer for `QuestionSetEditService` should:
 
 ---
 
-## 9.3 Question show workflow *(final desired admin workflow)*
+<a id="section-93-question-show-workflow-final-desired-admin-workflow"></a>
+### 9.3 Question show workflow *(final desired admin workflow)*
 
 ### Frontend flow
 1. Admin opens either `questionSetCreate.html` or `questionSetEdit.html`.
@@ -1640,7 +1732,8 @@ This API makes the admin workflow UI-driven and safer.
 
 ---
 
-## 9.4 Question-set show workflow *(final desired admin workflow)*
+<a id="section-94-question-set-show-workflow-final-desired-admin-workflow"></a>
+### 9.4 Question-set show workflow *(final desired admin workflow)*
 
 ### Frontend flow
 1. Admin opens `questionSetEdit.html`.
@@ -1693,9 +1786,11 @@ This API becomes the entry point for controlled question-set editing.
 
 ---
 
-# 10. Recommended final contracts for question-set APIs
+<a id="section-10-recommended-final-contracts-for-question-set-apis"></a>
+## 10. Recommended final contracts for question-set APIs
 
-## 10.1 Recommended final create API contract
+<a id="section-101-recommended-final-create-api-contract"></a>
+### 10.1 Recommended final create API contract
 
 ### URL
 `POST /backend/api/v1/questionSetCreate.php`
@@ -1751,7 +1846,8 @@ This API becomes the entry point for controlled question-set editing.
 
 ---
 
-## 10.2 Recommended final edit API contract
+<a id="section-102-recommended-final-edit-api-contract"></a>
+### 10.2 Recommended final edit API contract
 
 ### URL
 `POST /backend/api/v1/questionSetEdit.php`
@@ -1808,9 +1904,11 @@ This API becomes the entry point for controlled question-set editing.
 
 ---
 
-# 11. Flowchart-style text diagrams
+<a id="section-11-flowchart-style-text-diagrams"></a>
+## 11. Flowchart-style text diagrams
 
-## 11.1 Main application flow
+<a id="section-111-main-application-flow"></a>
+### 11.1 Main application flow
 
 ```text
 User opens frontend page
@@ -1828,7 +1926,8 @@ User opens frontend page
     -> frontend updates UI / cookies / redirects
 ```
 
-## 11.2 Quiz flow
+<a id="section-112-quiz-flow"></a>
+### 11.2 Quiz flow
 
 ```text
 quiz.html loads
@@ -1856,7 +1955,8 @@ quiz.html loads
         -> return score/result summary
 ```
 
-## 11.3 Admin create question-set flow *(proposed)*
+<a id="section-113-admin-create-question-set-flow-proposed"></a>
+### 11.3 Admin create question-set flow *(proposed)*
 
 ```text
 Admin opens questionSetCreate.html
@@ -1877,7 +1977,8 @@ Admin opens questionSetCreate.html
         -> return created config metadata
 ```
 
-## 11.4 Admin edit question-set flow *(proposed)*
+<a id="section-114-admin-edit-question-set-flow-proposed"></a>
+### 11.4 Admin edit question-set flow *(proposed)*
 
 ```text
 Admin opens questionSetEdit.html
@@ -1902,7 +2003,8 @@ Admin opens questionSetEdit.html
         -> return updated config metadata
 ```
 
-## 11.5 Question show API flow *(proposed)*
+<a id="section-115-question-show-api-flow-proposed"></a>
+### 11.5 Question show API flow *(proposed)*
 
 ```text
 Admin opens create/edit question-set page
@@ -1917,7 +2019,8 @@ Admin opens create/edit question-set page
     -> admin can move to next page and keep selected question ids in frontend state
 ```
 
-## 11.6 Question-set show API flow *(proposed)*
+<a id="section-116-question-set-show-api-flow-proposed"></a>
+### 11.6 Question-set show API flow *(proposed)*
 
 ```text
 Admin opens questionSetEdit page
@@ -1934,7 +2037,8 @@ Admin opens questionSetEdit page
 
 ---
 
-# 12. API summary table
+<a id="section-12-api-summary-table"></a>
+## 12. API summary table
 
 | API | Method | Role Access | Main Tables Used | Purpose |
 |---|---|---:|---|---|
@@ -1952,9 +2056,11 @@ Admin opens questionSetEdit page
 
 ---
 
-# 13. Key implementation observations for manager review
+<a id="section-13-key-implementation-observations-for-manager-review"></a>
+## 13. Key implementation observations for manager review
 
-## 13.1 What is already strong
+<a id="section-131-what-is-already-strong"></a>
+### 13.1 What is already strong
 - Clear API boundary pattern in all current PHP APIs
 - Good separation between API layer and service layer
 - Repositories/queries/mappers give structured DB access
@@ -1962,14 +2068,16 @@ Admin opens questionSetEdit page
 - Password hashing flow now uses secret key + password hash verification
 - Role-based admin gating already exists and can be reused for new admin APIs
 
-## 13.2 What still needs refinement for question-set feature
+<a id="section-132-what-still-needs-refinement-for-question-set-feature"></a>
+### 13.2 What still needs refinement for question-set feature
 - `questionSetCreate.php` and `questionSetEdit.php` should move away from raw/manual input style
 - Need dedicated APIs for question browsing and config browsing
 - Secret key must not be exposed in admin response payloads or frontend forms
 - Active config selection should be centralized so only one config is active at a time
 - Existing `QuestionSetCreateService` and `QuestionSetEditService` should be reshaped around final request contracts
 
-## 13.3 Recommended implementation sequence
+<a id="section-133-recommended-implementation-sequence"></a>
+### 13.3 Recommended implementation sequence
 1. Finalize DB support for active config and timestamps
 2. Finalize `GameConfig` repository/query/entity methods
 3. Build `questionShow.php` + service
@@ -1981,38 +2089,44 @@ Admin opens questionSetEdit page
 
 ---
 
-# 14. Future improvements / enhancements
+<a id="section-14-future-improvements--enhancements"></a>
+## 14. Future improvements / enhancements
 
 These are useful improvements, but they are not mandatory for the current implementation approval.
 
-## 14.1 Better toggle UX for `is_active`
+<a id="section-141-better-toggle-ux-for-is_active"></a>
+### 14.1 Better toggle UX for `is_active`
 Instead of asking the admin for raw active/inactive inputs, the frontend can provide:
 - toggle button
 - radio-style current selection control
 - one-click “Make Current Set Active” action
 
-## 14.2 More metadata fields for configs
+<a id="section-142-more-metadata-fields-for-configs"></a>
+### 14.2 More metadata fields for configs
 Possible future additions:
 - display-friendly created date in UI
 - default activation date
 - optional notes or description for config
 - environment tags if needed later
 
-## 14.3 Stronger naming constraints for configs
+<a id="section-143-stronger-naming-constraints-for-configs"></a>
+### 14.3 Stronger naming constraints for configs
 Future backend validation can include:
 - length bounds
 - normalized naming
 - restricted special characters
 - HTML/content sanitization
 
-## 14.4 Better pagination controls
+<a id="section-144-better-pagination-controls"></a>
+### 14.4 Better pagination controls
 Current plan is cursor pagination with small page size like 5.
 Future enhancement can include:
 - page summary text
 - selected question count badge
 - persisted selection state more visibly in UI
 
-## 14.5 Config activation by date window
+<a id="section-145-config-activation-by-date-window"></a>
+### 14.5 Config activation by date window
 A useful future enhancement is to let admin choose a **start date** and **end date** for when a game config should be active.
 
 This would reduce the need for admin to come back manually and change active config at the exact required time.
@@ -2040,7 +2154,8 @@ This is a **future improvement only**, not part of the current required implemen
 
 ---
 
-# 15. Final approval-oriented summary
+<a id="section-15-final-approval-oriented-summary"></a>
+## 15. Final approval-oriented summary
 
 The project already has a strong layered architecture and a working end-to-end quiz flow.
 
@@ -2077,4 +2192,3 @@ This document therefore presents both:
 - the **proposed approved direction** for the question-set feature evolution
 
 without changing the existing business logic for documentation-only structural improvements such as API versioning and contract presentation.
-
