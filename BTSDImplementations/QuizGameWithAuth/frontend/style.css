@@ -43,7 +43,7 @@ main::before {
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 52rem;
+    max-width: 60rem;
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -329,9 +329,10 @@ form {
 }
 
 .form-row {
-    width: 100%;
-    text-align: left;
-    margin-bottom: 14px;
+    width: 50%;
+    text-align: center;
+    align-items: center;
+    margin: 0 auto 14px auto;
 }
 
 .form-row h1 {
@@ -341,11 +342,13 @@ form {
     color: rgba(255, 255, 255, 0.7);
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    align-items: center;
 }
 
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"], 
+select{
     width: 100%;
     padding: 12px 16px;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -360,7 +363,8 @@ input[type="password"] {
 
 input[type="text"]:focus,
 input[type="email"]:focus,
-input[type="password"]:focus {
+input[type="password"]:focus,
+select:focus {
     border-color: rgba(108, 92, 231, 0.5);
     background: rgba(108, 92, 231, 0.06);
     box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
@@ -368,7 +372,8 @@ input[type="password"]:focus {
 
 input[type="text"]::placeholder,
 input[type="email"]::placeholder,
-input[type="password"]::placeholder {
+input[type="password"]::placeholder,
+select::placeholder {
     color: rgba(255, 255, 255, 0.25);
 }
 
@@ -602,6 +607,120 @@ button[type="submit"]:hover {
     box-shadow: 0 6px 20px rgba(0, 206, 201, 0.45);
 }
 
+.page-shell-wide {
+    max-width: 64rem;
+}
+
+.page-form-layout {
+    align-items: stretch;
+    text-align: left;
+}
+
+.ui-hidden {
+    display: none;
+}
+
+select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e0e0e0;
+    transition: all 0.25s ease;
+    outline: none;
+}
+
+select option {
+    background: #16162f;
+    color: #e0e0e0;
+}
+
+#question-add-mcq-section,
+#question-add-true-false-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#question-add-mcq-section.ui-hidden,
+#question-add-true-false-section.ui-hidden {
+    display: none;
+}
+
+#question-add-form {
+    align-items: center;
+}
+
+#question-add-form .form-row {
+    width: 100%;
+    max-width: 34rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#question-add-form .game-question-container {
+    max-width: 34rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#question-add-form .next-button-container {
+    max-width: 34rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#question-add-form input[type="text"],
+#question-add-form select {
+    width: 100%;
+}
+
+#question-add-form .question-add-correct-row {
+    max-width: 34rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#question-add-form .compact-info-box {
+    max-width: 34rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.question-add-option-grid {
+    width: 100%;
+    max-width: 46rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.question-add-option-card {
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.question-add-option-card .form-row {
+    max-width: none !important;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.question-add-option-card .question-add-correct-row {
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    padding-bottom: 0;
+}
+
+
 @media (max-width: 768px) {
     main {
         padding: 12px;
@@ -633,6 +752,11 @@ button[type="submit"]:hover {
     .next-button-container button,
     .page-nav button {
         width: 100%;
+    }
+
+
+    .question-add-option-grid {
+        grid-template-columns: 1fr;
     }
 }
 

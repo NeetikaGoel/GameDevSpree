@@ -20,12 +20,23 @@ type QuestionAddResponse=
 
 function questionAddMessageTextSet(message:string):void
 {
+    const questionAddMessageBoxElement=document.getElementById("question-add-message-box");
     const questionAddMessageTextElement=document.getElementById("question-add-message-text");
 
-    if (questionAddMessageTextElement)
+    if (!questionAddMessageBoxElement || !questionAddMessageTextElement)
         {
-            questionAddMessageTextElement.textContent=message;
+            return;
         }
+
+    if (message.trim()==="")
+        {
+            questionAddMessageBoxElement.classList.add("ui-hidden");
+            questionAddMessageTextElement.textContent="";
+            return;
+        }
+
+    questionAddMessageBoxElement.classList.remove("ui-hidden");
+    questionAddMessageTextElement.textContent=message;
 }
 
 function questionAddAccessCheck():boolean
@@ -48,6 +59,88 @@ function questionAddAccessCheck():boolean
     return true;
 }
 
+function questionAddTypeUiUpdate():void
+{
+    const questionTypeInputElement=document.getElementById("question-type-input") as HTMLSelectElement | null;
+    const questionAddMcqSectionElement=document.getElementById("question-add-mcq-section");
+    const questionAddTrueFalseSectionElement=document.getElementById("question-add-true-false-section");
+
+    if (
+        !questionTypeInputElement ||
+        !questionAddMcqSectionElement ||
+        !questionAddTrueFalseSectionElement
+    )
+        {
+            return;
+        }
+
+    if (questionTypeInputElement.value==="true/false")
+        {
+            questionAddMcqSectionElement.classList.add("ui-hidden");
+            questionAddTrueFalseSectionElement.classList.remove("ui-hidden");
+        }
+    else
+        {
+            questionAddMcqSectionElement.classList.remove("ui-hidden");
+            questionAddTrueFalseSectionElement.classList.add("ui-hidden");
+        }
+}
+
+function questionAddFormReset():void
+{
+    const questionTextInputElement=document.getElementById("question-text-input") as HTMLInputElement | null;
+    const questionTypeInputElement=document.getElementById("question-type-input") as HTMLSelectElement | null;
+
+    const answerOption1TextInputElement=document.getElementById("answer-option-1-text-input") as HTMLInputElement | null;
+    const answerOption2TextInputElement=document.getElementById("answer-option-2-text-input") as HTMLInputElement | null;
+    const answerOption3TextInputElement=document.getElementById("answer-option-3-text-input") as HTMLInputElement | null;
+    const answerOption4TextInputElement=document.getElementById("answer-option-4-text-input") as HTMLInputElement | null;
+
+    if (questionTextInputElement)
+        {
+            questionTextInputElement.value="";
+        }
+
+    if (questionTypeInputElement)
+        {
+            questionTypeInputElement.value="mcq";
+        }
+
+    if (answerOption1TextInputElement)
+        {
+            answerOption1TextInputElement.value="";
+        }
+
+    if (answerOption2TextInputElement)
+        {
+            answerOption2TextInputElement.value="";
+        }
+
+    if (answerOption3TextInputElement)
+        {
+            answerOption3TextInputElement.value="";
+        }
+
+    if (answerOption4TextInputElement)
+        {
+            answerOption4TextInputElement.value="";
+        }
+
+    const answerOptionCorrectRadioElementList=document.querySelectorAll('input[name="answerOptionCorrectIndex"]') as NodeListOf<HTMLInputElement>;
+
+    answerOptionCorrectRadioElementList.forEach((answerOptionCorrectRadioElement) => {
+        answerOptionCorrectRadioElement.checked=false;
+    });
+
+    const trueFalseCorrectRadioElementList=document.querySelectorAll('input[name="trueFalseCorrectValue"]') as NodeListOf<HTMLInputElement>;
+
+    trueFalseCorrectRadioElementList.forEach((trueFalseCorrectRadioElement) => {
+        trueFalseCorrectRadioElement.checked=false;
+    });
+
+    questionAddTypeUiUpdate();
+}
+
 async function questionAddSubmit(event:Event):Promise<void>
 {
     event.preventDefault();
@@ -60,34 +153,21 @@ async function questionAddSubmit(event:Event):Promise<void>
     const uidCurrent=authUidGet();
 
     const questionTextInputElement=document.getElementById("question-text-input") as HTMLInputElement | null;
-    const questionTypeInputElement=document.getElementById("question-type-input") as HTMLInputElement | null;
+    const questionTypeInputElement=document.getElementById("question-type-input") as HTMLSelectElement | null;
 
     const answerOption1TextInputElement=document.getElementById("answer-option-1-text-input") as HTMLInputElement | null;
-    const answerOption1TypeInputElement=document.getElementById("answer-option-1-type-input") as HTMLInputElement | null;
-
     const answerOption2TextInputElement=document.getElementById("answer-option-2-text-input") as HTMLInputElement | null;
-    const answerOption2TypeInputElement=document.getElementById("answer-option-2-type-input") as HTMLInputElement | null;
-
     const answerOption3TextInputElement=document.getElementById("answer-option-3-text-input") as HTMLInputElement | null;
-    const answerOption3TypeInputElement=document.getElementById("answer-option-3-type-input") as HTMLInputElement | null;
-
     const answerOption4TextInputElement=document.getElementById("answer-option-4-text-input") as HTMLInputElement | null;
-    const answerOption4TypeInputElement=document.getElementById("answer-option-4-type-input") as HTMLInputElement | null;
-
-    const answerOptionCorrectIndexElement=document.querySelector('input[name="answerOptionCorrectIndex"]:checked') as HTMLInputElement | null;
 
     if (
         !uidCurrent ||
         !questionTextInputElement ||
         !questionTypeInputElement ||
         !answerOption1TextInputElement ||
-        !answerOption1TypeInputElement ||
         !answerOption2TextInputElement ||
-        !answerOption2TypeInputElement ||
         !answerOption3TextInputElement ||
-        !answerOption3TypeInputElement ||
-        !answerOption4TextInputElement ||
-        !answerOption4TypeInputElement
+        !answerOption4TextInputElement
     )
         {
             return;
@@ -96,51 +176,82 @@ async function questionAddSubmit(event:Event):Promise<void>
     const questionText=questionTextInputElement.value.trim();
     const questionType=questionTypeInputElement.value.trim();
 
-    const answerOptionTextList=[
-        answerOption1TextInputElement.value.trim(),
-        answerOption2TextInputElement.value.trim(),
-        answerOption3TextInputElement.value.trim(),
-        answerOption4TextInputElement.value.trim()
-    ];
-
-    const answerOptionTypeList=[
-        answerOption1TypeInputElement.value.trim(),
-        answerOption2TypeInputElement.value.trim(),
-        answerOption3TypeInputElement.value.trim(),
-        answerOption4TypeInputElement.value.trim()
-    ];
-
     if (questionText==="" || questionType==="")
         {
             questionAddMessageTextSet("Question text and question type are required.");
             return;
         }
 
-    if (!answerOptionCorrectIndexElement)
+    const answerOptions:
+    {
+        text:string;
+        type:string;
+        isCorrect:boolean;
+    }[]=[];
+
+    if (questionType==="true/false")
         {
-            questionAddMessageTextSet("Please mark exactly one correct answer option.");
-            return;
-        }
+            const trueFalseCorrectValueElement=document.querySelector('input[name="trueFalseCorrectValue"]:checked') as HTMLInputElement | null;
 
-    const answerOptionCorrectIndex=parseInt(answerOptionCorrectIndexElement.value,10);
-
-    const answerOptions=[];
-
-    for (let index=0; index<answerOptionTextList.length; index++)
-        {
-            if (answerOptionTextList[index]==="" || answerOptionTypeList[index]==="")
+            if (!trueFalseCorrectValueElement)
                 {
-                    questionAddMessageTextSet("All answer option text and type fields are required.");
+                    questionAddMessageTextSet("Please choose whether True or False is the correct answer.");
                     return;
                 }
 
+            const isTrueCorrect=trueFalseCorrectValueElement.value==="true";
+
             answerOptions.push(
                 {
-                    text:answerOptionTextList[index],
-                    type:answerOptionTypeList[index],
-                    isCorrect:index===answerOptionCorrectIndex
+                    text:"True",
+                    type:"true/false",
+                    isCorrect:isTrueCorrect
                 }
             );
+
+            answerOptions.push(
+                {
+                    text:"False",
+                    type:"true/false",
+                    isCorrect:!isTrueCorrect
+                }
+            );
+        }
+    else
+        {
+            const answerOptionCorrectIndexElement=document.querySelector('input[name="answerOptionCorrectIndex"]:checked') as HTMLInputElement | null;
+
+            if (!answerOptionCorrectIndexElement)
+                {
+                    questionAddMessageTextSet("Please mark exactly one correct answer option.");
+                    return;
+                }
+
+            const answerOptionCorrectIndex=parseInt(answerOptionCorrectIndexElement.value,10);
+
+            const answerOptionTextList=[
+                answerOption1TextInputElement.value.trim(),
+                answerOption2TextInputElement.value.trim(),
+                answerOption3TextInputElement.value.trim(),
+                answerOption4TextInputElement.value.trim()
+            ];
+
+            for (let index=0; index<answerOptionTextList.length; index++)
+                {
+                    if (answerOptionTextList[index]==="")
+                        {
+                            questionAddMessageTextSet("All MCQ option fields are required.");
+                            return;
+                        }
+
+                    answerOptions.push(
+                        {
+                            text:answerOptionTextList[index],
+                            type:"mcq",
+                            isCorrect:index===answerOptionCorrectIndex
+                        }
+                    );
+                }
         }
 
     questionAddMessageTextSet("Adding question...");
@@ -167,27 +278,7 @@ async function questionAddSubmit(event:Event):Promise<void>
         }
 
     questionAddMessageTextSet("Question added successfully with id " + String(questionAddResponse.questionId) + ".");
-
-    questionTextInputElement.value="";
-    questionTypeInputElement.value="mcq";
-
-    answerOption1TextInputElement.value="";
-    answerOption1TypeInputElement.value="mcq";
-
-    answerOption2TextInputElement.value="";
-    answerOption2TypeInputElement.value="mcq";
-
-    answerOption3TextInputElement.value="";
-    answerOption3TypeInputElement.value="mcq";
-
-    answerOption4TextInputElement.value="";
-    answerOption4TypeInputElement.value="mcq";
-
-    const answerOptionCorrectRadioElementList=document.querySelectorAll('input[name="answerOptionCorrectIndex"]') as NodeListOf<HTMLInputElement>;
-
-    answerOptionCorrectRadioElementList.forEach((answerOptionCorrectRadioElement) => {
-        answerOptionCorrectRadioElement.checked=false;
-    });
+    questionAddFormReset();
 }
 
 function questionAddPageInitialize():void
@@ -195,6 +286,7 @@ function questionAddPageInitialize():void
     authNavbarUpdate();
 
     const questionAddFormElement=document.getElementById("question-add-form") as HTMLFormElement | null;
+    const questionTypeInputElement=document.getElementById("question-type-input") as HTMLSelectElement | null;
 
     if (!questionAddFormElement)
         {
@@ -207,6 +299,14 @@ function questionAddPageInitialize():void
             return;
         }
 
+    if (questionTypeInputElement)
+        {
+            questionTypeInputElement.addEventListener("change",() => {
+                questionAddTypeUiUpdate();
+            });
+        }
+
+    questionAddTypeUiUpdate();
     questionAddFormElement.addEventListener("submit",questionAddSubmit);
 }
 
