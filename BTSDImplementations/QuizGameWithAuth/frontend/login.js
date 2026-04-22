@@ -68,8 +68,33 @@ function indexStartQuizSubmit() {
     }
     window.location.href = "login.html";
 }
+async function loadQuestionCount() {
+    const totalQuestionsCountElement = document.getElementById("total-questions-count");
+    if (!totalQuestionsCountElement) {
+        return;
+    }
+    try {
+        const uid = authUidGet();
+        if (!uid) {
+            totalQuestionsCountElement.textContent = "5";
+            return;
+        }
+        const response = await fetch(`../backend/api/v1/quizLoad.php?uid=${encodeURIComponent(uid)}`);
+        const data = await response.json();
+        if (data.questionCountTotal) {
+            totalQuestionsCountElement.textContent = data.questionCountTotal;
+        }
+        else {
+            totalQuestionsCountElement.textContent = "5";
+        }
+    }
+    catch (error) {
+        totalQuestionsCountElement.textContent = "5";
+    }
+}
 function loginPageInitialize() {
     authNavbarUpdate();
+    loadQuestionCount();
     const guestLoginButtonElement = document.getElementById("guest-login-button");
     const loginUserFormElement = document.getElementById("login-user-form");
     const indexStartQuizButtonElement = document.getElementById("index-start-quiz-button");
