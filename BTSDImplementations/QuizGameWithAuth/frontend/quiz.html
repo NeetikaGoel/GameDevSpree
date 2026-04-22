@@ -8,7 +8,7 @@
 </head>
 <body>
     <main>
-        <div class="page-shell">
+        <div class="page-shell page-shell-wide">
             <div class="page-top-bar">
                 <div class="page-title-block">
                     <h1 class="heading">QUIZ GAME</h1>
@@ -42,28 +42,54 @@
 
             <div class="page-content">
                 <div class="game-quiz-container">
-                    <div class="game-details-container">
-                        <h1>Score: <span id="quiz-score-current">0</span> / <span id="quiz-question-count-total">0</span></h1>
-                        <h1>Question: <span id="quiz-question-id-current">0</span> / <span id="quiz-question-count-total-second">0</span></h1>
-                    </div>
+                    <section class="quiz-hero-panel">
+                        <p class="hero-kicker">LIVE QUIZ ROUND</p>
+                        <h2 class="hero-title hero-title-small">Think Fast. Choose Smart.</h2>
+                        <p class="hero-description quiz-hero-description">
+                            Read the question carefully, lock your answer, and keep your score climbing.
+                        </p>
+                    </section>
 
-                    <div class="game-question-container">
-                        <h1 id="quiz-question-text-current">Loading question...</h1>
-                    </div>
-
-                    <form id="quiz-answer-form">
-                        <div class="game-question-container" id="quiz-answer-options-container">
-                            <!-- TypeScript will insert radio options here -->
+                    <section class="quiz-status-grid">
+                        <div class="quiz-status-card">
+                            <span class="quiz-status-label">Score</span>
+                            <span class="quiz-status-value">
+                                <span id="quiz-score-current">0</span>
+                                <span class="quiz-status-divider">/</span>
+                                <span id="quiz-question-count-total">0</span>
+                            </span>
                         </div>
 
-                        <div class="next-button-container">
-                            <button type="submit">Submit Answer -></button>
+                        <div class="quiz-status-card">
+                            <span class="quiz-status-label">Progress</span>
+                            <span class="quiz-status-value">
+                                <span id="quiz-question-id-current">0</span>
+                                <span class="quiz-status-divider">/</span>
+                                <span id="quiz-question-count-total-second">0</span>
+                            </span>
                         </div>
-                    </form>
+                    </section>
 
-                    <div class="compact-info-box" id="quiz-message-container">
-                        <h1 id="quiz-message-text">Choose an answer and submit!!</h1>
-                    </div>
+                    <section class="quiz-main-panel">
+                        <div class="quiz-question-panel">
+                            <p class="quiz-question-kicker">CURRENT QUESTION</p>
+                            <h1 id="quiz-question-text-current">Loading question...</h1>
+                        </div>
+
+                        <form id="quiz-answer-form" class="quiz-form-panel">
+                            <div id="quiz-answer-options-container" class="quiz-options-panel">
+                                <!-- TypeScript will insert radio options here -->
+                            </div>
+
+                            <div class="next-button-container quiz-submit-row">
+                                <button type="submit">Submit Answer</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <p id="quiz-message-text" class="page-inline-message quiz-inline-message">
+                        Choose an answer and submit!!
+                    </p>
                 </div>
             </div>
         </div>

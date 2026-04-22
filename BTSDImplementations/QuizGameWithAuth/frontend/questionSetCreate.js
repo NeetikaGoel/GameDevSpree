@@ -1,9 +1,7 @@
 import { authUidGet, authPermissionGroupGet, authNavbarUpdate } from "./auth.js";
 const questionShowApiUrl = "../backend/api/v1/questionShow.php";
 const questionSetCreateApiUrl = "../backend/api/v1/questionSetCreate.php";
-//this will store all selected question ids even when admin moves across pages
 const questionSetCreateSelectedQuestionIdSet = new Set();
-//this will store cursor history for previous button handling
 const questionSetCreateCursorHistory = [0];
 let questionSetCreateCurrentCursor = 0;
 let questionSetCreateNextCursor = null;
@@ -14,9 +12,9 @@ function questionSetCreateMessageTextSet(message) {
     }
 }
 function questionSetCreateCountUpdate() {
-    const questionSetCreateCountInputElement = document.getElementById("question-set-create-count-input");
-    if (questionSetCreateCountInputElement) {
-        questionSetCreateCountInputElement.value = String(questionSetCreateSelectedQuestionIdSet.size);
+    const questionSetCreateCountTextElement = document.getElementById("question-set-create-count-text");
+    if (questionSetCreateCountTextElement) {
+        questionSetCreateCountTextElement.textContent = String(questionSetCreateSelectedQuestionIdSet.size);
     }
 }
 function questionSetCreateAccessCheck() {
@@ -48,49 +46,60 @@ function questionSetCreateQuestionListRender(questionList) {
     }
     questionSetCreateQuestionListContainerElement.innerHTML = "";
     if (questionList.length === 0) {
-        questionSetCreateQuestionListContainerElement.textContent = "No questions found.";
+        const emptyStateElement = document.createElement("div");
+        emptyStateElement.className = "question-set-empty-state";
+        emptyStateElement.textContent = "No questions found.";
+        questionSetCreateQuestionListContainerElement.appendChild(emptyStateElement);
         return;
     }
     for (const questionCurrent of questionList) {
-        const questionWrapperElement = document.createElement("div");
-        questionWrapperElement.className = "game-question-container";
-        const questionHeaderElement = document.createElement("h1");
-        questionHeaderElement.textContent =
-            "Question " +
-                String(questionCurrent.questionId) +
-                ": " +
-                questionCurrent.questionText +
-                " (" +
-                questionCurrent.questionType +
-                ")";
-        questionWrapperElement.appendChild(questionHeaderElement);
-        const questionCheckboxRowElement = document.createElement("div");
-        questionCheckboxRowElement.className = "form-row question-add-correct-row";
-        const questionCheckboxLabelElement = document.createElement("label");
+        const questionRowElement = document.createElement("div");
+        questionRowElement.className = "question-set-question-row";
+        const questionSelectLabelElement = document.createElement("label");
+        questionSelectLabelElement.className = "question-set-outside-select";
         const questionCheckboxInputElement = document.createElement("input");
         questionCheckboxInputElement.type = "checkbox";
+        questionCheckboxInputElement.name = "questionSetCreateQuestionSelect";
+        questionCheckboxInputElement.value = String(questionCurrent.questionId);
         questionCheckboxInputElement.checked = questionSetCreateSelectedQuestionIdSet.has(questionCurrent.questionId);
         questionCheckboxInputElement.addEventListener("change", () => {
             questionSetCreateQuestionSelectionToggle(questionCurrent.questionId, questionCheckboxInputElement.checked);
         });
-        questionCheckboxLabelElement.appendChild(questionCheckboxInputElement);
-        questionCheckboxLabelElement.append(" Select this question");
-        questionCheckboxRowElement.appendChild(questionCheckboxLabelElement);
-        questionWrapperElement.appendChild(questionCheckboxRowElement);
+        questionSelectLabelElement.appendChild(questionCheckboxInputElement);
+        const questionCardElement = document.createElement("div");
+        questionCardElement.className = "question-set-question-card";
+        const questionHeaderElement = document.createElement("div");
+        questionHeaderElement.className = "question-set-question-header";
+        const questionTitleWrapperElement = document.createElement("div");
+        const questionTitleElement = document.createElement("div");
+        questionTitleElement.className = "question-set-question-title";
+        questionTitleElement.textContent = questionCurrent.questionText;
+        const questionMetaElement = document.createElement("div");
+        questionMetaElement.className = "question-set-question-meta";
+        questionMetaElement.textContent =
+            "Question #" +
+                String(questionCurrent.questionId) +
+                " • Type: " +
+                questionCurrent.questionType;
+        const questionBadgeElement = document.createElement("div");
+        questionBadgeElement.className = "question-set-question-badge";
+        questionBadgeElement.textContent = questionCurrent.questionType;
+        questionTitleWrapperElement.appendChild(questionTitleElement);
+        questionTitleWrapperElement.appendChild(questionMetaElement);
+        questionHeaderElement.appendChild(questionTitleWrapperElement);
+        questionHeaderElement.appendChild(questionBadgeElement);
+        const answerOptionListElement = document.createElement("div");
+        answerOptionListElement.className = "question-set-question-options-inline";
+        const answerOptionTextList = [];
         for (const answerOptionCurrent of questionCurrent.answerOptions) {
-            const answerOptionElement = document.createElement("div");
-            answerOptionElement.className = "form-row";
-            answerOptionElement.textContent =
-                "Option " +
-                    String(answerOptionCurrent.id) +
-                    ": " +
-                    answerOptionCurrent.text +
-                    " (" +
-                    answerOptionCurrent.type +
-                    ")";
-            questionWrapperElement.appendChild(answerOptionElement);
+            answerOptionTextList.push(answerOptionCurrent.text);
         }
-        questionSetCreateQuestionListContainerElement.appendChild(questionWrapperElement);
+        answerOptionListElement.textContent = "• " + answerOptionTextList.join("      •      ");
+        questionCardElement.appendChild(questionHeaderElement);
+        questionCardElement.appendChild(answerOptionListElement);
+        questionRowElement.appendChild(questionSelectLabelElement);
+        questionRowElement.appendChild(questionCardElement);
+        questionSetCreateQuestionListContainerElement.appendChild(questionRowElement);
     }
 }
 function questionSetCreatePaginationButtonUpdate(hasMore) {

@@ -42,24 +42,47 @@
 
             <div class="page-content">
                 <div class="game-quiz-container">
-                    <div class="game-question-container">
-                        <h1>Quiz Completed!!</h1>
-                    </div>
+                    <section class="result-hero-panel">
+                        <p class="hero-kicker">MISSION COMPLETE</p>
+                        <h2 class="hero-title">Quiz Finished</h2>
+                        <p id="quiz-result-text" class="result-highlight-text">Loading result...</p>
 
-                    <div class="game-question-container">
-                        <h1>Score: <span id="quiz-result-score">0</span></h1>
-                        <h1>Questions Done: <span id="quiz-result-questions-done">0</span></h1>
-                        <h1>Total Questions: <span id="quiz-result-question-count-total">0</span></h1>
-                        <h1>Wrong Answers: <span id="quiz-result-answer-count-wrong">0</span></h1>
-                        <h1>Score Percentage: <span id="quiz-result-score-percentage">0</span>%</h1>
-                        <h1 id="quiz-result-text">Loading result...</h1>
-                    </div>
+                        <div class="result-stats-grid">
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Score</span>
+                                <span class="result-stat-value" id="quiz-result-score">0</span>
+                            </div>
 
-                    <div class="next-button-container">
-                        <a href="index.html">
-                            <button type="button">Play Again!</button>
-                        </a>
-                    </div>
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Questions Done</span>
+                                <span class="result-stat-value" id="quiz-result-questions-done">0</span>
+                            </div>
+
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Total Questions</span>
+                                <span class="result-stat-value" id="quiz-result-question-count-total">0</span>
+                            </div>
+
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Wrong Answers</span>
+                                <span class="result-stat-value" id="quiz-result-answer-count-wrong">0</span>
+                            </div>
+
+                            <div class="result-stat-card result-stat-card-wide">
+                                <span class="result-stat-label">Score Percentage</span>
+                                <div class="result-stat-value-row">
+                                    <span class="result-stat-value" id="quiz-result-score-percentage">0</span>
+                                    <span class="result-stat-suffix">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="next-button-container hero-button-row">
+                            <a href="index.html">
+                                <button type="button">Play Again</button>
+                            </a>
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>

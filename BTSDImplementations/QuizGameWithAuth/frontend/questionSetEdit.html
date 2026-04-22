@@ -8,7 +8,7 @@
 </head>
 <body>
     <main>
-        <div class="page-shell">
+        <div class="page-shell page-shell-wide">
             <div class="page-top-bar">
                 <div class="page-title-block">
                     <h1 class="heading">EDIT QUESTION SET</h1>
@@ -41,68 +41,86 @@
             </div>
 
             <div class="page-content">
-                <div class="game-quiz-container">
-                    <div class="game-question-container">
-                        <h1>Edit an existing question set below</h1>
+                <div class="game-quiz-container page-form-layout">
+                    <section class="hero-panel question-set-hero-panel">
+                        <p class="hero-kicker">MODIFY AN EXISTING QUIZ SET</p>
+                        <h2 class="hero-title hero-title-small">Edit Question Set</h2>
+                        <p class="hero-description question-set-description">
+                            Select a saved set, update its questions, and decide whether it should become the active challenge.
+                        </p>
+                    </section>
+
+                    <div class="question-set-config-browser-card">
+                        <div class="question-set-section-header">
+                            <div>
+                                <p class="hero-kicker">AVAILABLE SETS</p>
+                                <h3 class="question-set-section-title">Select a Question Set First</h3>
+                            </div>
+                        </div>
+
+                        <div id="question-set-edit-config-list-container" class="question-set-config-grid">
+                            <!-- TypeScript will insert config list here -->
+                        </div>
+
+                        <div class="next-button-container question-set-pagination-row">
+                            <button type="button" id="question-set-edit-config-prev-button">Previous Sets</button>
+                            <button type="button" id="question-set-edit-config-next-button">Next Sets</button>
+                        </div>
                     </div>
 
-                    <div class="game-question-container">
-                        <h1>Select a question set first</h1>
-                    </div>
+                    <form id="question-set-edit-form" class="question-set-builder-layout">
+                        <section class="question-set-builder-sidebar">
+                            <div class="question-set-summary-card">
+                                <p class="question-set-summary-label">Selected Set Id</p>
+                                <div class="question-set-id-badge" id="question-set-edit-id-text">No set selected</div>
 
-                    <div id="question-set-edit-config-list-container">
-                        <!-- TypeScript will insert config list here -->
-                    </div>
+                                <p class="question-set-summary-label">Set Name</p>
+                                <input
+                                    type="text"
+                                    id="question-set-edit-name-input"
+                                    name="gameConfigName"
+                                    placeholder="Select a question set first"
+                                >
 
-                    <div class="next-button-container">
-                        <button type="button" id="question-set-edit-config-prev-button">Previous Sets</button>
-                        <button type="button" id="question-set-edit-config-next-button">Next Sets</button>
-                    </div>
+                                <div class="question-set-live-count-card">
+                                    <span class="question-set-live-count-label">Selected Questions</span>
+                                    <span class="question-set-live-count-value" id="question-set-edit-count-text">0</span>
+                                    <span class="question-set-live-count-note">This updates automatically as you select or remove questions.</span>
+                                </div>
 
-                    <form id="question-set-edit-form">
-                        <div class="form-row">
-                            <h1>Question Set Id</h1>
-                            <input type="text" id="question-set-edit-id-input" readonly>
-                        </div>
+                                <label class="question-set-toggle-card">
+                                    <input type="checkbox" id="question-set-edit-make-active-input">
+                                    <span>Make this question set active now</span>
+                                </label>
+                            </div>
 
-                        <div class="form-row">
-                            <h1>Question Set Name</h1>
-                            <input type="text" id="question-set-edit-name-input" name="gameConfigName">
-                        </div>
+                            <div class="next-button-container question-set-submit-row">
+                                <button type="submit">Edit Question Set</button>
+                            </div>
 
-                        <div class="form-row">
-                            <h1>Selected Question Count</h1>
-                            <input type="text" id="question-set-edit-count-input" readonly>
-                        </div>
+                            <p id="question-set-edit-message-text" class="page-inline-message"></p>
+                        </section>
 
-                        <div class="form-row question-add-correct-row">
-                            <label>
-                                <input type="checkbox" id="question-set-edit-make-active-input">
-                                Make this question set active now
-                            </label>
-                        </div>
+                        <section class="question-set-builder-main">
+                            <div class="question-set-section-card">
+                                <div class="question-set-section-header">
+                                    <div>
+                                        <p class="hero-kicker">QUESTION LIBRARY</p>
+                                        <h3 class="question-set-section-title">Choose Questions For This Set</h3>
+                                    </div>
+                                </div>
 
-                        <div class="game-question-container">
-                            <h1>Choose questions for this set</h1>
-                        </div>
+                                <div id="question-set-edit-question-list-container" class="question-set-question-grid">
+                                    <!-- TypeScript will insert paginated question list here -->
+                                </div>
 
-                        <div id="question-set-edit-question-list-container">
-                            <!-- TypeScript will insert paginated question list here -->
-                        </div>
-
-                        <div class="next-button-container">
-                            <button type="button" id="question-set-edit-question-prev-button">Previous Questions</button>
-                            <button type="button" id="question-set-edit-question-next-button">Next Questions</button>
-                        </div>
-
-                        <div class="next-button-container">
-                            <button type="submit">Edit Question Set</button>
-                        </div>
+                                <div class="next-button-container question-set-pagination-row">
+                                    <button type="button" id="question-set-edit-question-prev-button">Previous Questions</button>
+                                    <button type="button" id="question-set-edit-question-next-button">Next Questions</button>
+                                </div>
+                            </div>
+                        </section>
                     </form>
-
-                    <div class="compact-info-box">
-                        <h1 id="question-set-edit-message-text">Only admin can edit question sets.</h1>
-                    </div>
                 </div>
             </div>
         </div>

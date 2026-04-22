@@ -30,24 +30,24 @@ function questionSetEditAccessCheck() {
     return true;
 }
 function questionSetEditCountUpdate() {
-    const questionSetEditCountInputElement = document.getElementById("question-set-edit-count-input");
-    if (!questionSetEditCountInputElement) {
+    const questionSetEditCountTextElement = document.getElementById("question-set-edit-count-text");
+    if (!questionSetEditCountTextElement) {
         return;
     }
-    questionSetEditCountInputElement.value = String(questionSetEditSelectedQuestionIdSet.size);
+    questionSetEditCountTextElement.textContent = String(questionSetEditSelectedQuestionIdSet.size);
 }
 function questionSetEditConfigSelectionFill(gameConfigCurrent) {
-    const questionSetEditIdInputElement = document.getElementById("question-set-edit-id-input");
+    const questionSetEditIdTextElement = document.getElementById("question-set-edit-id-text");
     const questionSetEditNameInputElement = document.getElementById("question-set-edit-name-input");
     const questionSetEditMakeActiveInputElement = document.getElementById("question-set-edit-make-active-input");
-    if (!questionSetEditIdInputElement ||
+    if (!questionSetEditIdTextElement ||
         !questionSetEditNameInputElement ||
         !questionSetEditMakeActiveInputElement) {
         return;
     }
     questionSetEditSelectedGameConfigId = gameConfigCurrent.id;
     questionSetEditSelectedQuestionIdSet = new Set(gameConfigCurrent.questionIdListAllowed);
-    questionSetEditIdInputElement.value = String(gameConfigCurrent.id);
+    questionSetEditIdTextElement.textContent = "Set #" + String(gameConfigCurrent.id);
     questionSetEditNameInputElement.value = gameConfigCurrent.gameConfigName;
     questionSetEditMakeActiveInputElement.checked = gameConfigCurrent.isActive;
     questionSetEditCountUpdate();
@@ -91,24 +91,38 @@ function questionSetEditConfigListRender(gameConfigList) {
     questionSetEditConfigListContainerElement.innerHTML = "";
     if (gameConfigList.length === 0) {
         const emptyStateElement = document.createElement("div");
-        emptyStateElement.className = "compact-info-box";
+        emptyStateElement.className = "question-set-empty-state";
         emptyStateElement.textContent = "No question sets found.";
         questionSetEditConfigListContainerElement.appendChild(emptyStateElement);
         return;
     }
     for (const gameConfigCurrent of gameConfigList) {
         const configCardElement = document.createElement("div");
-        configCardElement.className = "question-set-card";
-        const configTitleElement = document.createElement("h1");
+        configCardElement.className = "question-set-config-card";
+        const configHeaderElement = document.createElement("div");
+        configHeaderElement.className = "question-set-config-header";
+        const configTitleWrapperElement = document.createElement("div");
+        const configTitleElement = document.createElement("div");
+        configTitleElement.className = "question-set-config-title";
         configTitleElement.textContent = gameConfigCurrent.gameConfigName;
-        const configInfoElement = document.createElement("p");
-        configInfoElement.textContent =
-            "Id: " +
+        const configMetaElement = document.createElement("div");
+        configMetaElement.className = "question-set-config-meta";
+        configMetaElement.textContent =
+            "Set #" +
                 String(gameConfigCurrent.id) +
-                " | Questions: " +
+                " • " +
                 String(gameConfigCurrent.questionCountTarget) +
-                " | Active: " +
+                " questions • Active: " +
                 (gameConfigCurrent.isActive ? "Yes" : "No");
+        const configBadgeElement = document.createElement("div");
+        configBadgeElement.className = "question-set-config-badge";
+        configBadgeElement.textContent = gameConfigCurrent.isActive ? "Active" : "Saved";
+        configTitleWrapperElement.appendChild(configTitleElement);
+        configTitleWrapperElement.appendChild(configMetaElement);
+        configHeaderElement.appendChild(configTitleWrapperElement);
+        configHeaderElement.appendChild(configBadgeElement);
+        const configButtonRowElement = document.createElement("div");
+        configButtonRowElement.className = "question-set-config-action-row";
         const configButtonElement = document.createElement("button");
         configButtonElement.type = "button";
         configButtonElement.textContent = "Select This Set";
@@ -116,9 +130,9 @@ function questionSetEditConfigListRender(gameConfigList) {
             questionSetEditConfigSelectionFill(gameConfigCurrent);
             questionSetEditMessageTextSet("Question set loaded. You can now update it.");
         });
-        configCardElement.appendChild(configTitleElement);
-        configCardElement.appendChild(configInfoElement);
-        configCardElement.appendChild(configButtonElement);
+        configButtonRowElement.appendChild(configButtonElement);
+        configCardElement.appendChild(configHeaderElement);
+        configCardElement.appendChild(configButtonRowElement);
         questionSetEditConfigListContainerElement.appendChild(configCardElement);
     }
 }
@@ -130,16 +144,16 @@ function questionSetEditQuestionListRender(questionList) {
     questionSetEditQuestionListContainerElement.innerHTML = "";
     if (questionList.length === 0) {
         const emptyStateElement = document.createElement("div");
-        emptyStateElement.className = "compact-info-box";
+        emptyStateElement.className = "question-set-empty-state";
         emptyStateElement.textContent = "No questions found.";
         questionSetEditQuestionListContainerElement.appendChild(emptyStateElement);
         return;
     }
     for (const questionCurrent of questionList) {
-        const questionCardElement = document.createElement("div");
-        questionCardElement.className = "question-set-card";
-        const questionCheckboxWrapperElement = document.createElement("label");
-        questionCheckboxWrapperElement.className = "question-set-checkbox-row";
+        const questionRowElement = document.createElement("div");
+        questionRowElement.className = "question-set-question-row";
+        const questionSelectLabelElement = document.createElement("label");
+        questionSelectLabelElement.className = "question-set-outside-select";
         const questionCheckboxElement = document.createElement("input");
         questionCheckboxElement.type = "checkbox";
         questionCheckboxElement.name = "questionSetEditQuestionSelect";
@@ -154,27 +168,41 @@ function questionSetEditQuestionListRender(questionList) {
             }
             questionSetEditCountUpdate();
         });
-        const questionHeadingElement = document.createElement("span");
-        questionHeadingElement.textContent =
-            "Question " +
+        questionSelectLabelElement.appendChild(questionCheckboxElement);
+        const questionCardElement = document.createElement("div");
+        questionCardElement.className = "question-set-question-card";
+        const questionHeaderElement = document.createElement("div");
+        questionHeaderElement.className = "question-set-question-header";
+        const questionTitleWrapperElement = document.createElement("div");
+        const questionTitleElement = document.createElement("div");
+        questionTitleElement.className = "question-set-question-title";
+        questionTitleElement.textContent = questionCurrent.questionText;
+        const questionMetaElement = document.createElement("div");
+        questionMetaElement.className = "question-set-question-meta";
+        questionMetaElement.textContent =
+            "Question #" +
                 String(questionCurrent.questionId) +
-                ": " +
-                questionCurrent.questionText +
-                " (" +
-                questionCurrent.questionType +
-                ")";
-        questionCheckboxWrapperElement.appendChild(questionCheckboxElement);
-        questionCheckboxWrapperElement.appendChild(questionHeadingElement);
-        const answerOptionListElement = document.createElement("ul");
-        answerOptionListElement.className = "question-set-answer-option-list";
+                " • Type: " +
+                questionCurrent.questionType;
+        const questionBadgeElement = document.createElement("div");
+        questionBadgeElement.className = "question-set-question-badge";
+        questionBadgeElement.textContent = questionCurrent.questionType;
+        questionTitleWrapperElement.appendChild(questionTitleElement);
+        questionTitleWrapperElement.appendChild(questionMetaElement);
+        questionHeaderElement.appendChild(questionTitleWrapperElement);
+        questionHeaderElement.appendChild(questionBadgeElement);
+        const answerOptionListElement = document.createElement("div");
+        answerOptionListElement.className = "question-set-question-options-inline";
+        const answerOptionTextList = [];
         for (const answerOptionCurrent of questionCurrent.answerOptions) {
-            const answerOptionItemElement = document.createElement("li");
-            answerOptionItemElement.textContent = answerOptionCurrent.text + " (" + answerOptionCurrent.type + ")";
-            answerOptionListElement.appendChild(answerOptionItemElement);
+            answerOptionTextList.push(answerOptionCurrent.text);
         }
-        questionCardElement.appendChild(questionCheckboxWrapperElement);
+        answerOptionListElement.textContent = "• " + answerOptionTextList.join("      •      ");
+        questionCardElement.appendChild(questionHeaderElement);
         questionCardElement.appendChild(answerOptionListElement);
-        questionSetEditQuestionListContainerElement.appendChild(questionCardElement);
+        questionRowElement.appendChild(questionSelectLabelElement);
+        questionRowElement.appendChild(questionCardElement);
+        questionSetEditQuestionListContainerElement.appendChild(questionRowElement);
     }
 }
 async function questionSetEditConfigPageLoad() {
@@ -223,22 +251,20 @@ async function questionSetEditSubmit(event) {
         return;
     }
     const uidCurrent = authUidGet();
-    const questionSetEditIdInputElement = document.getElementById("question-set-edit-id-input");
     const questionSetEditNameInputElement = document.getElementById("question-set-edit-name-input");
     const questionSetEditMakeActiveInputElement = document.getElementById("question-set-edit-make-active-input");
     if (!uidCurrent ||
-        !questionSetEditIdInputElement ||
         !questionSetEditNameInputElement ||
         !questionSetEditMakeActiveInputElement) {
         return;
     }
-    const gameConfigIdRaw = questionSetEditIdInputElement.value.trim();
-    const gameConfigName = questionSetEditNameInputElement.value.trim();
-    const makeActive = questionSetEditMakeActiveInputElement.checked;
-    if (gameConfigIdRaw === "" || questionSetEditSelectedGameConfigId === null) {
+    if (questionSetEditSelectedGameConfigId === null) {
         questionSetEditMessageTextSet("Please select a question set first.");
         return;
     }
+    const gameConfigIdRaw = String(questionSetEditSelectedGameConfigId);
+    const gameConfigName = questionSetEditNameInputElement.value.trim();
+    const makeActive = questionSetEditMakeActiveInputElement.checked;
     if (gameConfigName === "") {
         questionSetEditMessageTextSet("Question set name is required.");
         return;
@@ -333,12 +359,8 @@ async function questionSetEditPageInitialize() {
     }
     if (questionSetEditAccessCheck() !== true) {
         questionSetEditFormElement.style.display = "none";
-        if (questionSetEditConfigListContainerElement) {
-            questionSetEditConfigListContainerElement.style.display = "none";
-        }
-        if (questionSetEditQuestionListContainerElement) {
-            questionSetEditQuestionListContainerElement.style.display = "none";
-        }
+        questionSetEditConfigListContainerElement.style.display = "none";
+        questionSetEditQuestionListContainerElement.style.display = "none";
         return;
     }
     questionSetEditFormElement.addEventListener("submit", questionSetEditSubmit);

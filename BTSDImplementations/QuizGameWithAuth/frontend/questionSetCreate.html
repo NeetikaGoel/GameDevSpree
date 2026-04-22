@@ -8,7 +8,7 @@
 </head>
 <body>
     <main>
-        <div class="page-shell">
+        <div class="page-shell page-shell-wide">
             <div class="page-top-bar">
                 <div class="page-title-block">
                     <h1 class="heading">CREATE QUESTION SET</h1>
@@ -41,50 +41,65 @@
             </div>
 
             <div class="page-content">
-                <div class="game-quiz-container">
-                    <div class="game-question-container">
-                        <h1>Create a new question set below</h1>
-                    </div>
+                <div class="game-quiz-container page-form-layout">
+                    <section class="hero-panel question-set-hero-panel">
+                        <p class="hero-kicker">BUILD A NEW QUIZ EXPERIENCE</p>
+                        <h2 class="hero-title hero-title-small">Create Question Set</h2>
+                        <p class="hero-description question-set-description">
+                            Pick questions, track your selection live, and launch a fresh challenge for players.
+                        </p>
+                    </section>
 
-                    <form id="question-set-create-form">
-                        <div class="form-row">
-                            <h1>Question Set Name</h1>
-                            <input type="text" id="question-set-create-name-input" name="gameConfigName">
-                        </div>
+                    <form id="question-set-create-form" class="question-set-builder-layout">
+                        <section class="question-set-builder-sidebar">
+                            <div class="question-set-summary-card">
+                                <p class="question-set-summary-label">Set Name</p>
+                                <input
+                                    type="text"
+                                    id="question-set-create-name-input"
+                                    name="gameConfigName"
+                                    placeholder="Enter question set name"
+                                >
 
-                        <div class="form-row">
-                            <h1>Selected Question Count</h1>
-                            <input type="text" id="question-set-create-count-input" readonly>
-                        </div>
+                                <div class="question-set-live-count-card">
+                                    <span class="question-set-live-count-label">Selected Questions</span>
+                                    <span class="question-set-live-count-value" id="question-set-create-count-text">0</span>
+                                    <span class="question-set-live-count-note">This updates automatically as you select or remove questions.</span>
+                                </div>
 
-                        <div class="form-row question-add-correct-row">
-                            <label>
-                                <input type="checkbox" id="question-set-create-make-active-input">
-                                Make this question set active now
-                            </label>
-                        </div>
+                                <label class="question-set-toggle-card">
+                                    <input type="checkbox" id="question-set-create-make-active-input">
+                                    <span>Make this question set active now</span>
+                                </label>
+                            </div>
 
-                        <div class="game-question-container">
-                            <h1>Choose questions for this set</h1>
-                        </div>
+                            <div class="next-button-container question-set-submit-row">
+                                <button type="submit">Create Question Set</button>
+                            </div>
 
-                        <div id="question-set-create-question-list-container">
-                            <!-- TypeScript will insert paginated question list here -->
-                        </div>
+                            <p id="question-set-create-message-text" class="page-inline-message"></p>
+                        </section>
 
-                        <div class="next-button-container">
-                            <button type="button" id="question-set-create-prev-button">Previous Questions</button>
-                            <button type="button" id="question-set-create-next-button">Next Questions</button>
-                        </div>
+                        <section class="question-set-builder-main">
+                            <div class="question-set-section-card">
+                                <div class="question-set-section-header">
+                                    <div>
+                                        <p class="hero-kicker">QUESTION LIBRARY</p>
+                                        <h3 class="question-set-section-title">Choose Questions</h3>
+                                    </div>
+                                </div>
 
-                        <div class="next-button-container">
-                            <button type="submit">Create Question Set</button>
-                        </div>
+                                <div id="question-set-create-question-list-container" class="question-set-question-grid">
+                                    <!-- TypeScript will insert paginated question list here -->
+                                </div>
+
+                                <div class="next-button-container question-set-pagination-row">
+                                    <button type="button" id="question-set-create-prev-button">Previous Questions</button>
+                                    <button type="button" id="question-set-create-next-button">Next Questions</button>
+                                </div>
+                            </div>
+                        </section>
                     </form>
-
-                    <div class="compact-info-box">
-                        <h1 id="question-set-create-message-text">Only admin can create question sets.</h1>
-                    </div>
                 </div>
             </div>
         </div>

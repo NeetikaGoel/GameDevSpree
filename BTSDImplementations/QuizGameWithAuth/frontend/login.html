@@ -42,30 +42,34 @@
 
             <div class="page-content">
                 <div class="game-quiz-container">
-                    <div class="game-question-container">
-                        <h1>Login with your registered account</h1>
-                    </div>
+                    <section class="auth-panel">
+                        <p class="hero-kicker">ACCESS YOUR ACCOUNT</p>
+                        <h2 class="hero-title hero-title-small">Welcome Back</h2>
+                        <p class="hero-description auth-description">
+                            Log in with your registered account to continue your quiz journey!!
+                        </p>
 
-                    <form id="login-user-form">
-                        <div class="form-row">
-                            <h1>Email</h1>
-                            <input type="email" id="login-email-input" name="email">
-                        </div>
+                        <form id="login-user-form" class="auth-form-panel auth-form-rows">
+                            <div class="form-row-inline">
+                                <h1>Email</h1>
+                                <span class="form-row-inline-separator">:</span>
+                                <input type="email" id="login-email-input" name="email" placeholder="Enter your email">
+                            </div>
+                            
+                            <div class="form-row-inline">
+                                <h1>Password</h1>
+                                <span class="form-row-inline-separator">:</span>
+                                <input type="password" id="login-password-input" name="password" placeholder="Enter your password">
+                            </div>
 
-                        <div class="form-row">
-                            <h1>Password</h1>
-                            <input type="password" id="login-password-input" name="password">
-                        </div>
+                            <div class="next-button-container hero-button-row">
+                                <button type="submit">Login</button>
+                                <button type="button" id="guest-login-button">Continue as Guest</button>
+                            </div>
+                        </form>
 
-                        <div class="next-button-container">
-                            <button type="submit">Login</button>
-                            <button type="button" id="guest-login-button">Continue as Guest</button>
-                        </div>
-                    </form>
-
-                    <div class="compact-info-box">
-                        <h1 id="login-message-text"></h1>
-                    </div>
+                        <p id="login-message-text" class="page-inline-message"></p>
+                    </section>
                 </div>
             </div>
         </div>

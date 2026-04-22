@@ -42,35 +42,40 @@
 
             <div class="page-content">
                 <div class="game-quiz-container">
-                    <div class="game-question-container">
-                        <h1>Create your account</h1>
-                    </div>
+                    <section class="auth-panel">
+                        <p class="hero-kicker">CREATE YOUR PLAYER PROFILE</p>
+                        <h2 class="hero-title hero-title-small">Join the Challenge</h2>
+                        <p class="hero-description auth-description">
+                            Register your account and start tracking your progress like a PRO!!
+                        </p>
 
-                    <form id="register-user-form">
-                        <div class="form-row">
-                            <h1>Name</h1>
-                            <input type="text" id="register-name-input" name="name">
-                        </div>
+                        <form id="register-user-form" class="auth-form-panel auth-form-rows">
+                            <div class="form-row-inline">
+                                <h1>Name</h1>
+                                <span class="form-row-inline-separator">:</span>
+                                <input type="text" id="register-name-input" name="name" placeholder="Enter your name">
+                            </div>
+                            
+                            <div class="form-row-inline">
+                                <h1>Email</h1>
+                                <span class="form-row-inline-separator">:</span>
+                                <input type="email" id="register-email-input" name="email" placeholder="Enter your email">
+                            </div>
+                            
+                            <div class="form-row-inline">
+                                <h1>Password</h1>
+                                <span class="form-row-inline-separator">:</span>
+                                <input type="password" id="register-password-input" name="password" placeholder="Create a password">
+                            </div>
 
-                        <div class="form-row">
-                            <h1>Email</h1>
-                            <input type="email" id="register-email-input" name="email">
-                        </div>
+                            <div class="next-button-container hero-button-row">
+                                <button type="submit">Register</button>
+                                <button type="button" id="register-guest-login-button">Continue as Guest</button>
+                            </div>
+                        </form>
 
-                        <div class="form-row">
-                            <h1>Password</h1>
-                            <input type="password" id="register-password-input" name="password">
-                        </div>
-
-                        <div class="next-button-container">
-                            <button type="submit">Register</button>
-                            <button type="button" id="register-guest-login-button">Continue as Guest</button>
-                        </div>
-                    </form>
-
-                    <div class="compact-info-box">
-                        <h1 id="register-message-text"></h1>
-                    </div>
+                        <p id="register-message-text" class="page-inline-message"></p>
+                    </section>
                 </div>
             </div>
         </div>
