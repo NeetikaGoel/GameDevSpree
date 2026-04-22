@@ -12,10 +12,15 @@ Instead of passing many loose values everywhere, params classes make selected AP
 
 ## Current use
 
-This folder currently includes parameter wrappers for quiz-related APIs, such as:
-- `quizLoadParams.php`
-- `quizResultShowParams.php`
-- `quizSubmitParams.php`
+This folder currently includes parameter wrappers for quiz-related APIs:
+
+| File | Purpose |
+|---|---|
+| `quizLoadParams.php` | Wraps `uid` for the quiz load API |
+| `quizResultShowParams.php` | Wraps `uid` for the quiz result show API |
+| `quizSubmitParams.php` | Wraps `uid` and `answerOptionId` for the quiz submit API |
+
+The admin APIs (`questionSetCreate`, `questionSetEdit`, `questionShow`, `questionSetShow`) pass parameters directly rather than through params objects, as their inputs are simpler or handled inline in the boundary layer.
 
 ## Benefits
 

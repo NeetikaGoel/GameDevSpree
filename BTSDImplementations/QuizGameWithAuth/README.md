@@ -9,7 +9,10 @@ This project supports:
 - quiz play with persisted progress
 - result calculation
 - admin-only question creation
-- evolving question-set management through `game_configs`
+- admin question-set creation (final contract — no raw secret key, `makeActive` support)
+- admin question-set editing by config id (final contract)
+- paginated question browser for admin
+- paginated question-set / config browser for admin
 
 ## Project overview
 
@@ -67,12 +70,11 @@ QuizGameWithAuth is designed around a clear layered architecture:
 
 ### Admin controls
 - Add question with answer options
-- Planned / evolving:
-  - question browsing with pagination
-  - question-set browsing
-  - question-set creation
-  - question-set editing
-  - active config switching
+- Browse questions with cursor-based pagination (`questionShow.php`)
+- Browse question-sets / configs with cursor-based pagination (`questionSetShow.php`)
+- Create question sets by selecting question ids (no raw secret key in request, `makeActive` support)
+- Edit question sets by config id (rename, swap questions, activate)
+- Active config switching: deactivates all configs, activates the selected one
 
 ## Key tables
 

@@ -29,12 +29,14 @@ Instead of services dealing with SQL directly, services call repository methods 
 
 ## Examples in this folder
 
-- `UserRepository`
-- `UserPermissionRepository`
-- `UserProgressStateRepository`
-- `QuestionRepository`
-- `AnswerOptionRepository`
-- `GameConfigRepository`
+| Repository | Key methods |
+|---|---|
+| `UserRepository` | `getUserFromUid`, `getUserFromEmail`, `createGuestUser`, `createRegisteredUser`, `upgradeGuestToRegistered` |
+| `UserPermissionRepository` | `getUserPermissionFromUid`, `createUserPermission`, `updateUserPermission` |
+| `UserProgressStateRepository` | `getUserProgressStateFromUid`, `createUserProgressState`, `updateUserProgressState` |
+| `QuestionRepository` | `getQuestionsFromQuestionIdListAllowed`, `createQuestion`, `getQuestionPageAfterId` |
+| `AnswerOptionRepository` | `getAnswerOptionsFromQuestionIdList`, `createAnswerOption` |
+| `GameConfigRepository` | `getGameConfigFromName`, `getGameConfigFromId`, `getActiveGameConfig`, `getGameConfigsPageAfterId`, `createGameConfig`, `updateGameConfigFromId`, `deactivateAllGameConfigs`, `activateGameConfigFromId` |
 
 ## Pattern
 

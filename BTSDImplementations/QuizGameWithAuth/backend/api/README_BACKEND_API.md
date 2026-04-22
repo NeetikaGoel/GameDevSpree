@@ -22,21 +22,23 @@ A typical API file in this project is responsible for:
 8. returning JSON response
 9. writing audit and error logs
 
-## Example APIs in this folder
+## APIs in this folder
 
-- `loginGuest.php`
-- `loginUser.php`
-- `registerUser.php`
-- `quizLoad.php`
-- `quizSubmit.php`
-- `quizResultShow.php`
-- `questionAdd.php`
-- `questionSetCreate.php`
-- `questionSetEdit.php`
+All APIs are under `v1/`:
 
-## Recommended future structure
+- `v1/loginGuest.php`
+- `v1/loginUser.php`
+- `v1/registerUser.php`
+- `v1/quizLoad.php`
+- `v1/quizSubmit.php`
+- `v1/quizResultShow.php`
+- `v1/questionAdd.php`
+- `v1/questionSetCreate.php`
+- `v1/questionSetEdit.php`
+- `v1/questionShow.php`
+- `v1/questionSetShow.php`
 
-For long-term cleanliness, place APIs under versioned paths such as:
+All APIs live under the versioned path:
 
 ```text
 /backend/api/v1/
@@ -79,7 +81,7 @@ authenticate
 
 ### Admin-only APIs
 - question add
-- question set create
-- question set edit
-- proposed question show
-- proposed question set show
+- question set create (final contract: no raw secret key, derives question count from selection, supports `makeActive`)
+- question set edit (final contract: edit by config id, preserves secret key, supports `makeActive`)
+- question show (paginated question browser with answer options, cursor-based, limit 1–20)
+- question set show (paginated config browser, cursor-based, limit 1–20)

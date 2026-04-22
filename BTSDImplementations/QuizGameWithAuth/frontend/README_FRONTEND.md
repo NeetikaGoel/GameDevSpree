@@ -72,4 +72,7 @@ The backend still validates the `uid` against the database on every relevant req
 - quiz play
 - result page
 - admin question add
-- planned admin question-set management
+- admin question-set create (page exists; backend API is fully implemented)
+- admin question-set edit (page exists; backend API is fully implemented)
+
+Note: the frontend pages for question-set create/edit (`questionSetCreate.html`, `questionSetEdit.html`) have their forms, but full wiring to the paginated question browser (`questionShow.php`) is pending.

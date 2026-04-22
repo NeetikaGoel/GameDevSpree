@@ -46,12 +46,15 @@ These services manage:
 - `QuestionAddService`
 - `QuestionSetCreateService`
 - `QuestionSetEditService`
+- `QuestionShowService`
+- `QuestionSetShowService`
 
 These services manage:
-- question creation
-- answer-option creation
-- game config creation/editing
-- evolving admin control over quiz content
+- question creation with answer options
+- game config creation using final contract (derives question count target, resolves secret key from active/default config, supports makeActive)
+- game config editing using final contract (edit by config id, preserves secret key, supports makeActive, deactivates all before activating chosen)
+- cursor-paginated question list with answer options (for admin question-set management UI)
+- cursor-paginated question-set / config list (for admin edit-selection UI)
 
 ## Typical responsibilities of a service
 

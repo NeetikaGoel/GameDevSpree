@@ -100,19 +100,19 @@ class QuestionSetCreateService
             'questionSetCreateService',
             'Question set create completed successfully!!',
             [
-                'gameConfigId' => $gameConfigId,
-                'gameConfigName' => $gameConfigName,
-                'isActive' => $isActive
+                'gameConfigId'=>$gameConfigId,
+                'gameConfigName'=>$gameConfigName,
+                'isActive'=>$isActive
             ]
         );
 
         return [
-            'gameConfigId' => $gameConfigId,
-            'gameConfigName' => $gameConfigName,
-            'questionCountTarget' => $questionCountTarget,
-            'questionIdListAllowed' => $questionIdListAllowedSanitized,
-            'isActive' => $isActive,
-            'isCreated' => true
+            'gameConfigId'=>$gameConfigId,
+            'gameConfigName'=>$gameConfigName,
+            'questionCountTarget'=>$questionCountTarget,
+            'questionIdListAllowed'=>$questionIdListAllowedSanitized,
+            'isActive'=>$isActive,
+            'isCreated'=>true
         ];
     }
 }

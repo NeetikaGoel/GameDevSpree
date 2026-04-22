@@ -34,7 +34,10 @@ Files in `service/`:
 - quiz submit logic
 - result generation
 - admin question creation
-- evolving question-set workflows
+- question show service (cursor-paginated question list with answer options)
+- question-set show service (cursor-paginated config list)
+- question-set create service (final contract: derives count target, resolves secret key internally, makeActive support)
+- question-set edit service (final contract: edit by config id, preserves secret key, makeActive support)
 
 ### 3. Request parameter typing
 Files in `params/`:

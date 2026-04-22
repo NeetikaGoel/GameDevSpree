@@ -28,11 +28,14 @@ A query class usually returns SQL for:
 - update
 - special lookup operations
 
-## Example domains handled here
+## Query files in this folder
 
-- users
-- permissions
-- quiz progress
-- questions
-- answer options
-- game configs
+| Query file | Key queries |
+|---|---|
+| `userQuery.php` | select by uid, select by email, insert, update |
+| `userPermissionQuery.php` | select by uid, insert, update |
+| `userProgressStateQuery.php` | select by uid, insert, update |
+| `questionQuery.php` | select all, select by id list (with `FIELD` ordering), insert, cursor-paginated select (`WHERE id > ? LIMIT ?`) |
+| `answerOptionQuery.php` | select by question id list (IN clause), insert |
+| `gameConfigQuery.php` | select by name, select by id, select active, select all, cursor-paginated select (`WHERE id > ? LIMIT ?`), insert, update by id, deactivate all, activate by id |
+| `quizAttemptQuery.php` | legacy quiz attempt queries |

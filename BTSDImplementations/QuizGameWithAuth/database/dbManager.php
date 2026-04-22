@@ -95,9 +95,38 @@ class DBManager
 
         $query->execute();
         $insertId=$conn->insert_id;
-        //THIS INSERT ID IS GONNA ACT LIKE QUIZATTEMPT ID FOR US SO IT IS VEYR VERY IMPORTANT!!!!!!
+        //THIS INSERT ID IS GONNA ACT LIKE QUIZATTEMPT ID FOR US SO IT IS VERY VERY IMPORTANT!!!!!!
         $query->close();
         return $insertId;
+    }
+
+
+    //FOR EXPLAIN QUERY
+
+    public function explainQuery(string $sql, string $types, array $params): array
+    {
+        global $conn;
+
+        $explainSql='EXPLAIN ' . $sql;
+        $query=$conn->prepare($explainSql);
+
+        if ($types !== '') 
+        {
+            $query->bind_param($types, ...$params);
+        }
+
+        $query->execute();
+        $result=$query->get_result();
+
+        $rows=[];
+
+        while ($row=mysqli_fetch_assoc($result)) 
+        {
+            $rows[]=$row;
+        }
+
+        $query->close();
+        return $rows;
     }
 }
 

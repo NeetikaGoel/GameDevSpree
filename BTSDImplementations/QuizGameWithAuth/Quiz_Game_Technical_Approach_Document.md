@@ -28,26 +28,26 @@
 | 7.5 | API: Quiz Submit | [Go to Section 7.5](#section-75-api-quiz-submit) |
 | 7.6 | API: Quiz Result Show | [Go to Section 7.6](#section-76-api-quiz-result-show) |
 | 7.7 | API: Question Add | [Go to Section 7.7](#section-77-api-question-add) |
-| 7.8 | API: Question Set Create *(current state, planned refactor)* | [Go to Section 7.8](#section-78-api-question-set-create-current-state-planned-refactor) |
-| 7.9 | API: Question Set Edit *(current state, planned refactor)* | [Go to Section 7.9](#section-79-api-question-set-edit-current-state-planned-refactor) |
-| 8 | Proposed new admin APIs for manager approval | [Go to Section 8](#section-8-proposed-new-admin-apis-for-manager-approval) |
-| 8.1 | Proposed API: Question Show | [Go to Section 8.1](#section-81-proposed-api-question-show) |
-| 8.2 | Proposed API: Question Set Show / Game Config Show | [Go to Section 8.2](#section-82-proposed-api-question-set-show--game-config-show) |
+| 7.8 | API: Question Set Create *(now fully implemented with final contract)* | [Go to Section 7.8](#section-78-api-question-set-create-current-state-planned-refactor) |
+| 7.9 | API: Question Set Edit *(now fully implemented with final contract)* | [Go to Section 7.9](#section-79-api-question-set-edit-current-state-planned-refactor) |
+| 8 | New admin APIs — now implemented | [Go to Section 8](#section-8-proposed-new-admin-apis-for-manager-approval) |
+| 8.1 | API: Question Show | [Go to Section 8.1](#section-81-proposed-api-question-show) |
+| 8.2 | API: Question Set Show / Game Config Show | [Go to Section 8.2](#section-82-proposed-api-question-set-show--game-config-show) |
 | 9 | Final desired admin workflows | [Go to Section 9](#section-9-final-desired-admin-workflows) |
 | 9.1 | Create question-set flow | [Go to Section 9.1](#section-91-create-question-set-flow) |
 | 9.2 | Edit question-set flow | [Go to Section 9.2](#section-92-edit-question-set-flow) |
-| 9.3 | Question show workflow *(final desired admin workflow)* | [Go to Section 9.3](#section-93-question-show-workflow-final-desired-admin-workflow) |
-| 9.4 | Question-set show workflow *(final desired admin workflow)* | [Go to Section 9.4](#section-94-question-set-show-workflow-final-desired-admin-workflow) |
-| 10 | Recommended final contracts for question-set APIs | [Go to Section 10](#section-10-recommended-final-contracts-for-question-set-apis) |
-| 10.1 | Recommended final create API contract | [Go to Section 10.1](#section-101-recommended-final-create-api-contract) |
-| 10.2 | Recommended final edit API contract | [Go to Section 10.2](#section-102-recommended-final-edit-api-contract) |
+| 9.3 | Question show workflow | [Go to Section 9.3](#section-93-question-show-workflow-final-desired-admin-workflow) |
+| 9.4 | Question-set show workflow | [Go to Section 9.4](#section-94-question-set-show-workflow-final-desired-admin-workflow) |
+| 10 | Implemented final contracts for question-set APIs | [Go to Section 10](#section-10-recommended-final-contracts-for-question-set-apis) |
+| 10.1 | Implemented final create API contract | [Go to Section 10.1](#section-101-recommended-final-create-api-contract) |
+| 10.2 | Implemented final edit API contract | [Go to Section 10.2](#section-102-recommended-final-edit-api-contract) |
 | 11 | Flowchart-style text diagrams | [Go to Section 11](#section-11-flowchart-style-text-diagrams) |
 | 11.1 | Main application flow | [Go to Section 11.1](#section-111-main-application-flow) |
 | 11.2 | Quiz flow | [Go to Section 11.2](#section-112-quiz-flow) |
-| 11.3 | Admin create question-set flow *(proposed)* | [Go to Section 11.3](#section-113-admin-create-question-set-flow-proposed) |
-| 11.4 | Admin edit question-set flow *(proposed)* | [Go to Section 11.4](#section-114-admin-edit-question-set-flow-proposed) |
-| 11.5 | Question show API flow *(proposed)* | [Go to Section 11.5](#section-115-question-show-api-flow-proposed) |
-| 11.6 | Question-set show API flow *(proposed)* | [Go to Section 11.6](#section-116-question-set-show-api-flow-proposed) |
+| 11.3 | Admin create question-set flow | [Go to Section 11.3](#section-113-admin-create-question-set-flow-proposed) |
+| 11.4 | Admin edit question-set flow | [Go to Section 11.4](#section-114-admin-edit-question-set-flow-proposed) |
+| 11.5 | Question show API flow | [Go to Section 11.5](#section-115-question-show-api-flow-proposed) |
+| 11.6 | Question-set show API flow | [Go to Section 11.6](#section-116-question-set-show-api-flow-proposed) |
 | 12 | API summary table | [Go to Section 12](#section-12-api-summary-table) |
 | 13 | Key implementation observations for manager review | [Go to Section 13](#section-13-key-implementation-observations-for-manager-review) |
 | 13.1 | What is already strong | [Go to Section 13.1](#section-131-what-is-already-strong) |
@@ -66,15 +66,15 @@
 
 This document explains the complete current end-to-end flow of the **QuizGameWithAuth** project, from frontend page actions to backend APIs, services, repositories, queries, mappers, ORM layer, and database tables.
 
-It also documents the **proposed question-set workflow** for review, including the additional APIs needed for:
-- Question browsing for admin
-- Question-set browsing for admin
-- Question-set creation
-- Question-set editing
+It documents the fully implemented **admin question-set management workflow**, including:
+- Question browsing for admin (paginated, with answer options)
+- Question-set browsing for admin (paginated)
+- Question-set creation (final contract — no raw secret key, derives question count, supports `makeActive`)
+- Question-set editing (final contract — edit by config id, preserves secret key, supports `makeActive`)
 
-The goal is to make the architecture, request flow, validations, permissions, database usage, and proposed API evolution crystal clear before further implementation work starts.
+The goal is to make the architecture, request flow, validations, permissions, database usage, and API contracts crystal clear for ongoing development and review.
 
-This document is written as a **technical README-style design document** so it can be shared for review and approval.
+This document is written as a **technical README-style design document** so it can be shared for review.
 
 ---
 
@@ -237,11 +237,10 @@ Admin user can access:
 
 Currently implemented fully:
 - question add
-
-Partially implemented / planned:
-- question-set create/edit
-- question show API
-- question-set show API
+- question-set create
+- question-set edit
+- question show API (paginated)
+- question-set show API (paginated)
 
 ---
 
@@ -322,15 +321,19 @@ Calls:
 - `questionAdd.php`
 
 ### `questionSetCreate.html` + `questionSetCreate.ts`
-Planned to call:
-- `questionShow.php` *(proposed)*
+Calls:
 - `questionSetCreate.php`
 
+Can call (backend implemented, frontend wiring pending):
+- `questionShow.php` — to browse and select questions from a paginated list
+
 ### `questionSetEdit.html` + `questionSetEdit.ts`
-Planned to call:
-- `questionSetShow.php` *(proposed)*
-- `questionShow.php` *(proposed)*
+Calls:
 - `questionSetEdit.php`
+
+Can call (backend implemented, frontend wiring pending):
+- `questionSetShow.php` — to load existing configs for selection
+- `questionShow.php` — to browse and change selected questions
 
 ---
 
@@ -347,15 +350,24 @@ Used by:
 - registration
 - authentication checks for admin APIs
 
-Important columns:
-- `uid`
-- `user_id`
-- `login_type`
-- `email`
-- `name`
-- `password_hash`
-- `created_at`
-- `updated_at`
+Column definitions:
+
+| Column | SQL type | Signed/Unsigned | Bits | Max length | Nullable | Default | Notes |
+|---|---|---|---|---|---|---|---|
+| `uid` | `INT AUTO_INCREMENT PRIMARY KEY` | Signed | 32-bit | Max 2,147,483,647 | No | auto | Auto-generated row id |
+| `user_id` | `VARCHAR(100)` | N/A | N/A | 100 chars | No | None | Unique user identity string, e.g. `guest_...` or `user_...` |
+| `login_type` | `VARCHAR(50)` | N/A | N/A | 50 chars | No | None | Either `guest` or `registered` |
+| `email` | `VARCHAR(255)` | N/A | N/A | 255 chars | Yes | NULL | Standard email, nullable for guest users |
+| `name` | `VARCHAR(255)` | N/A | N/A | 255 chars | Yes | NULL | Display name, nullable for guest users |
+| `password_hash` | `VARCHAR(255)` | N/A | N/A | 255 chars | Yes | NULL | bcrypt hash of password+separator+secret_key, nullable for guest users |
+| `created_at` | `DATETIME(3)` | N/A | N/A | 3-digit millisecond precision | No | `CURRENT_TIMESTAMP(3)` | Row creation time |
+| `updated_at` | `DATETIME(3)` | N/A | N/A | 3-digit millisecond precision | No | `CURRENT_TIMESTAMP(3) ON UPDATE` | Row last-update time |
+
+Notes:
+- `uid` is signed 32-bit INT. Values are always positive (auto-increment starts from 1).
+- `user_id` has a `UNIQUE` constraint so no two users can share an identity string.
+- `email` has no `UNIQUE` constraint defined at DB level; uniqueness is enforced in application logic.
+- `password_hash` stores the result of PHP `password_hash()` which outputs bcrypt hashes of length up to 255 chars.
 
 ---
 
@@ -373,6 +385,16 @@ Used by:
 - quiz authorization
 - admin-only APIs
 
+Column definitions:
+
+| Column | SQL type | Signed/Unsigned | Bits | Max length | Nullable | Default | Notes |
+|---|---|---|---|---|---|---|---|
+| `id` | `INT AUTO_INCREMENT PRIMARY KEY` | Signed | 32-bit | Max 2,147,483,647 | No | auto | Auto-generated row id |
+| `uid` | `INT NOT NULL` | Signed | 32-bit | Max 2,147,483,647 | No | None | Foreign key → `users.uid` |
+| `permission_group` | `VARCHAR(50)` | N/A | N/A | 50 chars | No | None | One of `guest`, `user`, or `admin` |
+| `created_at` | `DATETIME(3)` | N/A | N/A | 3-digit millisecond precision | No | `CURRENT_TIMESTAMP(3)` | Row creation time |
+| `updated_at` | `DATETIME(3)` | N/A | N/A | 3-digit millisecond precision | No | `CURRENT_TIMESTAMP(3) ON UPDATE` | Row last-update time |
+
 ---
 
 <a id="section-53-user_progress_states"></a>
@@ -384,16 +406,24 @@ Used by:
 - quiz submit
 - result show
 
-Important columns:
-- `uid`
-- `score_current`
-- `questions_done`
-- `question_id_order_json`
-- `question_id_order_index_current`
-- `question_id_current`
-- `is_complete`
+Column definitions:
 
-This table is the main reason the quiz is **stateful in DB**, but **stateless over HTTP**.
+| Column | SQL type | Signed/Unsigned | Bits | Max length | Nullable | Default | Notes |
+|---|---|---|---|---|---|---|---|
+| `id` | `INT AUTO_INCREMENT PRIMARY KEY` | Signed | 32-bit | Max 2,147,483,647 | No | auto | Auto-generated row id |
+| `uid` | `INT NOT NULL` | Signed | 32-bit | Max 2,147,483,647 | No | None | Foreign key → `users.uid` |
+| `score_current` | `INT NOT NULL` | Signed | 32-bit | Max 2,147,483,647 | No | None | Current quiz score, always ≥ 0 |
+| `questions_done` | `INT NOT NULL` | Signed | 32-bit | Max 2,147,483,647 | No | None | How many questions answered so far |
+| `question_id_order_json` | `TEXT NOT NULL` | N/A | N/A | Up to 65,535 bytes | No | None | JSON array of question ids in quiz order |
+| `question_id_order_index_current` | `INT NOT NULL` | Signed | 32-bit | Max 2,147,483,647 | No | None | Current index into the question order array |
+| `question_id_current` | `INT NOT NULL` | Signed | 32-bit | Max 2,147,483,647 | No | None | The question id currently being answered |
+| `is_complete` | `BOOLEAN NOT NULL` | N/A | 1-bit effectively | `TRUE` or `FALSE` | No | None | Whether the quiz is finished |
+| `created_at` | `DATETIME(3)` | N/A | N/A | 3-digit millisecond precision | No | `CURRENT_TIMESTAMP(3)` | Row creation time |
+| `updated_at` | `DATETIME(3)` | N/A | N/A | 3-digit millisecond precision | No | `CURRENT_TIMESTAMP(3) ON UPDATE` | Row last-update time |
+
+Notes:
+- `question_id_order_json` uses TEXT because JSON arrays of question ids can be moderately long.
+- This table is the main reason the quiz is **stateful in DB**, but **stateless over HTTP**.
 
 ---
 
@@ -404,8 +434,21 @@ Stores question master data.
 Used by:
 - question add
 - quiz load
-- planned question show API
-- planned question-set create/edit flow
+- question show API (paginated)
+- question-set create/edit flow
+
+Column definitions:
+
+| Column | SQL type | Signed/Unsigned | Bits | Max length | Nullable | Default | Notes |
+|---|---|---|---|---|---|---|---|
+| `id` | `INT AUTO_INCREMENT PRIMARY KEY` | Signed | 32-bit | Max 2,147,483,647 | No | auto | Auto-generated question id |
+| `type` | `VARCHAR(100) NOT NULL` | N/A | N/A | 100 chars | No | None | Question type, e.g. `mcq` or `true/false` |
+| `text` | `VARCHAR(255) NOT NULL` | N/A | N/A | 255 chars | No | None | Question content |
+
+Notes:
+- `type` allows only 100 characters. Current types in use are short strings like `mcq` and `true/false`.
+- `text` is limited to 255 characters, meaning questions must be phrased concisely.
+- There is no explicit UNIQUE constraint on `text` — identical question text is not prevented at DB level.
 
 ---
 
@@ -417,7 +460,21 @@ Used by:
 - question add
 - quiz load
 - quiz submit
-- planned question show API
+- question show API (paginated)
+
+Column definitions:
+
+| Column | SQL type | Signed/Unsigned | Bits | Max length | Nullable | Default | Notes |
+|---|---|---|---|---|---|---|---|
+| `id` | `INT AUTO_INCREMENT PRIMARY KEY` | Signed | 32-bit | Max 2,147,483,647 | No | auto | Auto-generated answer option id |
+| `type` | `VARCHAR(100) NOT NULL` | N/A | N/A | 100 chars | No | None | Type, usually matches question type like `mcq` or `true/false` |
+| `text` | `VARCHAR(100) NOT NULL` | N/A | N/A | 100 chars | No | None | Answer option display text |
+| `question_id` | `INT NOT NULL` | Signed | 32-bit | Max 2,147,483,647 | No | None | Foreign key → `questions.id` |
+| `is_correct` | `BOOLEAN NOT NULL` | N/A | 1-bit effectively | `TRUE` or `FALSE` | No | None | Whether this option is the correct answer |
+
+Notes:
+- `text` here is 100 chars (shorter than the question's 255 char limit). Answer option text is expected to be brief.
+- `is_correct` must have exactly one `TRUE` per question at the application level. The DB does not enforce this with a constraint.
 
 ---
 
@@ -430,36 +487,44 @@ Stores question-set / config definitions.
 - determine question count target
 - provide secret key for password hashing flow
 - determine active question set for quiz load
+- allow admin to create and manage named question sets
 
-### Important columns
-- `game_config_name`
-- `question_count_target`
-- `question_id_list_allowed_json`
-- `secret_key`
-- `is_active`
-- `created_at`
-- `updated_at`
+### Column definitions
+
+| Column | SQL type | Signed/Unsigned | Bits | Max length | Nullable | Default | Notes |
+|---|---|---|---|---|---|---|---|
+| `id` | `INT AUTO_INCREMENT PRIMARY KEY` | Signed | 32-bit | Max 2,147,483,647 | No | auto | Auto-generated config id |
+| `game_config_name` | `VARCHAR(100) NOT NULL UNIQUE` | N/A | N/A | 100 chars | No | None | Unique config name; application enforces character restrictions too |
+| `question_count_target` | `INT NOT NULL` | Signed | 32-bit | Max 2,147,483,647 | No | None | How many questions are in this set; derived from `questionIdListAllowed` count |
+| `question_id_list_allowed_json` | `TEXT NOT NULL` | N/A | N/A | Up to 65,535 bytes | No | None | JSON array of allowed question ids |
+| `secret_key` | `VARCHAR(255) NOT NULL` | N/A | N/A | 255 chars | No | `'neetikagoel12345'` | Secret key used in password hash derivation; never exposed to admin UI |
+| `is_active` | `BOOLEAN NOT NULL` | N/A | 1-bit effectively | `TRUE` or `FALSE` | No | `FALSE` | Whether this config drives the live quiz |
+| `created_at` | `DATETIME NOT NULL` | N/A | N/A | Second precision | No | `CURRENT_TIMESTAMP` | Row creation time |
+| `updated_at` | `DATETIME NOT NULL` | N/A | N/A | Second precision | No | `CURRENT_TIMESTAMP ON UPDATE` | Row last-update time |
+
+Notes:
+- `game_config_name` has `UNIQUE` constraint at DB level AND max 100 char limit.
+- Application-level validation (in `questionSetCreate.php` and `questionSetEdit.php`) additionally restricts allowed characters to: `A-Z`, `a-z`, `0-9`, space, `_`, `,`, `-`, `(`, `)`, `.`, `&`. This prevents injection or HTML-like input.
+- `question_id_list_allowed_json` stores a JSON array of integers, e.g. `[1,2,3,4,5]`. Uses `TEXT` not `VARCHAR` to handle larger question sets safely.
+- `secret_key` defaults to `'neetikagoel12345'` in the schema. In practice, new configs copy the secret key from the active or default config at creation time via `QuestionSetCreateService`.
+- `created_at` / `updated_at` in this table use plain `DATETIME` (second precision), while `users`, `user_permissions`, and `user_progress_states` use `DATETIME(3)` (millisecond precision).
+- Only one config should have `is_active = TRUE` at any time. This is enforced by the service layer via `deactivateAllGameConfigs()` before setting a new active config.
 
 ### Used by
 - register flow
 - login flow
 - quiz load
-- question-set create/edit flows
+- question-set create API
+- question-set edit API
+- question-set show API
 
-### Current structural notes
-From the current DB state:
-- `secret_key` is already present
-- `is_active` is already present
-- `created_at` and `updated_at` are already present
-
-### Input/constraint notes for future config naming
-For user-friendly config name validation in future implementation, the document assumes:
-- a max length bound should be applied, such as **50 to 100 characters**
-- dangerous or unnecessary special characters should be restricted
-- HTML-like content should not be accepted
-- config naming should stay business-friendly and UI-friendly, not developer-centric
-
-This is a **validation and UX recommendation**, not a current backend behavior commitment yet.
+### Input/constraint notes for config naming
+Config name validation is enforced in both the create and edit API boundary layers:
+- **Max length**: 100 characters (`mb_strlen` check in PHP + `VARCHAR(100)` in DB)
+- **Allowed characters**: alphanumeric, space, `_`, `,`, `-`, `(`, `)`, `.`, `&` — enforced with `preg_match('/^[A-Za-z0-9 _,\-().&]+$/', $gameConfigName)`
+- **HTML / script injection**: blocked because `<`, `>`, `"`, `'`, `;` are not in the allowed set
+- **Empty name**: rejected at validation step
+- This validation is **already implemented and active** in both `questionSetCreate.php` and `questionSetEdit.php`.
 
 ---
 
@@ -1170,7 +1235,7 @@ Boundary file performs:
 ---
 
 <a id="section-78-api-question-set-create-current-state-planned-refactor"></a>
-### 7.8 API: Question Set Create *(current state, planned refactor)*
+### 7.8 API: Question Set Create *(now fully implemented with final contract)*
 
 ### URL
 `POST /backend/api/v1/questionSetCreate.php`
@@ -1181,176 +1246,213 @@ Creates a new question-set / game config.
 ### Authorization
 Admin only.
 
-### Current implemented service contract
-Current service expects:
-- `gameConfigName`
-- `questionCountTarget`
-- `questionIdListAllowed`
-- `secretKey`
+### Implemented service contract
+The API and service now implement the final clean contract:
+- `uid` — required, authenticated admin user
+- `gameConfigName` — non-empty, max 100 chars, restricted character set
+- `questionIdListAllowed` — JSON array of positive integer question ids, validated against DB
+- `makeActive` — optional boolean-like flag; defaults to `false`
+- `secretKey` is **not** accepted from the admin; it is derived internally by the service from the active config or default config
+- `questionCountTarget` is **not** accepted from admin; it is derived by the service as `count(questionIdListAllowed)` after deduplication
 
-### Request parameters *(current state)*
+### Request parameters
 | Parameter | Type of value | Valid value range |
 |---|---|---|
 | uid | integer | Required positive integer |
-| gameConfigName | string | Non-empty string |
-| questionCountTarget | integer | Positive integer |
-| questionIdListAllowed | JSON array | Non-empty integer list |
-| secretKey | string | Non-empty string |
+| gameConfigName | string | Non-empty, max 100 chars, allowed chars: `A-Z a-z 0-9 space _ , - ( ) . &` |
+| questionIdListAllowed | JSON string | Non-empty JSON array of positive integers |
+| makeActive | string | Optional; `true`, `1`, or `yes` to activate; anything else is treated as `false` |
 
-### Example current-state request
+### Example request
 ```json
 {
   "method": "POST",
   "body": {
     "uid": 1,
     "gameConfigName": "SpecialGame1",
-    "questionCountTarget": 7,
-    "questionIdListAllowed": [1, 2, 3, 4, 5, 6, 7],
-    "secretKey": "neetikagoel12345"
+    "questionIdListAllowed": "[1, 2, 3, 4, 5, 6, 7]",
+    "makeActive": "false"
   }
 }
 ```
 
-### Response parameters *(current state)*
+### Response parameters
 | Parameter | Type of value | Valid value range |
 |---|---|---|
 | gameConfigId | integer | Positive integer |
 | gameConfigName | string | Non-empty string |
 | questionCountTarget | integer | Positive integer |
-| questionIdListAllowed | array | Non-empty integer list |
-| secretKey | string | Present currently, but should not be exposed in final design |
+| questionIdListAllowed | array | Non-empty deduplicated integer list |
+| isActive | boolean | `true` or `false` |
 | isCreated | boolean | `true` on success |
 | error | string | Present only on failure |
 
-### Example current-state response
+### Example success response
 ```json
 {
   "gameConfigId": 2,
   "gameConfigName": "SpecialGame1",
   "questionCountTarget": 7,
   "questionIdListAllowed": [1, 2, 3, 4, 5, 6, 7],
-  "secretKey": "neetikagoel12345",
+  "isActive": false,
   "isCreated": true
 }
 ```
 
-### Current intended business role
-Creates a new row in `game_configs` for a new quiz configuration.
+### Internal checks in API boundary layer (in order)
+1. request method must be POST
+2. uid must be present and numeric
+3. authenticate: uid must exist in `users`
+4. authorize: user must have `admin` permission in `user_permissions`
+5. `gameConfigName` and `questionIdListAllowed` must be present and non-empty
+6. uid must be positive
+7. `gameConfigName` must be ≤ 100 chars
+8. `gameConfigName` must match allowed character regex
+9. `questionIdListAllowed` must decode to a valid non-empty JSON array
+10. each element in `questionIdListAllowed` must be a numeric positive integer
+11. `makeActive` is read, defaulting to `false`
+12. rate limit placeholder
+13. idempotency placeholder
 
-### Current gaps versus final desired workflow
-The current code structure is not yet aligned with final UX because in final workflow:
-- admin should not type raw secret key
-- admin should select questions from paginated list
-- question count target should be derived automatically from selected questions or constrained logically
-
-### Correct final purpose
-This API should ultimately receive a clean admin-selected question-set payload and create a new `game_configs` row.
+### Service behavior (`QuestionSetCreateService`)
+1. checks whether a config with the same name already exists → throws if duplicate
+2. validates `questionIdListAllowed` is non-empty
+3. sanitizes and deduplicates question ids
+4. derives `questionCountTarget = count(deduplicated ids)`
+5. fetches question rows from DB to verify all ids actually exist
+6. resolves `secretKey` from active config or default config (never from admin input)
+7. inserts new row into `game_configs` with `is_active = false`
+8. if `makeActive` is true: calls `deactivateAllGameConfigs()`, then `activateGameConfigFromId()`
+9. returns safe response payload (no secret key exposed)
 
 ### Database tables used and why
 - `users` → authentication existence check
 - `user_permissions` → admin authorization check
-- `game_configs` → create new config row
-- `questions` → verify selected question ids exist
+- `game_configs` → create new config row, and fetch active/default config for secret key
+- `questions` → verify all selected question ids exist in DB
 
 ---
 
 <a id="section-79-api-question-set-edit-current-state-planned-refactor"></a>
-### 7.9 API: Question Set Edit *(current state, planned refactor)*
+### 7.9 API: Question Set Edit *(now fully implemented with final contract)*
 
 ### URL
 `POST /backend/api/v1/questionSetEdit.php`
 
 ### Purpose
-Updates an existing question-set / game config.
+Updates an existing question-set / game config identified by its `gameConfigId`.
 
 ### Authorization
 Admin only.
 
-### Current implemented service contract
-Current service expects:
-- `gameConfigName`
-- `questionCountTarget`
-- `questionIdListAllowed`
-- `secretKey`
+### Implemented service contract
+The API and service now implement the final clean contract:
+- `uid` — required, authenticated admin user
+- `gameConfigId` — required, identifies the config to edit
+- `gameConfigName` — non-empty, max 100 chars, restricted character set; may rename the config
+- `questionIdListAllowed` — JSON array of positive integer question ids, validated against DB
+- `makeActive` — optional boolean-like flag; if true, deactivates all configs and activates this one
+- `secretKey` is **not** accepted from admin; it is preserved internally from the existing config row
+- `questionCountTarget` is **not** accepted from admin; it is derived as `count(deduplicated ids)`
 
-### Request parameters *(current state)*
+### Request parameters
 | Parameter | Type of value | Valid value range |
 |---|---|---|
 | uid | integer | Required positive integer |
-| gameConfigName | string | Non-empty string |
-| questionCountTarget | integer | Positive integer |
-| questionIdListAllowed | JSON array | Non-empty integer list |
-| secretKey | string | Non-empty string |
+| gameConfigId | integer | Required positive integer |
+| gameConfigName | string | Non-empty, max 100 chars, allowed chars: `A-Z a-z 0-9 space _ , - ( ) . &` |
+| questionIdListAllowed | JSON string | Non-empty JSON array of positive integers |
+| makeActive | string | Optional; `true`, `1`, or `yes` to activate; anything else treated as `false` |
 
-### Example current-state request
+### Example request
 ```json
 {
   "method": "POST",
   "body": {
     "uid": 1,
-    "gameConfigName": "SpecialGame1",
-    "questionCountTarget": 6,
-    "questionIdListAllowed": [1, 2, 3, 4, 5, 6],
-    "secretKey": "neetikagoel12345"
+    "gameConfigId": 2,
+    "gameConfigName": "SpecialGame1Updated",
+    "questionIdListAllowed": "[1, 2, 3, 4, 5, 6]",
+    "makeActive": "true"
   }
 }
 ```
 
-### Response parameters *(current state)*
+### Response parameters
 | Parameter | Type of value | Valid value range |
 |---|---|---|
+| gameConfigId | integer | Positive integer |
 | gameConfigName | string | Non-empty string |
 | questionCountTarget | integer | Positive integer |
-| questionIdListAllowed | array | Non-empty integer list |
-| secretKey | string | Present currently, but should not be exposed in final design |
+| questionIdListAllowed | array | Non-empty deduplicated integer list |
+| isActive | boolean | `true` or `false` |
 | isUpdated | boolean | `true` on success |
 | error | string | Present only on failure |
 
-### Example current-state response
+### Example success response
 ```json
 {
-  "gameConfigName": "SpecialGame1",
+  "gameConfigId": 2,
+  "gameConfigName": "SpecialGame1Updated",
   "questionCountTarget": 6,
   "questionIdListAllowed": [1, 2, 3, 4, 5, 6],
-  "secretKey": "neetikagoel12345",
+  "isActive": true,
   "isUpdated": true
 }
 ```
 
-### Current gaps versus final desired workflow
-Final workflow requires:
-- select an existing config first
-- edit by config id or original identity, not ambiguous rename-only flow
-- optionally make config active
-- preserve secret key from backend side
-- support question selection through paginated question browser
+### Internal checks in API boundary layer (in order)
+1. request method must be POST
+2. uid must be present and numeric
+3. authenticate: uid must exist in `users`
+4. authorize: user must have `admin` permission in `user_permissions`
+5. `uid`, `gameConfigId`, `gameConfigName`, and `questionIdListAllowed` must all be present
+6. uid must be positive
+7. `gameConfigId` must be numeric and positive
+8. `gameConfigName` and `questionIdListAllowed` must be non-empty
+9. `gameConfigName` must be ≤ 100 chars
+10. `gameConfigName` must match allowed character regex
+11. `questionIdListAllowed` must decode to a valid non-empty JSON array
+12. each element must be a numeric positive integer
+13. `makeActive` is read, defaulting to `false`
+14. rate limit placeholder
+15. idempotency placeholder
+
+### Service behavior (`QuestionSetEditService`)
+1. fetches existing config by `gameConfigId` → throws if not found
+2. checks for name collision — another config with same name but different id → throws if collision
+3. sanitizes and deduplicates question ids
+4. derives `questionCountTarget = count(deduplicated ids)`
+5. verifies all selected question ids exist in DB
+6. preserves `is_active` state from current config unless `makeActive` is true
+7. if `makeActive` is true: calls `deactivateAllGameConfigs()`, sets `finalIsActive = true`
+8. calls `updateGameConfigFromId()` which updates `game_config_name`, `question_count_target`, `question_id_list_allowed_json`, `is_active` — secret key is **not** changed
+9. returns safe response payload (no secret key exposed)
 
 ### Database tables used and why
 - `users` → authentication existence check
 - `user_permissions` → admin authorization check
-- `game_configs` → update existing config row
-- `questions` → verify updated selected question ids exist
+- `game_configs` → load existing config, update it, manage active state
+- `questions` → verify all selected question ids exist in DB
 
 ---
 
 <a id="section-8-proposed-new-admin-apis-for-manager-approval"></a>
-## 8. Proposed new admin APIs for manager approval
+## 8. New admin APIs — now implemented
 
-These APIs are the correct additional APIs needed to support the desired admin workflow.
+These APIs were previously proposed. They are now fully implemented.
 
 ---
 
 <a id="section-81-proposed-api-question-show"></a>
-### 8.1 Proposed API: Question Show
+### 8.1 API: Question Show
 
 ### URL
 `GET /backend/api/v1/questionShow.php`
 
 ### Purpose
 Return paginated question list for admin selection UI.
-
-### Why needed
-Admin must be able to browse questions with answer options instead of manually typing question ids.
+Used when admin is creating or editing a question set.
 
 ### Authorization
 Admin only.
@@ -1359,8 +1461,8 @@ Admin only.
 | Parameter | Type of value | Valid value range |
 |---|---|---|
 | uid | integer | Required positive integer |
-| cursor | integer | Optional last-seen question id for cursor pagination |
-| limit | integer | Optional positive integer, default 5 |
+| cursor | integer | Optional; last-seen question id for cursor pagination; defaults to `0` |
+| limit | integer | Optional positive integer; defaults to `5`; max is `20` |
 
 ### Example request
 ```json
@@ -1385,7 +1487,7 @@ Admin only.
 | questions[].answerOptions[].id | integer | Positive integer |
 | questions[].answerOptions[].text | string | Non-empty string |
 | questions[].answerOptions[].type | string | Existing option type |
-| nextCursor | integer or null | Cursor for next page |
+| nextCursor | integer or null | Cursor for next page; `null` when no more pages |
 | hasMore | boolean | `true` or `false` |
 | error | string | Present only on failure |
 
@@ -1410,47 +1512,47 @@ Admin only.
 }
 ```
 
-### Backend boundary checks
-1. request method must be correct
-2. uid must be present
-3. uid must be numeric
-4. uid must be positive
-5. authenticated user must exist in `users`
-6. authorized user must have `admin` permission in `user_permissions`
-7. cursor, if present, must be numeric and valid
-8. limit, if present, must be numeric, positive, and within bounded max
-9. rate-limit and idempotency placeholder checks
+### Internal checks in API boundary layer (in order)
+1. request method must be GET
+2. uid must be present and numeric
+3. uid must be positive
+4. cursor must be numeric (defaults to `0`)
+5. limit must be numeric (defaults to `5`)
+6. cursor must not be negative
+7. limit must be between `1` and `20` inclusive
+8. authenticate: uid must exist in `users`
+9. authorize: user must have `admin` permission in `user_permissions`
+10. rate-limit placeholder
+11. idempotency placeholder
 
-### Service layer responsibilities
-1. read the paginated question list from `questions`
-2. apply cursor-based pagination ordering consistently
-3. fetch answer options from `answer_options` for the current page questions
-4. shape response data so frontend does not need DB-specific knowledge
-5. return:
-   - question metadata
-   - answer option metadata
-   - `nextCursor`
-   - `hasMore`
+### Service behavior (`QuestionShowService`)
+1. calls `getQuestionPageAfterId($cursor, $limit + 1)` — fetches `limit + 1` rows to detect next page
+2. if result count > limit: sets `hasMore = true`, trims to `limit` rows
+3. collects all question ids from the current page
+4. fetches all answer options for those question ids in one query
+5. builds an answer option map keyed by `question_id`
+6. assembles questions response array, attaching answer options per question
+7. sets `nextCursor` to the last question id in the page when `hasMore` is true, else `null`
+8. returns `{ questions, nextCursor, hasMore }`
 
-### Internal flow
-Frontend question-set page → `questionShow.php` → service fetches paginated questions + answer options → frontend renders checkbox list → admin selects questions
+Note: `isCorrect` is **not exposed** in the question show response — only `id`, `text`, `type` per option.
 
 ### Database tables used and why
 - `users` → authentication existence check
 - `user_permissions` → admin authorization check
-- `questions` → question master list
-- `answer_options` → option details shown alongside each question
+- `questions` → question master list, cursor-paginated by id
+- `answer_options` → option details fetched for the current page questions
 
 ---
 
 <a id="section-82-proposed-api-question-set-show--game-config-show"></a>
-### 8.2 Proposed API: Question Set Show / Game Config Show
+### 8.2 API: Question Set Show / Game Config Show
 
 ### URL
 `GET /backend/api/v1/questionSetShow.php`
 
 ### Purpose
-Show existing configs to admin for edit selection.
+Show existing configs to admin — used as entry point for edit-selection workflow.
 
 ### Authorization
 Admin only.
@@ -1459,8 +1561,8 @@ Admin only.
 | Parameter | Type of value | Valid value range |
 |---|---|---|
 | uid | integer | Required positive integer |
-| cursor | integer | Optional config cursor for pagination |
-| limit | integer | Optional positive integer, default 5 |
+| cursor | integer | Optional; last-seen config id for cursor pagination; defaults to `0` |
+| limit | integer | Optional positive integer; defaults to `5`; max is `20` |
 
 ### Example request
 ```json
@@ -1485,9 +1587,11 @@ Admin only.
 | gameConfigs[].isActive | boolean | `true` or `false` |
 | gameConfigs[].createdAt | string | Valid datetime string |
 | gameConfigs[].updatedAt | string | Valid datetime string |
-| nextCursor | integer or null | Cursor for next page |
+| nextCursor | integer or null | Cursor for next page; `null` when no more pages |
 | hasMore | boolean | `true` or `false` |
 | error | string | Present only on failure |
+
+Note: `secret_key` is **never** included in the response.
 
 ### Example success response
 ```json
@@ -1517,39 +1621,30 @@ Admin only.
 }
 ```
 
-### Backend boundary checks
-1. request method must be correct
-2. uid must be present
-3. uid must be numeric
-4. uid must be positive
-5. authenticated user must exist in `users`
-6. authorized user must have `admin` permission in `user_permissions`
-7. cursor, if present, must be numeric and valid
-8. limit, if present, must be numeric, positive, and within bounded max
-9. rate-limit and idempotency placeholder checks
+### Internal checks in API boundary layer (in order)
+1. request method must be GET
+2. uid must be present and numeric
+3. uid must be positive
+4. cursor must be numeric (defaults to `0`)
+5. limit must be numeric (defaults to `5`)
+6. cursor must not be negative
+7. limit must be between `1` and `20` inclusive
+8. authenticate: uid must exist in `users`
+9. authorize: user must have `admin` permission in `user_permissions`
+10. rate-limit placeholder
+11. idempotency placeholder
 
-### Service layer responsibilities
-1. read paginated config rows from `game_configs`
-2. include fields needed for admin display only
-3. not expose secret key in response
-4. return config metadata in frontend-friendly structure
-5. return:
-   - config id
-   - config name
-   - question count target
-   - selected question ids
-   - active/inactive state
-   - timestamps if needed
-   - `nextCursor`
-   - `hasMore`
-
-### Why needed
-Admin edit flow first needs to choose which config to edit.
+### Service behavior (`QuestionSetShowService`)
+1. calls `getGameConfigsPageAfterId($cursor, $limit + 1)` — fetches `limit + 1` rows to detect next page
+2. if result count > limit: sets `hasMore = true`, trims to `limit` rows
+3. builds config response array with: `id`, `gameConfigName`, `questionCountTarget`, `questionIdListAllowed`, `isActive`, `createdAt`, `updatedAt`
+4. sets `nextCursor` to the last config id when `hasMore` is true, else `null`
+5. returns `{ gameConfigs, nextCursor, hasMore }`
 
 ### Database tables used and why
 - `users` → authentication existence check
 - `user_permissions` → admin authorization check
-- `game_configs` → list existing question sets/configs
+- `game_configs` → list existing question sets/configs, cursor-paginated by id
 
 ---
 
@@ -1681,7 +1776,7 @@ The service layer for `QuestionSetEditService` should:
 ---
 
 <a id="section-93-question-show-workflow-final-desired-admin-workflow"></a>
-### 9.3 Question show workflow *(final desired admin workflow)*
+### 9.3 Question show workflow
 
 ### Frontend flow
 1. Admin opens either `questionSetCreate.html` or `questionSetEdit.html`.
@@ -1733,7 +1828,7 @@ This API makes the admin workflow UI-driven and safer.
 ---
 
 <a id="section-94-question-set-show-workflow-final-desired-admin-workflow"></a>
-### 9.4 Question-set show workflow *(final desired admin workflow)*
+### 9.4 Question-set show workflow
 
 ### Frontend flow
 1. Admin opens `questionSetEdit.html`.
@@ -1787,10 +1882,10 @@ This API becomes the entry point for controlled question-set editing.
 ---
 
 <a id="section-10-recommended-final-contracts-for-question-set-apis"></a>
-## 10. Recommended final contracts for question-set APIs
+## 10. Implemented final contracts for question-set APIs
 
 <a id="section-101-recommended-final-create-api-contract"></a>
-### 10.1 Recommended final create API contract
+### 10.1 Implemented final create API contract
 
 ### URL
 `POST /backend/api/v1/questionSetCreate.php`
@@ -1847,7 +1942,7 @@ This API becomes the entry point for controlled question-set editing.
 ---
 
 <a id="section-102-recommended-final-edit-api-contract"></a>
-### 10.2 Recommended final edit API contract
+### 10.2 Implemented final edit API contract
 
 ### URL
 `POST /backend/api/v1/questionSetEdit.php`
@@ -1956,7 +2051,7 @@ quiz.html loads
 ```
 
 <a id="section-113-admin-create-question-set-flow-proposed"></a>
-### 11.3 Admin create question-set flow *(proposed)*
+### 11.3 Admin create question-set flow
 
 ```text
 Admin opens questionSetCreate.html
@@ -1978,7 +2073,7 @@ Admin opens questionSetCreate.html
 ```
 
 <a id="section-114-admin-edit-question-set-flow-proposed"></a>
-### 11.4 Admin edit question-set flow *(proposed)*
+### 11.4 Admin edit question-set flow
 
 ```text
 Admin opens questionSetEdit.html
@@ -2004,7 +2099,7 @@ Admin opens questionSetEdit.html
 ```
 
 <a id="section-115-question-show-api-flow-proposed"></a>
-### 11.5 Question show API flow *(proposed)*
+### 11.5 Question show API flow
 
 ```text
 Admin opens create/edit question-set page
@@ -2020,7 +2115,7 @@ Admin opens create/edit question-set page
 ```
 
 <a id="section-116-question-set-show-api-flow-proposed"></a>
-### 11.6 Question-set show API flow *(proposed)*
+### 11.6 Question-set show API flow
 
 ```text
 Admin opens questionSetEdit page
@@ -2040,19 +2135,19 @@ Admin opens questionSetEdit page
 <a id="section-12-api-summary-table"></a>
 ## 12. API summary table
 
-| API | Method | Role Access | Main Tables Used | Purpose |
-|---|---|---:|---|---|
-| `loginGuest.php` | POST | Public | `users`, `user_permissions` | Create guest identity |
-| `loginUser.php` | POST | Public | `users`, `user_permissions`, `game_configs` | Registered login |
-| `registerUser.php` | POST | Public | `users`, `user_permissions`, `game_configs` | Register / upgrade guest |
-| `quizLoad.php` | GET | Guest/User/Admin | `users`, `user_permissions`, `user_progress_states`, `game_configs`, `questions`, `answer_options` | Load current quiz question |
-| `quizSubmit.php` | POST | Guest/User/Admin | `users`, `user_permissions`, `user_progress_states`, `questions`, `answer_options` | Submit answer |
-| `quizResultShow.php` | GET | Guest/User/Admin | `users`, `user_permissions`, `user_progress_states` | Show final result |
-| `questionAdd.php` | POST | Admin only | `users`, `user_permissions`, `questions`, `answer_options` | Create question + options |
-| `questionSetCreate.php` | POST | Admin only | `users`, `user_permissions`, `game_configs`, `questions` | Create config/question set |
-| `questionSetEdit.php` | POST | Admin only | `users`, `user_permissions`, `game_configs`, `questions` | Edit config/question set |
-| `questionShow.php` *(proposed)* | GET | Admin only | `users`, `user_permissions`, `questions`, `answer_options` | Paginated question browser |
-| `questionSetShow.php` *(proposed)* | GET | Admin only | `users`, `user_permissions`, `game_configs` | List configs for edit |
+| API | Method | Role Access | Main Tables Used | Status | Purpose |
+|---|---|---|---|---|---|
+| `loginGuest.php` | POST | Public | `users`, `user_permissions` | Implemented | Create guest identity |
+| `loginUser.php` | POST | Public | `users`, `user_permissions`, `game_configs` | Implemented | Registered login |
+| `registerUser.php` | POST | Public | `users`, `user_permissions`, `game_configs` | Implemented | Register / upgrade guest |
+| `quizLoad.php` | GET | Guest/User/Admin | `users`, `user_permissions`, `user_progress_states`, `game_configs`, `questions`, `answer_options` | Implemented | Load current quiz question |
+| `quizSubmit.php` | POST | Guest/User/Admin | `users`, `user_permissions`, `user_progress_states`, `questions`, `answer_options` | Implemented | Submit answer |
+| `quizResultShow.php` | GET | Guest/User/Admin | `users`, `user_permissions`, `user_progress_states` | Implemented | Show final result |
+| `questionAdd.php` | POST | Admin only | `users`, `user_permissions`, `questions`, `answer_options` | Implemented | Create question + options |
+| `questionSetCreate.php` | POST | Admin only | `users`, `user_permissions`, `game_configs`, `questions` | Implemented (final contract) | Create config/question set |
+| `questionSetEdit.php` | POST | Admin only | `users`, `user_permissions`, `game_configs`, `questions` | Implemented (final contract) | Edit config/question set |
+| `questionShow.php` | GET | Admin only | `users`, `user_permissions`, `questions`, `answer_options` | Implemented | Paginated question browser |
+| `questionSetShow.php` | GET | Admin only | `users`, `user_permissions`, `game_configs` | Implemented | List configs for edit |
 
 ---
 
@@ -2065,27 +2160,39 @@ Admin opens questionSetEdit page
 - Good separation between API layer and service layer
 - Repositories/queries/mappers give structured DB access
 - Quiz state is persisted in DB cleanly through `user_progress_states`
-- Password hashing flow now uses secret key + password hash verification
-- Role-based admin gating already exists and can be reused for new admin APIs
+- Password hashing flow uses secret key + password hash verification
+- Role-based admin gating exists and is reused consistently in all admin APIs
+- All admin APIs follow the same 9-step boundary pattern (authenticate → authorize → validate/sanitize → ratelimit → idempotency → delegate → respond → auditlog → try/catch)
+- `DBManager.explainQuery()` is present for future DB query analysis
+- Secret key is fully backend-controlled — not exposed in any API response or admin form
+- Active config management is centralized with `deactivateAllGameConfigs()` + `activateGameConfigFromId()`
+- Cursor-based pagination is consistently implemented in both `questionShow` and `questionSetShow` with `limit + 1` look-ahead pattern
 
 <a id="section-132-what-still-needs-refinement-for-question-set-feature"></a>
-### 13.2 What still needs refinement for question-set feature
-- `questionSetCreate.php` and `questionSetEdit.php` should move away from raw/manual input style
-- Need dedicated APIs for question browsing and config browsing
-- Secret key must not be exposed in admin response payloads or frontend forms
-- Active config selection should be centralized so only one config is active at a time
-- Existing `QuestionSetCreateService` and `QuestionSetEditService` should be reshaped around final request contracts
+### 13.2 Current status of the question-set feature
+
+All major planned APIs for the admin question-set management workflow are now implemented:
+- `questionShow.php` + `QuestionShowService` — paginated question browser with answer options
+- `questionSetShow.php` + `QuestionSetShowService` — paginated config browser
+- `questionSetCreate.php` + `QuestionSetCreateService` — creates config using final contract (no manual secret key, no manual count target, supports `makeActive`)
+- `questionSetEdit.php` + `QuestionSetEditService` — edits config by id using final contract (same clean model)
+
+Remaining minor areas for future refinement:
+- Frontend pages (`questionSetCreate.html`, `questionSetEdit.html`) can be connected to the new paginated question browser using `questionShow.php`
+- Frontend checkbox selection UX for question-set management is not yet fully wired to the implemented APIs
+- Stronger uniqueness enforcement for email could be added at DB level in addition to application-level check
 
 <a id="section-133-recommended-implementation-sequence"></a>
-### 13.3 Recommended implementation sequence
-1. Finalize DB support for active config and timestamps
-2. Finalize `GameConfig` repository/query/entity methods
-3. Build `questionShow.php` + service
-4. Build `questionSetShow.php` + service
-5. Refactor `questionSetCreate.php` + service to final contract
-6. Refactor `questionSetEdit.php` + service to final contract
-7. Update frontend create/edit pages and navbar admin links
-8. Update quiz load to rely only on active config
+### 13.3 Completed implementation sequence
+
+1. ✅ DB support for active config and timestamps (`is_active`, `created_at`, `updated_at` in `game_configs`)
+2. ✅ `GameConfig` repository/query/entity methods (`getGameConfigsPageAfterId`, `createGameConfig`, `updateGameConfigFromId`, `deactivateAllGameConfigs`, `activateGameConfigFromId`)
+3. ✅ `questionShow.php` + `QuestionShowService`
+4. ✅ `questionSetShow.php` + `QuestionSetShowService`
+5. ✅ `questionSetCreate.php` + `QuestionSetCreateService` aligned to final contract
+6. ✅ `questionSetEdit.php` + `QuestionSetEditService` aligned to final contract
+7. ⬜ Frontend create/edit pages full wiring to implemented APIs (pending)
+8. ✅ Quiz load relies on active config
 
 ---
 
@@ -2110,12 +2217,16 @@ Possible future additions:
 - environment tags if needed later
 
 <a id="section-143-stronger-naming-constraints-for-configs"></a>
-### 14.3 Stronger naming constraints for configs
-Future backend validation can include:
-- length bounds
-- normalized naming
-- restricted special characters
-- HTML/content sanitization
+### 14.3 Naming constraints for configs — already implemented
+Backend validation for config names is already in place:
+- **Length bound**: max 100 characters (`mb_strlen` check + `VARCHAR(100)` DB column)
+- **Allowed characters**: alphanumeric, space, `_`, `,`, `-`, `(`, `)`, `.`, `&` — regex enforced
+- **HTML/script injection blocked**: `<`, `>`, `"`, `'`, `;` are all excluded from the allowed set
+- This validation is active in both `questionSetCreate.php` and `questionSetEdit.php`
+
+Future refinement could add:
+- stricter normalization (e.g. trim repeated spaces)
+- case-insensitive uniqueness checks
 
 <a id="section-144-better-pagination-controls"></a>
 ### 14.4 Better pagination controls
@@ -2157,7 +2268,7 @@ This is a **future improvement only**, not part of the current required implemen
 <a id="section-15-final-approval-oriented-summary"></a>
 ## 15. Final approval-oriented summary
 
-The project already has a strong layered architecture and a working end-to-end quiz flow.
+The project has a strong layered architecture and a fully working end-to-end quiz flow.
 
 The current working system supports:
 - guest login
@@ -2166,29 +2277,29 @@ The current working system supports:
 - quiz play
 - quiz scoring and results
 - admin question addition
+- admin question-set creation (final contract, no raw secret key, `makeActive` support)
+- admin question-set editing (final contract, by config id, `makeActive` support)
+- paginated question browser for admin (`questionShow.php`)
+- paginated question-set browser for admin (`questionSetShow.php`)
 
-The next planned phase is the **admin-driven question-set management workflow**, where admins will:
-- browse questions with pagination
-- create named question sets from selected questions
-- edit existing question sets
-- choose which question set is active for the live quiz experience
+The **admin-driven question-set management workflow** is now fully implemented at the backend level:
+- admin can browse questions page by page using cursor pagination
+- admin can create named question sets from selected question ids
+- admin can edit existing question sets by config id
+- admin can activate a specific question set which deactivates all others
+- quiz content shown to all users is driven by whichever `game_configs` row has `is_active = TRUE`
 
-This requires two new support APIs:
-- `questionShow.php`
-- `questionSetShow.php`
+Security model is enforced:
+- `secret_key` is never exposed to admin via any API response
+- only admin-permissioned users can access question-set management APIs
+- config name is validated for length (≤ 100 chars) and character safety (no HTML / injection)
+- question ids are validated against the DB on every create/edit
 
-And it requires aligning the existing question-set create/edit APIs with the final UX and security model.
+The remaining work is primarily frontend wiring:
+- connecting `questionSetCreate.html` and `questionSetEdit.html` to the paginated question selection UIs that use `questionShow.php`
 
-The resulting architecture will ensure that quiz content shown to all end users is controlled centrally through the currently active `game_configs` row, while the frontend remains simple and backend ownership of sensitive fields like secret key is preserved.
-
-It also keeps the current code structure intact conceptually:
-- frontend remains fetch-based
-- backend remains API-boundary + service-layer driven
-- repositories remain DB access abstraction
-- game config becomes the central control point for live quiz content
-
-This document therefore presents both:
-- the **current implemented flow**, and
-- the **proposed approved direction** for the question-set feature evolution
-
-without changing the existing business logic for documentation-only structural improvements such as API versioning and contract presentation.
+The backend structure remains:
+- frontend: fetch-based API calls
+- backend: API-boundary + service-layer driven
+- repositories: DB access abstraction
+- game config: central control point for live quiz content

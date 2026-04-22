@@ -51,4 +51,11 @@ class OrmManager
         $rows=$this->dbManager->getAllRowsPrepared($sql,$types,$params);
         return $mapper->getMappingRows($rows);
     }
+
+    //NEW FUNCTION FOR EXPLIAN QUERY THING
+
+    public function explainQuery(string $sql,string $types,array $params):array
+    {
+        return $this->dbManager->explainQuery($sql,$types,$params);
+    }
 }
