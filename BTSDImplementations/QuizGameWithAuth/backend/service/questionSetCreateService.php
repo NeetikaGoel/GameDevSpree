@@ -91,7 +91,7 @@ class QuestionSetCreateService
         $isActive = false;
 
         if ($makeActive === true) {
-            $gameConfigRepository->deactivateAllGameConfigs();
+            // $gameConfigRepository->deactivateAllGameConfigs();
             $gameConfigRepository->activateGameConfigFromId($gameConfigId);
             $isActive = true;
         }

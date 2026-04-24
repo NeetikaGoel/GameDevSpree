@@ -66,7 +66,7 @@ class QuestionSetEditService
         $finalIsActive = $gameConfigCurrent->getIsActive();
 
         if ($makeActive === true) {
-            $gameConfigRepository->deactivateAllGameConfigs();
+            // $gameConfigRepository->deactivateAllGameConfigs();
             $finalIsActive = true;
         }
 

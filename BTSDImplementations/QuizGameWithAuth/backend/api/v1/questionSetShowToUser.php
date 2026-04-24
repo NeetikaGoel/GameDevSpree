@@ -246,7 +246,7 @@ function questionSetShowToUserHandle(): void
     questionSetShowToUserAuditLog('question_set_show_to_user_success', [
         'uid' => $responseData['uid'] ?? $uid,
         //service should now return activeGameConfigs for user dashboard, so log that count
-        'activeConfigCount' => isset($responseData['activeGameConfigs']) && is_array($responseData['activeGameConfigs']) ? count($responseData['activeGameConfigs']) : 0
+        'activeConfigCount' => isset($responseData['gameConfigs']) && is_array($responseData['gameConfigs']) ? count($responseData['gameConfigs']) : 0
     ]);
 }
 

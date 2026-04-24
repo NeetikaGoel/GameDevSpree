@@ -21,7 +21,7 @@ namespace Database\Query;
 class UserProgressStateQuery
 {
     //insert query first
-    public function getInsertUserProgressStateSqlQuery():string
+    public function getInsertUserProgressStateSqlQuery(): string
     {
         return '
             INSERT INTO user_progress_states
@@ -29,7 +29,7 @@ class UserProgressStateQuery
                 uid,
                 game_config_id,
                 score_current,
-                highest_score,
+                score_highest,
                 play_count,
                 question_id_order_json,
                 question_id_order_index_current,
@@ -42,7 +42,7 @@ class UserProgressStateQuery
     }
 
     //now select queries simialr to others
-    public function getSelectUserProgressStateFromUidAndGameConfigIdSqlQuery():string
+    public function getSelectUserProgressStateFromUidAndGameConfigIdSqlQuery(): string
     {
         return '
             SELECT
@@ -50,7 +50,7 @@ class UserProgressStateQuery
                 uid,
                 game_config_id,
                 score_current,
-                highest_score,
+                score_highest,
                 play_count,
                 question_id_order_json,
                 question_id_order_index_current,
@@ -62,7 +62,7 @@ class UserProgressStateQuery
         ';
     }
 
-    public function getSelectUserProgressStatesFromUidSqlQuery():string
+    public function getSelectUserProgressStatesFromUidSqlQuery(): string
     {
         return '
             SELECT
@@ -70,7 +70,7 @@ class UserProgressStateQuery
                 uid,
                 game_config_id,
                 score_current,
-                highest_score,
+                score_highest,
                 play_count,
                 question_id_order_json,
                 question_id_order_index_current,
@@ -83,13 +83,13 @@ class UserProgressStateQuery
     }
 
     //make an update query now
-    public function getUpdateUserProgressStateSqlQuery():string
+    public function getUpdateUserProgressStateSqlQuery(): string
     {
         return '
             UPDATE user_progress_states
             SET
                 score_current=?,
-                highest_score=?,
+                score_highest=?,
                 play_count=?,
                 question_id_order_json=?,
                 question_id_order_index_current=?,
@@ -98,13 +98,13 @@ class UserProgressStateQuery
         ';
     }
 
-    public function getResetUserProgressStateSqlQuery():string
+    public function getResetUserProgressStateSqlQuery(): string
     {
         return '
             UPDATE user_progress_states
             SET
                 score_current=?,
-                highest_score=?,
+                score_highest=?,
                 play_count=?,
                 question_id_order_json=?,
                 question_id_order_index_current=?,
@@ -114,7 +114,7 @@ class UserProgressStateQuery
     }
 
     //delete query too since if to delete it if over
-    public function getDeleteUserProgressStateFromUidAndGameConfigIdSqlQuery():string
+    public function getDeleteUserProgressStateFromUidAndGameConfigIdSqlQuery(): string
     {
         return '
             DELETE FROM user_progress_states
