@@ -32,11 +32,13 @@ All APIs are under `v1/`:
 - `v1/quizLoad.php`
 - `v1/quizSubmit.php`
 - `v1/quizResultShow.php`
+- `v1/quizReset.php`
 - `v1/questionAdd.php`
 - `v1/questionSetCreate.php`
 - `v1/questionSetEdit.php`
 - `v1/questionShow.php`
 - `v1/questionSetShow.php`
+- `v1/questionSetShowToUser.php`
 
 All APIs live under the versioned path:
 
@@ -46,9 +48,10 @@ All APIs live under the versioned path:
 
 ## Design guideline
 
-API files should **not** contain core business logic.
+API files should not contain core business logic.
 
 They should mainly coordinate:
+
 - input reading
 - boundary checks
 - service delegation
@@ -70,18 +73,40 @@ authenticate
 ## Role behavior in this project
 
 ### Public APIs
+
 - guest login
 - registered login
 - register user
 
 ### Guest/User/Admin APIs
-- quiz load
-- quiz submit
-- quiz result show
+
+- quiz load  
+  (now loads quiz for a specific `uid + gameConfigId`, and can create first progress row if none exists)
+
+- quiz submit  
+  (now submits answer for a specific `uid + gameConfigId`)
+
+- quiz result show  
+  (now returns result for a specific `uid + gameConfigId`)
+
+- quiz reset  
+  (resets one user’s progress for one config, preserves highest score, increments play count)
+
+- question set show to user  
+  (returns all active configs with user-specific summary like highest score, play count, status)
 
 ### Admin-only APIs
+
 - question add
-- question set create (final contract: no raw secret key, derives question count from selection, supports `makeActive`)
-- question set edit (final contract: edit by config id, preserves secret key, supports `makeActive`)
-- question show (paginated question browser with answer options, cursor-based, limit 1–20)
-- question set show (paginated config browser, cursor-based, limit 1–20)
+
+- question set create  
+  (final contract: no raw secret key, derives question count from selection, supports `makeActive`)
+
+- question set edit  
+  (final contract: edit by config id, preserves secret key, supports `makeActive`)
+
+- question show  
+  (paginated question browser with answer options, cursor-based, limit `1–5`)
+
+- question set show  
+  (paginated config browser, cursor-based, limit `1–5`)

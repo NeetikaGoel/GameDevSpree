@@ -67,11 +67,25 @@ class GameConfigRepository
 
         $gameConfig=$ormManager->ormManageForOneRow($sql,'',[],$gameConfigMapper);
 
-        if (!$gameConfig instanceof GameConfig) {
+        if (!$gameConfig instanceof GameConfig) 
+        {
             return null;
         }
 
         return $gameConfig;
+    }
+
+    ///new function now for this
+
+    public function getAllActiveGameConfigs(): array
+    {
+        $gameConfigQuery=new GameConfigQuery();
+        $gameConfigMapper=new GameConfigMapper();
+        $ormManager=new OrmManager();
+
+        $sql=$gameConfigQuery->getSelectAllActiveGameConfigsSqlQuery();
+
+        return $ormManager->ormManage($sql,$gameConfigMapper);
     }
 
     public function getAllGameConfigs(): array
@@ -87,7 +101,8 @@ class GameConfigRepository
 
     public function getGameConfigsPageAfterId(int $cursor,int $limit): array
     {
-        if ($cursor < 0 || $limit<=0) {
+        if ($cursor<0 || $limit<=0) 
+        {
             return [];
         }
 
@@ -133,20 +148,22 @@ class GameConfigRepository
                 $questionCountTarget,
                 $questionIdListAllowedJson,
                 $secretKey,
-                $isActive?1:0
+                $isActive ? 1 : 0
             ]
         );
     }
 
     public function updateGameConfigFromId(int $gameConfigId,string $gameConfigName,int $questionCountTarget,array $questionIdListAllowed,bool $isActive): void
     {
-        if ($gameConfigId<=0 || $gameConfigName==='' || $questionCountTarget<=0 || count($questionIdListAllowed)===0) {
+        if ($gameConfigId<=0 || $gameConfigName==='' || $questionCountTarget<=0 || count($questionIdListAllowed)===0) 
+        {
             return;
         }
 
         $questionIdListAllowedJson=json_encode(array_map('intval',$questionIdListAllowed));
 
-        if ($questionIdListAllowedJson===false) {
+        if ($questionIdListAllowedJson===false) 
+        {
             return;
         }
 
@@ -162,7 +179,7 @@ class GameConfigRepository
                 $gameConfigName,
                 $questionCountTarget,
                 $questionIdListAllowedJson,
-                $isActive?1:0,
+                $isActive ? 1 : 0,
                 $gameConfigId
             ]
         );

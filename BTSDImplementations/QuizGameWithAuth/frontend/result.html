@@ -45,12 +45,23 @@
                     <section class="result-hero-panel">
                         <p class="hero-kicker">MISSION COMPLETE</p>
                         <h2 class="hero-title">Quiz Finished</h2>
+                        <p id="quiz-result-game-config-name" class="page-inline-message">Loading question set...</p>
                         <p id="quiz-result-text" class="result-highlight-text">Loading result...</p>
 
                         <div class="result-stats-grid">
                             <div class="result-stat-card">
                                 <span class="result-stat-label">Score</span>
                                 <span class="result-stat-value" id="quiz-result-score">0</span>
+                            </div>
+
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Highest Score</span>
+                                <span class="result-stat-value" id="quiz-result-score-highest">0</span>
+                            </div>
+
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Play Count</span>
+                                <span class="result-stat-value" id="quiz-result-play-count">0</span>
                             </div>
 
                             <div class="result-stat-card">
@@ -78,8 +89,9 @@
                         </div>
 
                         <div class="next-button-container hero-button-row">
-                            <a href="index.html">
-                                <button type="button">Play Again</button>
+                            <button type="button" id="quiz-result-play-again-button">Play Again</button>
+                            <a href="questionSetShowToUser.html">
+                                <button type="button">Back To Question Sets</button>
                             </a>
                         </div>
                     </section>

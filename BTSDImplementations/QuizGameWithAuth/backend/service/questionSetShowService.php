@@ -25,7 +25,8 @@ class QuestionSetShowService
 
         $gameConfigsResponse = [];
 
-        foreach ($gameConfigListCurrent as $gameConfigCurrent) {
+        foreach ($gameConfigListCurrent as $gameConfigCurrent) 
+        {
             $gameConfigsResponse[] = [
                 'id' => $gameConfigCurrent->getId(),
                 'gameConfigName' => $gameConfigCurrent->getGameConfigName(),

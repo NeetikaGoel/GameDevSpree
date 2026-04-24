@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/../../backend/entity/userProgressState.php';
@@ -22,68 +23,87 @@ use Database\Query\UserProgressStateQuery;
 //lets start
 class UserProgressStateRepository
 {
-    public function createUserProgressState(int $uid,array $questionIdOrder):int
+    public function createUserProgressState(int $uid,int $gameConfigId,array $questionIdOrder): int
     {
-        if ($uid<=0)
-            {
-                return 0;
-            }
+        if ($uid<=0) {
+            return 0;
+        }
 
-        if (!isset($questionIdOrder[0]))
-            {
-                return 0;
-            }
+        if ($gameConfigId<=0) {
+            return 0;
+        }
+
+        if (!isset($questionIdOrder[0])) {
+            return 0;
+        }
 
         $userProgressStateQuery=new UserProgressStateQuery();
         $ormManager=new OrmManager();
 
         $scoreCurrent=0;
-        $questionsDone=0;
+        $highestScore=0;
+        $playCount=1;
         $questionIdOrderJson=json_encode($questionIdOrder); //might give error wait check needed
         $questionIdOrderIndexCurrent=0;
-        $questionIdCurrent=(int)$questionIdOrder[0];
-        $isComplete=false;
-        $createdAt=date('Y-m-d H:i:s');
-        $updatedAt=date('Y-m-d H:i:s');
+        $createdAt=date('Y-m-d H:i:s.u');
+        $updatedAt=date('Y-m-d H:i:s.u');
 
-        if ($questionIdOrderJson===false)
-            {
-                return 0;
-            }
+        if ($questionIdOrderJson===false) {
+            return 0;
+        }
 
         $sql=$userProgressStateQuery->getInsertUserProgressStateSqlQuery();
 
         return $ormManager->insertQuery(
             $sql,
-            'iiisiiiss',
+            'iiiiisiss',
             [
                 $uid,
+                $gameConfigId,
                 $scoreCurrent,
-                $questionsDone,
+                $highestScore,
+                $playCount,
                 $questionIdOrderJson,
                 $questionIdOrderIndexCurrent,
-                $questionIdCurrent,
-                $isComplete?1:0,
                 $createdAt,
                 $updatedAt
             ]
         );
     }
 
-    public function getUserProgressStateFromUid(int $uid):?UserProgressState
+    public function getUserProgressStateFromUidAndGameConfigId(int $uid,int $gameConfigId): ?UserProgressState
     {
-        if ($uid<=0)
-            {
-                return null;
-            }
+        if ($uid<=0 || $gameConfigId<=0) {
+            return null;
+        }
 
         $userProgressStateQuery=new UserProgressStateQuery();
         $userProgressStateMapper=new UserProgressStateMapper();
         $ormManager=new OrmManager();
 
-        $sql=$userProgressStateQuery->getSelectUserProgressStateFromUidSqlQuery();
+        $sql=$userProgressStateQuery->getSelectUserProgressStateFromUidAndGameConfigIdSqlQuery();
 
         return $ormManager->ormManageForOneRow(
+            $sql,
+            'ii',
+            [$uid,$gameConfigId],
+            $userProgressStateMapper
+        );
+    }
+
+    public function getUserProgressStatesFromUid(int $uid): array
+    {
+        if ($uid<=0) {
+            return [];
+        }
+
+        $userProgressStateQuery=new UserProgressStateQuery();
+        $userProgressStateMapper=new UserProgressStateMapper();
+        $ormManager=new OrmManager();
+
+        $sql=$userProgressStateQuery->getSelectUserProgressStatesFromUidSqlQuery();
+
+        return $ormManager->ormManageWithParams(
             $sql,
             'i',
             [$uid],
@@ -91,97 +111,93 @@ class UserProgressStateRepository
         );
     }
 
-    public function updateUserProgressState(int $uid,int $scoreCurrent,int $questionsDone,array $questionIdOrder,int $questionIdOrderIndexCurrent,int $questionIdCurrent,bool $isComplete):void
+    public function updateUserProgressState(int $uid,int $gameConfigId,int $scoreCurrent,int $highestScore,int $playCount,array $questionIdOrder,int $questionIdOrderIndexCurrent): void
     {
-        if ($uid<=0)
-            {
-                return;
-            }
+        if ($uid<=0 || $gameConfigId<=0) {
+            return;
+        }
 
         $questionIdOrderJson=json_encode($questionIdOrder); //might give error again
 
-        if ($questionIdOrderJson===false)
-            {
-                return;
-            }
+        if ($questionIdOrderJson===false) {
+            return;
+        }
 
         $userProgressStateQuery=new UserProgressStateQuery();
         $ormManager=new OrmManager();
 
-        $updatedAt=date('Y-m-d H:i:s');
+        $updatedAt=date('Y-m-d H:i:s.u');
         $sql=$userProgressStateQuery->getUpdateUserProgressStateSqlQuery();
 
         $ormManager->runQuery(
             $sql,
-            'iisiiisi',
+            'iiisisii',
             [
                 $scoreCurrent,
-                $questionsDone,
+                $highestScore,
+                $playCount,
                 $questionIdOrderJson,
                 $questionIdOrderIndexCurrent,
-                $questionIdCurrent,
-                $isComplete?1:0,
                 $updatedAt,
-                $uid
+                $uid,
+                $gameConfigId
             ]
         );
     }
 
-    public function markUserProgressStateComplete(int $uid,int $scoreCurrent,int $questionsDone,array $questionIdOrder,int $questionIdOrderIndexCurrent,int $questionIdCurrent):void
+    public function resetUserProgressState(int $uid,int $gameConfigId,int $highestScore,int $playCount,array $questionIdOrder): void
     {
-        if ($uid<=0)
-            {
-                return;
-            }
+        if ($uid<=0 || $gameConfigId<=0) {
+            return;
+        }
 
         $questionIdOrderJson=json_encode($questionIdOrder);
 
-        if ($questionIdOrderJson===false)
-            {
-                return;
-            }
+        if ($questionIdOrderJson===false) 
+        {
+            return;
+        }
 
         $userProgressStateQuery=new UserProgressStateQuery();
         $ormManager=new OrmManager();
 
-        //now mark it true 
-        $isComplete=true; 
-        $updatedAt=date('Y-m-d H:i:s');
-        $sql=$userProgressStateQuery->getMarkUserProgressStateCompleteSqlQuery();
+        $scoreCurrent=0;
+        $questionIdOrderIndexCurrent=0;
+        $updatedAt=date('Y-m-d H:i:s.u');
+        $sql=$userProgressStateQuery->getResetUserProgressStateSqlQuery();
 
         $ormManager->runQuery(
             $sql,
-            'iisiiisi',
+            'iiisisii',
             [
                 $scoreCurrent,
-                $questionsDone,
+                $highestScore,
+                $playCount,
                 $questionIdOrderJson,
                 $questionIdOrderIndexCurrent,
-                $questionIdCurrent,
-                $isComplete?1:0,
                 $updatedAt,
-                $uid
+                $uid,
+                $gameConfigId
             ]
         );
     }
 
-    public function deleteUserProgressStateFromUid(int $uid):void
+    public function deleteUserProgressStateFromUidAndGameConfigId(int $uid,int $gameConfigId): void
     {
-        if ($uid<=0)
-            {
-                return;
-            }
+        if ($uid<=0 || $gameConfigId<=0) 
+        {
+            return;
+        }
 
         $userProgressStateQuery=new UserProgressStateQuery();
         $ormManager=new OrmManager();
 
-        $sql=$userProgressStateQuery->getDeleteUserProgressStateFromUidSqlQuery();
+        $sql=$userProgressStateQuery->getDeleteUserProgressStateFromUidAndGameConfigIdSqlQuery();
 
         $ormManager->runQuery(
             $sql,
-            'i',
-            [$uid]
+            'ii',
+            [$uid,$gameConfigId]
         );
     }
 }
-?>

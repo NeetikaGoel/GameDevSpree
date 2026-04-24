@@ -1790,3 +1790,182 @@ select option {
         line-height: 1.6;
     }
 }
+
+
+
+.question-set-user-dashboard-card {
+    width: 100%;
+    max-width: 76rem;
+    margin: 0 auto;
+}
+
+.question-set-user-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.question-set-user-card {
+    width: 100%;
+    min-width: 0;
+    padding: 22px 24px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(244, 179, 66, 0.14);
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.question-set-user-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(244, 179, 66, 0.3);
+    background: rgba(143, 1, 119, 0.18);
+}
+
+.question-set-user-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.question-set-user-card-title {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+.question-set-user-card-meta {
+    font-size: 0.84rem;
+    line-height: 1.6;
+    color: rgba(247, 241, 255, 0.68);
+    word-break: break-word;
+}
+
+.question-set-user-card-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(244, 179, 66, 0.14);
+    border: 1px solid rgba(244, 179, 66, 0.18);
+    color: #ffd88c;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    line-height: 1.2;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.question-set-user-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.question-set-user-stat-card {
+    padding: 14px 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(244, 179, 66, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.question-set-user-stat-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    color: rgba(247, 241, 255, 0.66);
+}
+
+.question-set-user-stat-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.question-set-user-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.question-set-user-action-row button {
+    min-width: 9rem;
+    height: 2.55rem;
+    padding: 0 18px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #F4B342, #DE1A58);
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.86rem;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(222, 26, 88, 0.28);
+}
+
+.question-set-user-action-row button:hover {
+    background: linear-gradient(135deg, #ffd06b, #f12f74);
+    box-shadow: 0 6px 20px rgba(222, 26, 88, 0.42);
+    transform: translateY(-1px);
+}
+
+.quiz-status-grid-three {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+    .question-set-user-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quiz-status-grid-three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .question-set-user-card {
+        padding: 16px;
+    }
+
+    .question-set-user-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .question-set-user-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .question-set-user-action-row button {
+        width: 100%;
+    }
+
+    .quiz-status-grid-three {
+        grid-template-columns: 1fr;
+    }
+}

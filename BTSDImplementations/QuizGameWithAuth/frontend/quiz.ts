@@ -10,6 +10,7 @@ import {
 const quizApiLoadUrl="../backend/api/v1/quizLoad.php";
 const quizApiSubmitUrl="../backend/api/v1/quizSubmit.php";
 const quizApiResultUrl="../backend/api/v1/quizResultShow.php";
+const quizApiResetUrl="../backend/api/v1/quizReset.php";
 
 
 //now type blocks to specify what shape will json come in from backend - helps to understand backend fields that will be returned
@@ -23,7 +24,11 @@ type QuizAnswerOption=
 type QuizResponseLoad=
 {
     uid:number;
+    gameConfigId:number;
+    gameConfigName:string;
     score:number;
+    scoreHighest:number;
+    playCount:number;
     questionsDone:number;
     questionIdCurrent:number;
     questionTextCurrent:string;
@@ -38,7 +43,10 @@ type QuizResponseLoad=
 type QuizResponseSubmit=
 {
     uid:number;
+    gameConfigId:number;
     score:number;
+    scoreHighest:number;
+    playCount:number;
     questionsDone:number;
     questionCountTotal:number;
     isAnswerOptionCorrectForQuestion:boolean;
@@ -52,21 +60,53 @@ type QuizResponseSubmit=
 type QuizResponseResult=
 {
     uid:number;
+    gameConfigId:number;
+    gameConfigName:string;
     score:number;
+    scoreHighest:number;
+    playCount:number;
     questionsDone:number;
     questionCountTotal:number;
     resultText:string;
     scorePercentage:number;
     answerCountWrong:number;
+    isQuizDone?:boolean;
     error?:string; //still optional not mandatory 
 }
 
+type QuizResponseReset=
+{
+    uid:number;
+    gameConfigId:number;
+    gameConfigName:string;
+    scoreCurrent:number;
+    scoreHighest:number;
+    playCount:number;
+    questionCountTotal:number;
+    isReset:boolean;
+    error?:string;
+}
+
 //COPIED EVEYRHITNG ABOVE FROM THE PHP FILES HEHE
+
+function quizGameConfigIdGetFromUrl():string | null
+{
+    const queryParamCurrent=new URLSearchParams(window.location.search);
+    const gameConfigId=queryParamCurrent.get("gameConfigId");
+
+    if (!gameConfigId || gameConfigId.trim()==="")
+        {
+            return null;
+        }
+
+    return gameConfigId;
+}
 
 //NOW FUNCTION TO CALL BACKEND AND UPDATE FRONTEND WITH CURRENT QUESTION AND ANSWER OPTIONS
 async function quizQuestionCurrentLoad():Promise<void> //RETURN PROMISE VOID BECOZ ASYNC FUNCTION ALWAYS RETURNS PROMISE AND WE DONT WANT TO RETURN ANY VALUE SO VOID, NOW PROMISE IS USED WHEN FUNC IS ASYNC
 {
     const uidCurrent=authUidGet();
+    const gameConfigIdCurrent=quizGameConfigIdGetFromUrl();
 
     if (!uidCurrent)
         {
@@ -74,8 +114,18 @@ async function quizQuestionCurrentLoad():Promise<void> //RETURN PROMISE VOID BEC
             return;
         }
 
+    if (!gameConfigIdCurrent)
+        {
+            window.location.href="questionSetShowToUser.html";
+            return;
+        }
+
     const response=await fetch(
-        quizApiLoadUrl + "?uid=" + encodeURIComponent(uidCurrent),
+        quizApiLoadUrl +
+        "?uid=" +
+        encodeURIComponent(uidCurrent) +
+        "&gameConfigId=" +
+        encodeURIComponent(gameConfigIdCurrent),
         {
             method:"GET"
         }
@@ -102,29 +152,35 @@ async function quizQuestionCurrentLoad():Promise<void> //RETURN PROMISE VOID BEC
             return;
         }
 
-    //if backend says quiz is done then we need to go to result page
+    //if backend says quiz is done then we need to go to result page with same config id
     if (quizResponseLoad.isQuizDone===true)
         {
-            window.location.href="result.html";
+            window.location.href="result.html?gameConfigId=" + encodeURIComponent(String(quizResponseLoad.gameConfigId));
             return;
         }
 
     //taking references from html page to fill in values
     const quizScoreCurrentElement=document.getElementById("quiz-score-current");
+    const quizScoreHighestElement=document.getElementById("quiz-score-highest");
+    const quizPlayCountElement=document.getElementById("quiz-play-count");
     const quizQuestionCountTotalElement=document.getElementById("quiz-question-count-total");
     const quizQuestionCountTotalSecondElement=document.getElementById("quiz-question-count-total-second");
     const quizQuestionIdCurrentElement=document.getElementById("quiz-question-id-current");
     const quizQuestionTextCurrentElement=document.getElementById("quiz-question-text-current");
     const quizAnswerOptionsContainerElement=document.getElementById("quiz-answer-options-container");
+    const quizGameConfigNameTextElement=document.getElementById("quiz-game-config-name-text");
 
     if 
     (
         !quizScoreCurrentElement ||
+        !quizScoreHighestElement ||
+        !quizPlayCountElement ||
         !quizQuestionCountTotalElement ||
         !quizQuestionCountTotalSecondElement ||
         !quizQuestionIdCurrentElement ||
         !quizQuestionTextCurrentElement ||
-        !quizAnswerOptionsContainerElement
+        !quizAnswerOptionsContainerElement ||
+        !quizGameConfigNameTextElement
     ) 
     {
         return;
@@ -132,10 +188,13 @@ async function quizQuestionCurrentLoad():Promise<void> //RETURN PROMISE VOID BEC
 
     //now fill in values in html elements
     quizScoreCurrentElement.textContent=String(quizResponseLoad.score);
+    quizScoreHighestElement.textContent=String(quizResponseLoad.scoreHighest);
+    quizPlayCountElement.textContent=String(quizResponseLoad.playCount);
     quizQuestionCountTotalElement.textContent=String(quizResponseLoad.questionCountTotal);
     quizQuestionCountTotalSecondElement.textContent=String(quizResponseLoad.questionCountTotal);
     quizQuestionIdCurrentElement.textContent=String(quizResponseLoad.questionsDone+1);
     quizQuestionTextCurrentElement.textContent=quizResponseLoad.questionTextCurrent;
+    quizGameConfigNameTextElement.textContent="Playing: " + quizResponseLoad.gameConfigName;
 
     //now update answer so first clear existing
     quizAnswerOptionsContainerElement.innerHTML="";
@@ -169,6 +228,7 @@ async function quizQuestionCurrentLoad():Promise<void> //RETURN PROMISE VOID BEC
 
     quizAnswerFormElement.dataset.questionIdCurrent=String(quizResponseLoad.questionIdCurrent);
     quizAnswerFormElement.dataset.uid=String(quizResponseLoad.uid);
+    quizAnswerFormElement.dataset.gameConfigId=String(quizResponseLoad.gameConfigId);
 }
 
 //was answer correct???
@@ -186,9 +246,10 @@ async function quizAnswerCorrectSubmit(event:Event): Promise<void>
         }
 
     const uidCurrent=quizAnswerFormElement.dataset.uid;
+    const gameConfigIdCurrent=quizAnswerFormElement.dataset.gameConfigId;
     const quizSelectedAnswerOptionElement=document.querySelector('input[name="answerOptionId"]:checked') as HTMLInputElement | null; //will find selected radio option
 
-    if (!uidCurrent || !quizSelectedAnswerOptionElement) 
+    if (!uidCurrent || !gameConfigIdCurrent || !quizSelectedAnswerOptionElement) 
         {
             quizMessageTextElement.textContent="Please select an answer option.";
             return;
@@ -196,6 +257,7 @@ async function quizAnswerCorrectSubmit(event:Event): Promise<void>
 
     const quizFormData=new FormData();
     quizFormData.append("uid",uidCurrent);
+    quizFormData.append("gameConfigId",gameConfigIdCurrent);
     quizFormData.append("answerOptionId",quizSelectedAnswerOptionElement.value);
     
     //now have to call backend submit endpoint
@@ -226,7 +288,7 @@ async function quizAnswerCorrectSubmit(event:Event): Promise<void>
     //if backend says quiz is over then we neeed to go to the results.html
     if (quizSubmitResponse.isQuizDone===true) 
         {
-            window.location.href="result.html";
+            window.location.href="result.html?gameConfigId=" + encodeURIComponent(String(quizSubmitResponse.gameConfigId));
             return;
         }
 
@@ -237,6 +299,7 @@ async function quizAnswerCorrectSubmit(event:Event): Promise<void>
 async function quizResultLoad():Promise<void> 
 {
     const uidCurrent=authUidGet();
+    const gameConfigIdCurrent=quizGameConfigIdGetFromUrl();
 
     if (!uidCurrent)
         {
@@ -250,8 +313,18 @@ async function quizResultLoad():Promise<void>
             return;
         }
 
+    if (!gameConfigIdCurrent)
+        {
+            window.location.href="questionSetShowToUser.html";
+            return;
+        }
+
     const response=await fetch(
-        quizApiResultUrl + "?uid=" + encodeURIComponent(uidCurrent),
+        quizApiResultUrl +
+        "?uid=" +
+        encodeURIComponent(uidCurrent) +
+        "&gameConfigId=" +
+        encodeURIComponent(gameConfigIdCurrent),
         {
             method:"GET"
         }
@@ -260,20 +333,26 @@ async function quizResultLoad():Promise<void>
     const quizResultResponse:QuizResponseResult=await response.json();
 
     const quizResultScoreElement=document.getElementById("quiz-result-score");
+    const quizResultScoreHighestElement=document.getElementById("quiz-result-score-highest");
+    const quizResultPlayCountElement=document.getElementById("quiz-result-play-count");
     const quizResultQuestionsDoneElement=document.getElementById("quiz-result-questions-done");
     const quizResultQuestionCountTotalElement=document.getElementById("quiz-result-question-count-total");
     const quizResultAnswerCountWrongElement=document.getElementById("quiz-result-answer-count-wrong");
     const quizResultScorePercentageElement=document.getElementById("quiz-result-score-percentage");
     const quizResultTextElement=document.getElementById("quiz-result-text");
+    const quizResultGameConfigNameElement=document.getElementById("quiz-result-game-config-name");
 
     if 
     (
         !quizResultScoreElement ||
+        !quizResultScoreHighestElement ||
+        !quizResultPlayCountElement ||
         !quizResultQuestionsDoneElement ||
         !quizResultQuestionCountTotalElement ||
         !quizResultAnswerCountWrongElement ||
         !quizResultScorePercentageElement ||
-        !quizResultTextElement
+        !quizResultTextElement ||
+        !quizResultGameConfigNameElement
     ) 
     {
         return;
@@ -286,11 +365,58 @@ async function quizResultLoad():Promise<void>
         }
 
     quizResultScoreElement.textContent=String(quizResultResponse.score);
+    quizResultScoreHighestElement.textContent=String(quizResultResponse.scoreHighest);
+    quizResultPlayCountElement.textContent=String(quizResultResponse.playCount);
     quizResultQuestionsDoneElement.textContent=String(quizResultResponse.questionsDone);
     quizResultQuestionCountTotalElement.textContent=String(quizResultResponse.questionCountTotal);
     quizResultAnswerCountWrongElement.textContent=String(quizResultResponse.answerCountWrong);
     quizResultScorePercentageElement.textContent=String(quizResultResponse.scorePercentage);
     quizResultTextElement.textContent=quizResultResponse.resultText;
+    quizResultGameConfigNameElement.textContent="Question Set: " + quizResultResponse.gameConfigName;
+}
+
+async function quizResultPlayAgainSubmit():Promise<void>
+{
+    const uidCurrent=authUidGet();
+    const gameConfigIdCurrent=quizGameConfigIdGetFromUrl();
+    const quizResultTextElement=document.getElementById("quiz-result-text");
+
+    if (!uidCurrent || !gameConfigIdCurrent)
+        {
+            window.location.href="questionSetShowToUser.html";
+            return;
+        }
+
+    if (quizResultTextElement)
+        {
+            quizResultTextElement.textContent="Resetting question set...";
+        }
+
+    const quizResetFormData=new FormData();
+    quizResetFormData.append("uid",uidCurrent);
+    quizResetFormData.append("gameConfigId",gameConfigIdCurrent);
+
+    const response=await fetch(
+        quizApiResetUrl,
+        {
+            method:"POST",
+            body:quizResetFormData
+        }
+    );
+
+    const quizResetResponse:QuizResponseReset=await response.json();
+
+    if (quizResetResponse.error)
+        {
+            if (quizResultTextElement)
+                {
+                    quizResultTextElement.textContent=quizResetResponse.error;
+                }
+
+            return;
+        }
+
+    window.location.href="questionSetShowToUser.html";
 }
 
 //this will detect which page is currently open
@@ -321,10 +447,18 @@ function quizPageInitialize():void
         }
 
     const quizResultScoreElement=document.getElementById("quiz-result-score");
+    const quizResultPlayAgainButtonElement=document.getElementById("quiz-result-play-again-button");
 
     if (quizResultScoreElement)
         {
             quizResultLoad();  //naming followed
+        }
+
+    if (quizResultPlayAgainButtonElement)
+        {
+            quizResultPlayAgainButtonElement.addEventListener("click",() => {
+                quizResultPlayAgainSubmit();
+            });
         }
 }
 

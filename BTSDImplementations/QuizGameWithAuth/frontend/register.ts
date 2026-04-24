@@ -5,7 +5,8 @@ import {
     authUserSessionClear,
     authUidGet,
     authLoginTypeGet,
-    authNavbarUpdate
+    authNavbarUpdate,
+    authUserQuestionSetPageRedirect
 } from "./auth.js";
 
 const registerUserApiUrl="../backend/api/v1/registerUser.php";
@@ -48,7 +49,7 @@ async function registerGuestLoginSubmit():Promise<void>
 
     if (uidCurrent && loginTypeCurrent==="guest")
         {
-            window.location.href="quiz.html";
+            authUserQuestionSetPageRedirect();
             return;
         }
 
@@ -77,7 +78,7 @@ async function registerGuestLoginSubmit():Promise<void>
         loginGuestResponse.permissionGroup
     );
 
-    window.location.href="quiz.html";
+    authUserQuestionSetPageRedirect();
 }
 
 async function registerUserSubmit(event:Event):Promise<void>
@@ -139,7 +140,7 @@ async function registerUserSubmit(event:Event):Promise<void>
         registerUserResponse.email
     );
 
-    window.location.href="quiz.html";
+    authUserQuestionSetPageRedirect();
 }
 
 function registerPageInitialize():void

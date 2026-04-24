@@ -9,7 +9,7 @@ require_once __DIR__ . '/../entity/quiz.php';
 
 require_once __DIR__ . '/../../database/repository/userProgressStateRepository.php';
 
-//so now this should do follwoign::
+//so now this should do following::
 
 // get quiz progress state
 // validate quiz state is consistent or not
@@ -24,134 +24,165 @@ require_once __DIR__ . '/../../database/repository/userProgressStateRepository.p
 
 class QuizSubmitService
 {
-    //this will take uid and ans op id too from user as input and then it will return data that will help in showing next question or result on frontend
-    public function quizSubmitService(int $uid, int $answerOptionIdByUser):array
+    //this helper will decide completion using derived logic only
+    private function getIsQuizComplete(array $questionIdOrder, int $questionIdOrderIndexCurrent): bool
     {
-        $userProgressStateRepository=new UserProgressStateRepository();
-        $userProgressState=$userProgressStateRepository->getUserProgressStateFromUid($uid);
+        $questionCountTotal = count($questionIdOrder);
 
-        if ($userProgressState===null)
-            {
-                throw new RuntimeException('User progress state not found!!');
-            }
+        if ($questionIdOrderIndexCurrent >= $questionCountTotal) {
+            return true;
+        }
 
-        $questionIdOrder=$userProgressState->getQuestionIdOrder();
-        $questionIdOrderIndexCurrent=$userProgressState->getQuestionIdOrderIndexCurrent();
-        $questionIdCurrent=$userProgressState->getQuestionIdCurrent();
+        return false;
+    }
 
-        if (!is_array($questionIdOrder))
-            {
-                throw new RuntimeException('User progress state question order is invalid!!');
-            }
+    //this will take uid and ans op id too from user as input and then it will return data that will help in showing next question or result on frontend
+    public function quizSubmitService(int $uid, int $gameConfigId, int $answerOptionIdByUser): array
+    {
+        //uid must be valid
+        if ($uid <= 0) {
+            throw new InvalidArgumentException('Invalid uid for quiz submit!!');
+        }
 
-        if ($questionIdOrderIndexCurrent<0)
-            {
-                throw new RuntimeException('User progress state current index is invalid!!');
-            }
+        //config id must be valid because submit is now per config
+        if ($gameConfigId <= 0) {
+            throw new InvalidArgumentException('Invalid gameConfigId for quiz submit!!');
+        }
 
-        if (!isset($questionIdOrder[$questionIdOrderIndexCurrent]))
-            {
-                throw new RuntimeException('Current question index is out of bounds!!');
-            }
+        //answer option id must be valid too
+        if ($answerOptionIdByUser <= 0) {
+            throw new InvalidArgumentException('Invalid answerOptionId for quiz submit!!');
+        }
 
-        if (!is_numeric($questionIdOrder[$questionIdOrderIndexCurrent]))
-            {
-                throw new RuntimeException('Current question id in order is invalid!!');
-            }
+        $userProgressStateRepository = new UserProgressStateRepository();
 
-        if ((int)$questionIdOrder[$questionIdOrderIndexCurrent]!==$questionIdCurrent)
-            {
-                throw new RuntimeException('User progress state current question state is inconsistent!!');
-            }
+        //load exact progress row for this user+config pair
+        $userProgressState = $userProgressStateRepository->getUserProgressStateFromUidAndGameConfigId($uid, $gameConfigId);
 
-        if ($userProgressState->getIsComplete()===true)
-            {
-                throw new RuntimeException('User progress state is already complete!!');
-            }
+        if ($userProgressState === null) {
+            throw new RuntimeException('User progress state not found!!');
+        }
 
-        $quiz=new Quiz($questionIdOrder);
+        $questionIdOrder = $userProgressState->getQuestionIdOrder();
+        $questionIdOrderIndexCurrent = $userProgressState->getQuestionIdOrderIndexCurrent();
 
-        $questionCurrent=$quiz->getQuestionFromId($questionIdCurrent);
-        $answerOptionCurrent=$quiz->getAnswerOptionFromId($answerOptionIdByUser);
+        if (!is_array($questionIdOrder)) {
+            throw new RuntimeException('User progress state question order is invalid!!');
+        }
 
-        if ($questionCurrent->getId()<=0 || $answerOptionCurrent->getId()<=0)
-            {
-                throw new RuntimeException('Question or answer option not found!!');
-            }
+        if ($questionIdOrderIndexCurrent < 0) {
+            throw new RuntimeException('User progress state current index is invalid!!');
+        }
 
-        if ($answerOptionCurrent->getQuestionId()!==$questionIdCurrent)
-            {
-                throw new InvalidArgumentException('Answer option does not belong to current question!!');
-            }
+        //if already complete, submit should not proceed
+        if ($this->getIsQuizComplete($questionIdOrder, $questionIdOrderIndexCurrent) === true) {
+            throw new RuntimeException('User progress state is already complete!!');
+        }
 
-        $isAnswerOptionCorrectForQuestion=false;
-        $scoreCurrent=$userProgressState->getScoreCurrent();
-        $questionsDone=$userProgressState->getQuestionsDone();
+        if (!isset($questionIdOrder[$questionIdOrderIndexCurrent])) {
+            throw new RuntimeException('Current question index is out of bounds!!');
+        }
+
+        if (!is_numeric($questionIdOrder[$questionIdOrderIndexCurrent])) {
+            throw new RuntimeException('Current question id in order is invalid!!');
+        }
+
+        //derive current question id from order array instead of old question_id_current column
+        $questionIdCurrent = (int)$questionIdOrder[$questionIdOrderIndexCurrent];
+
+        $quiz = new Quiz($questionIdOrder);
+
+        $questionCurrent = $quiz->getQuestionFromId($questionIdCurrent);
+        $answerOptionCurrent = $quiz->getAnswerOptionFromId($answerOptionIdByUser);
+
+        if ($questionCurrent->getId() <= 0 || $answerOptionCurrent->getId() <= 0) {
+            throw new RuntimeException('Question or answer option not found!!');
+        }
+
+        if ($answerOptionCurrent->getQuestionId() !== $questionIdCurrent) {
+            throw new InvalidArgumentException('Answer option does not belong to current question!!');
+        }
+
+        $isAnswerOptionCorrectForQuestion = false;
+        $scoreCurrent = $userProgressState->getScoreCurrent();
+        $scoreHighest = $userProgressState->getScoreHighest();
+        $playCount = $userProgressState->getPlayCount();
+        $questionsDone = $questionIdOrderIndexCurrent; //derived questions done before submit
 
         //so if ans op correct, just increment score
-        if ($quiz->isAnswerOptionCorrect($answerOptionCurrent,$questionCurrent)===true)
-            {
-                $isAnswerOptionCorrectForQuestion=true;
-                $scoreCurrent++;
-            }
+        if ($quiz->isAnswerOptionCorrect($answerOptionCurrent, $questionCurrent) === true) {
+            $isAnswerOptionCorrectForQuestion = true;
+            $scoreCurrent++;
+        }
 
-        //increment no of ques done as well
-        $questionsDone++;
-        //take index to next ques
-        $questionIdOrderIndexNext=$questionIdOrderIndexCurrent+1;
+        //increment no of ques done as well by moving current index to next slot
+        $questionIdOrderIndexNext = $questionIdOrderIndexCurrent + 1;
+        $questionsDone = $questionIdOrderIndexNext;
 
-        //if next ques idx is out of bounds
-        if (!isset($questionIdOrder[$questionIdOrderIndexNext]))
-            {
-                //then it means quiz is complete now so mark complete in db and return response accordingly
-                $userProgressStateRepository->markUserProgressStateComplete(
-                    $uid,
-                    $scoreCurrent,
-                    $questionsDone,
-                    $questionIdOrder,
-                    $questionIdOrderIndexCurrent,
-                    $questionIdCurrent
-                );
+        //highest score should be preserved as best ever for same config
+        if ($scoreCurrent > $scoreHighest) {
+            $scoreHighest = $scoreCurrent;
+        }
 
-                return [
-                    'uid'=>$uid,
-                    'score'=>$scoreCurrent,
-                    'questionsDone'=>$questionsDone,
-                    'questionCountTotal'=>count($questionIdOrder),
-                    'isAnswerOptionCorrectForQuestion'=>$isAnswerOptionCorrectForQuestion,
-                    'isQuizDone'=>true,
-                    'resultLink'=>'quizResultShow.php'
-                ];
-            }
+        //if next ques idx is out of bounds then quiz becomes complete now
+        if (!isset($questionIdOrder[$questionIdOrderIndexNext])) {
+            //update same progress row to final completed state
+            //completion is now derived because next index reaches total question count
+            $userProgressStateRepository->updateUserProgressState(
+                $uid,
+                $gameConfigId,
+                $scoreCurrent,
+                $scoreHighest,
+                $playCount,
+                $questionIdOrder,
+                $questionIdOrderIndexNext
+            );
+
+            return [
+                'uid' => $uid,
+                'gameConfigId' => $gameConfigId,
+                'score' => $scoreCurrent,
+                'scoreHighest' => $scoreHighest,
+                'playCount' => $playCount,
+                'questionsDone' => $questionsDone,
+                'questionCountTotal' => count($questionIdOrder),
+                'isAnswerOptionCorrectForQuestion' => $isAnswerOptionCorrectForQuestion,
+                'isQuizDone' => true,
+                //return full link because result api now needs both uid and gameConfigId
+                'resultLink' => 'quizResultShow.php?uid=' . $uid . '&gameConfigId=' . $gameConfigId
+            ];
+        }
 
         //if next ques idx is not out of bounds then also check if the ques id at that idx is valid or not
-        if (!is_numeric($questionIdOrder[$questionIdOrderIndexNext]))
-            {
-                throw new RuntimeException('Next question id is invalid!!');
-            }
+        if (!is_numeric($questionIdOrder[$questionIdOrderIndexNext])) {
+            throw new RuntimeException('Next question id is invalid!!');
+        }
 
         //if everything is fine then move to next ques by updating user progress state in db
-        $questionIdNext=(int)$questionIdOrder[$questionIdOrderIndexNext];
+        $questionIdNext = (int)$questionIdOrder[$questionIdOrderIndexNext];
 
-        //udpate user progress state with new progress
+        //update user progress state with new progress
         $userProgressStateRepository->updateUserProgressState(
             $uid,
+            $gameConfigId,
             $scoreCurrent,
-            $questionsDone,
+            $scoreHighest,
+            $playCount,
             $questionIdOrder,
-            $questionIdOrderIndexNext,
-            $questionIdNext,
-            false
+            $questionIdOrderIndexNext
         );
 
         return [
-            'uid'=>$uid,
-            'score'=>$scoreCurrent,
-            'questionsDone'=>$questionsDone,
-            'questionCountTotal'=>count($questionIdOrder),
-            'isAnswerOptionCorrectForQuestion'=>$isAnswerOptionCorrectForQuestion,
-            'isQuizDone'=>false,
-            'questionIdNext'=>$questionIdNext
+            'uid' => $uid,
+            'gameConfigId' => $gameConfigId,
+            'score' => $scoreCurrent,
+            'scoreHighest' => $scoreHighest,
+            'playCount' => $playCount,
+            'questionsDone' => $questionsDone,
+            'questionCountTotal' => count($questionIdOrder),
+            'isAnswerOptionCorrectForQuestion' => $isAnswerOptionCorrectForQuestion,
+            'isQuizDone' => false,
+            'questionIdNext' => $questionIdNext
         ];
     }
 }

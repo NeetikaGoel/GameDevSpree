@@ -1,4 +1,4 @@
-import { authUserSessionSave, authUserSessionClear, authUidGet, authLoginTypeGet, authIsLoggedIn, authNavbarUpdate } from "./auth.js";
+import { authUserSessionSave, authUserSessionClear, authUidGet, authLoginTypeGet, authIsLoggedIn, authNavbarUpdate, authUserQuestionSetPageRedirect } from "./auth.js";
 const loginGuestApiUrl = "../backend/api/v1/loginGuest.php";
 const loginUserApiUrl = "../backend/api/v1/loginUser.php";
 function loginMessageTextSet(message) {
@@ -15,7 +15,7 @@ async function loginGuestSubmit() {
     const uidCurrent = authUidGet();
     const loginTypeCurrent = authLoginTypeGet();
     if (uidCurrent && loginTypeCurrent === "guest") {
-        window.location.href = "quiz.html";
+        authUserQuestionSetPageRedirect();
         return;
     }
     loginMessageTextSet("Logging in as guest...");
@@ -29,7 +29,7 @@ async function loginGuestSubmit() {
         return;
     }
     authUserSessionSave(String(loginGuestResponse.uid), loginGuestResponse.userId, loginGuestResponse.loginType, loginGuestResponse.permissionGroup);
-    window.location.href = "quiz.html";
+    authUserQuestionSetPageRedirect();
 }
 async function loginUserSubmit(event) {
     event.preventDefault();
@@ -59,42 +59,17 @@ async function loginUserSubmit(event) {
         return;
     }
     authUserSessionSave(String(loginUserResponse.uid), loginUserResponse.userId, loginUserResponse.loginType, loginUserResponse.permissionGroup, loginUserResponse.name, loginUserResponse.email);
-    window.location.href = "quiz.html";
+    authUserQuestionSetPageRedirect();
 }
 function indexStartQuizSubmit() {
     if (authIsLoggedIn()) {
-        window.location.href = "quiz.html";
+        authUserQuestionSetPageRedirect();
         return;
     }
     window.location.href = "login.html";
 }
-async function loadQuestionCount() {
-    const totalQuestionsCountElement = document.getElementById("total-questions-count");
-    if (!totalQuestionsCountElement) {
-        return;
-    }
-    try {
-        const uid = authUidGet();
-        if (!uid) {
-            totalQuestionsCountElement.textContent = "5";
-            return;
-        }
-        const response = await fetch(`../backend/api/v1/quizLoad.php?uid=${encodeURIComponent(uid)}`);
-        const data = await response.json();
-        if (data.questionCountTotal) {
-            totalQuestionsCountElement.textContent = data.questionCountTotal;
-        }
-        else {
-            totalQuestionsCountElement.textContent = "5";
-        }
-    }
-    catch (error) {
-        totalQuestionsCountElement.textContent = "5";
-    }
-}
 function loginPageInitialize() {
     authNavbarUpdate();
-    loadQuestionCount();
     const guestLoginButtonElement = document.getElementById("guest-login-button");
     const loginUserFormElement = document.getElementById("login-user-form");
     const indexStartQuizButtonElement = document.getElementById("index-start-quiz-button");

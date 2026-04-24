@@ -165,6 +165,12 @@ export function authCurrentUserDisplayTextGet():string
     return "User: " + (userId ?? "");
 }
 
+//this helper will redirect logged in user to main question set dashboard page
+export function authUserQuestionSetPageRedirect():void
+{
+    window.location.href="questionSetShowToUser.html";
+}
+
 //NAVBAR UPDATE FUNCTION
 export function authNavbarUpdate():void
 {

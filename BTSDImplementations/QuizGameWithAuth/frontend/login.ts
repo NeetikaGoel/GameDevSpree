@@ -6,7 +6,8 @@ import {
     authUidGet,
     authLoginTypeGet,
     authIsLoggedIn,
-    authNavbarUpdate
+    authNavbarUpdate,
+    authUserQuestionSetPageRedirect
 } from "./auth.js";
 
 const loginGuestApiUrl="../backend/api/v1/loginGuest.php";
@@ -55,7 +56,7 @@ async function loginGuestSubmit():Promise<void>
 
     if (uidCurrent && loginTypeCurrent==="guest")
         {
-            window.location.href="quiz.html";
+            authUserQuestionSetPageRedirect();
             return;
         }
 
@@ -84,7 +85,7 @@ async function loginGuestSubmit():Promise<void>
         loginGuestResponse.permissionGroup
     );
 
-    window.location.href="quiz.html";
+    authUserQuestionSetPageRedirect();
 }
 
 async function loginUserSubmit(event:Event):Promise<void>
@@ -140,61 +141,23 @@ async function loginUserSubmit(event:Event):Promise<void>
         loginUserResponse.email
     );
 
-    window.location.href="quiz.html";
+    authUserQuestionSetPageRedirect();
 }
 
 function indexStartQuizSubmit():void
 {
     if (authIsLoggedIn())
         {
-            window.location.href="quiz.html";
+            authUserQuestionSetPageRedirect();
             return;
         }
 
     window.location.href="login.html";
 }
 
-async function loadQuestionCount():Promise<void>
-{
-    const totalQuestionsCountElement=document.getElementById("total-questions-count");
-
-    if (!totalQuestionsCountElement)
-        {
-            return;
-        }
-
-    try
-    {
-        const uid=authUidGet();
-
-        if (!uid)
-            {
-                totalQuestionsCountElement.textContent="5";
-                return;
-            }
-
-        const response=await fetch(`../backend/api/v1/quizLoad.php?uid=${encodeURIComponent(uid)}`);
-        const data=await response.json();
-
-        if (data.questionCountTotal)
-            {
-                totalQuestionsCountElement.textContent=data.questionCountTotal;
-            }
-        else
-            {
-                totalQuestionsCountElement.textContent="5";
-            }
-    }
-    catch (error)
-    {
-        totalQuestionsCountElement.textContent="5";
-    }
-}
-
 function loginPageInitialize():void
 {
     authNavbarUpdate();
-    loadQuestionCount();
 
     const guestLoginButtonElement=document.getElementById("guest-login-button");
     const loginUserFormElement=document.getElementById("login-user-form") as HTMLFormElement | null;

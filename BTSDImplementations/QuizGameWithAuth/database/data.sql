@@ -38,23 +38,24 @@ VALUES
 ON DUPLICATE KEY UPDATE
 question_count_target=VALUES(question_count_target),
 question_id_list_allowed_json=VALUES(question_id_list_allowed_json),
-secret_key=VALUES(secret_key);
+secret_key=VALUES(secret_key),
+is_active=VALUES(is_active);
 
 -- USERS
 
 INSERT IGNORE INTO users(uid,user_id,login_type,email,name,password_hash,created_at,updated_at)
-VALUES (1,'user_admin_001','registered','admin1@example.com','AdminABC','$2y$12$vr2hxA8txTiDkURhbAPzEOhDuOrYFXlI6EANiZtB68nThOC8Mjh2y',NOW(),NOW());
+VALUES (1,'user_admin_001','registered','admin1@example.com','AdminABC','$2y$12$vr2hxA8txTiDkURhbAPzEOhDuOrYFXlI6EANiZtB68nThOC8Mjh2y',NOW(3),NOW(3));
 
 UPDATE users
 SET password_hash = '$2y$12$vr2hxA8txTiDkURhbAPzEOhDuOrYFXlI6EANiZtB68nThOC8Mjh2y',
-    updated_at = NOW()
+    updated_at = NOW(3)
 WHERE uid = 1;
 
 INSERT IGNORE INTO user_permissions(id,uid,permission_group,created_at,updated_at)
-VALUES (1,1,'admin',NOW(),NOW());
+VALUES (1,1,'admin',NOW(3),NOW(3));
 
 INSERT IGNORE INTO users(uid,user_id,login_type,email,name,password_hash,created_at,updated_at)
-VALUES (2,'guest_001','guest',NULL,NULL,NULL,NOW(),NOW());
+VALUES (2,'guest_001','guest',NULL,NULL,NULL,NOW(3),NOW(3));
 
 INSERT IGNORE INTO user_permissions(id,uid,permission_group,created_at,updated_at)
-VALUES (2,2,'guest',NOW(),NOW());
+VALUES (2,2,'guest',NOW(3),NOW(3));

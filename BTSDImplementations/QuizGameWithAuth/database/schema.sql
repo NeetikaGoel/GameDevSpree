@@ -69,13 +69,15 @@ CREATE TABLE IF NOT EXISTS user_progress_states
 (
     id INT AUTO_INCREMENT PRIMARY KEY,
     uid INT NOT NULL,
+    game_config_id INT NOT NULL,
     score_current INT NOT NULL,
-    questions_done INT NOT NULL,
+    score_highest INT NOT NULL,
+    play_count INT NOT NULL,
     question_id_order_json TEXT NOT NULL,
     question_id_order_index_current INT NOT NULL,
-    question_id_current INT NOT NULL,
-    is_complete BOOLEAN NOT NULL,
     created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
-    FOREIGN KEY (uid) REFERENCES users(uid)
+    UNIQUE KEY unique_uid_game_config_id (uid, game_config_id),
+    FOREIGN KEY (uid) REFERENCES users(uid),
+    FOREIGN KEY (game_config_id) REFERENCES game_configs(id)
 );

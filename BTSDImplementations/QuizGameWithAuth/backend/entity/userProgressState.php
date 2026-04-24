@@ -8,25 +8,25 @@ class UserProgressState
 {
     private int $id;
     private int $uid;
+    private int $gameConfigId;
     private int $scoreCurrent;
-    private int $questionsDone;
+    private int $scoreHighest;
+    private int $playCount;
     private array $questionIdOrder;
     private int $questionIdOrderIndexCurrent;
-    private int $questionIdCurrent;
-    private bool $isComplete;
     private string $createdAt;
     private string $updatedAt;
 
-    public function __construct(int $id,int $uid,int $scoreCurrent,int $questionsDone,array $questionIdOrder,int $questionIdOrderIndexCurrent,int $questionIdCurrent,bool $isComplete,string $createdAt,string $updatedAt)
+    public function __construct(int $id, int $uid, int $gameConfigId, int $scoreCurrent, int $scoreHighest, int $playCount, array $questionIdOrder, int $questionIdOrderIndexCurrent, string $createdAt, string $updatedAt)
     {
         $this->id=$id;
         $this->uid=$uid;
+        $this->gameConfigId=$gameConfigId;
         $this->scoreCurrent=$scoreCurrent;
-        $this->questionsDone=$questionsDone;
+        $this->scoreHighest=$scoreHighest;
+        $this->playCount=$playCount;
         $this->questionIdOrder=$questionIdOrder;
         $this->questionIdOrderIndexCurrent=$questionIdOrderIndexCurrent;
-        $this->questionIdCurrent=$questionIdCurrent;
-        $this->isComplete=$isComplete;
         $this->createdAt=$createdAt;
         $this->updatedAt=$updatedAt;
     }
@@ -43,14 +43,24 @@ class UserProgressState
         return $this->uid;
     }
 
+    public function getGameConfigId():int
+    {
+        return $this->gameConfigId;
+    }
+
     public function getScoreCurrent():int
     {
         return $this->scoreCurrent;
     }
 
-    public function getQuestionsDone():int
+    public function getScoreHighest():int
     {
-        return $this->questionsDone;
+        return $this->scoreHighest;
+    }
+
+    public function getPlayCount():int
+    {
+        return $this->playCount;
     }
 
     public function getQuestionIdOrder():array
@@ -63,16 +73,6 @@ class UserProgressState
         return $this->questionIdOrderIndexCurrent;
     }
 
-    public function getQuestionIdCurrent():int
-    {
-        return $this->questionIdCurrent;
-    }
-
-    public function getIsComplete():bool
-    {
-        return $this->isComplete;
-    }
-
     public function getCreatedAt():string
     {
         return $this->createdAt;
@@ -83,4 +83,3 @@ class UserProgressState
         return $this->updatedAt;
     }
 }
-?>

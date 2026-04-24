@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-class QuizResultShowParams
+
+
+class QuizResetParams
 {
     public ?int $uid;
     public ?int $gameConfigId;
 
     public function __construct(?int $uid, ?int $gameConfigId)
     {
-        $this->uid = $uid;
-        $this->gameConfigId = $gameConfigId;
+        $this->uid=$uid;
+        $this->gameConfigId=$gameConfigId;
     }
 
     public function getUid(): ?int
@@ -23,3 +25,5 @@ class QuizResultShowParams
         return $this->gameConfigId;
     }
 }
+
+?>

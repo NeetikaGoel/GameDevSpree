@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../database/repository/questionRepository.php';
 
 class QuestionSetEditService
 {
-    //WE WILL COME AFTER SELECTING QUESTION SET HERE HEHE
+    //WE WILL COME AFTER SELECTING QUESTION SET HERE
     public function questionSetEditService(int $gameConfigId, string $gameConfigName, array $questionIdListAllowed, bool $makeActive): array
     {
         $gameConfigRepository = new GameConfigRepository();

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 
@@ -26,37 +27,58 @@ class UserProgressStateQuery
             INSERT INTO user_progress_states
             (
                 uid,
+                game_config_id,
                 score_current,
-                questions_done,
+                highest_score,
+                play_count,
                 question_id_order_json,
                 question_id_order_index_current,
-                question_id_current,
-                is_complete,
                 created_at,
                 updated_at
             )
             VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (?,?,?,?,?,?,?,?,?)
         ';
     }
 
     //now select queries simialr to others
-    public function getSelectUserProgressStateFromUidSqlQuery():string
+    public function getSelectUserProgressStateFromUidAndGameConfigIdSqlQuery():string
     {
         return '
             SELECT
                 id,
                 uid,
+                game_config_id,
                 score_current,
-                questions_done,
+                highest_score,
+                play_count,
                 question_id_order_json,
                 question_id_order_index_current,
-                question_id_current,
-                is_complete,
+                created_at,
+                updated_at
+            FROM user_progress_states
+            WHERE uid=? AND game_config_id=?
+            LIMIT 1
+        ';
+    }
+
+    public function getSelectUserProgressStatesFromUidSqlQuery():string
+    {
+        return '
+            SELECT
+                id,
+                uid,
+                game_config_id,
+                score_current,
+                highest_score,
+                play_count,
+                question_id_order_json,
+                question_id_order_index_current,
                 created_at,
                 updated_at
             FROM user_progress_states
             WHERE uid=?
+            ORDER BY game_config_id ASC
         ';
     }
 
@@ -67,40 +89,36 @@ class UserProgressStateQuery
             UPDATE user_progress_states
             SET
                 score_current=?,
-                questions_done=?,
+                highest_score=?,
+                play_count=?,
                 question_id_order_json=?,
                 question_id_order_index_current=?,
-                question_id_current=?,
-                is_complete=?,
                 updated_at=?
-            WHERE uid=?
+            WHERE uid=? AND game_config_id=?
         ';
     }
 
-    //when to just mark complete
-    public function getMarkUserProgressStateCompleteSqlQuery():string
+    public function getResetUserProgressStateSqlQuery():string
     {
         return '
             UPDATE user_progress_states
             SET
                 score_current=?,
-                questions_done=?,
+                highest_score=?,
+                play_count=?,
                 question_id_order_json=?,
                 question_id_order_index_current=?,
-                question_id_current=?,
-                is_complete=?,
                 updated_at=?
-            WHERE uid=?
+            WHERE uid=? AND game_config_id=?
         ';
     }
 
     //delete query too since if to delete it if over
-    public function getDeleteUserProgressStateFromUidSqlQuery():string
+    public function getDeleteUserProgressStateFromUidAndGameConfigIdSqlQuery():string
     {
         return '
             DELETE FROM user_progress_states
-            WHERE uid=?
+            WHERE uid=? AND game_config_id=?
         ';
     }
 }
-?>

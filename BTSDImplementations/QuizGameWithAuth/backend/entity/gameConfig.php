@@ -8,7 +8,7 @@ class GameConfig
     private int $questionCountTarget; //Number of questions that we want to show in the quiz for this game config    
     private array $questionIdListAllowed; //List of question ids that we want to allow for this game config, if this list is empty then it means that we want to allow all the questions for this game config
     private string $secretKey; //Hidden secret key for internal use only
-    private bool $isActive; //Whether this config is the currently active config for quiz load
+    private bool $isActive; //Whether this config is currently active/visible for user play
     private string $createdAt; //When this config was created
     private string $updatedAt; //When this config was last updated
 

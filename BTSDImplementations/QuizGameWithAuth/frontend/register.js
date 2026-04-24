@@ -1,4 +1,4 @@
-import { authUserSessionSave, authUserSessionClear, authUidGet, authLoginTypeGet, authNavbarUpdate } from "./auth.js";
+import { authUserSessionSave, authUserSessionClear, authUidGet, authLoginTypeGet, authNavbarUpdate, authUserQuestionSetPageRedirect } from "./auth.js";
 const registerUserApiUrl = "../backend/api/v1/registerUser.php";
 const loginGuestApiUrl = "../backend/api/v1/loginGuest.php";
 function registerMessageTextSet(message) {
@@ -11,7 +11,7 @@ async function registerGuestLoginSubmit() {
     const uidCurrent = authUidGet();
     const loginTypeCurrent = authLoginTypeGet();
     if (uidCurrent && loginTypeCurrent === "guest") {
-        window.location.href = "quiz.html";
+        authUserQuestionSetPageRedirect();
         return;
     }
     registerMessageTextSet("Logging in as guest...");
@@ -25,7 +25,7 @@ async function registerGuestLoginSubmit() {
         return;
     }
     authUserSessionSave(String(loginGuestResponse.uid), loginGuestResponse.userId, loginGuestResponse.loginType, loginGuestResponse.permissionGroup);
-    window.location.href = "quiz.html";
+    authUserQuestionSetPageRedirect();
 }
 async function registerUserSubmit(event) {
     event.preventDefault();
@@ -61,7 +61,7 @@ async function registerUserSubmit(event) {
         return;
     }
     authUserSessionSave(String(registerUserResponse.uid), registerUserResponse.userId, registerUserResponse.loginType, registerUserResponse.permissionGroup, registerUserResponse.name, registerUserResponse.email);
-    window.location.href = "quiz.html";
+    authUserQuestionSetPageRedirect();
 }
 function registerPageInitialize() {
     authNavbarUpdate();
