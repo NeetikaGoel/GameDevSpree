@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CREATE QUESTION SET</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="page-shell page-shell-wide">
+            <div class="page-top-bar">
+                <div class="page-title-block">
+                    <h1 class="heading">CREATE QUESTION SET</h1>
+                    <div class="page-user-text" id="nav-user-text">Not logged in</div>
+                </div>
+
+                <div class="page-nav">
+                    <a id="nav-login-link" href="login.html">
+                        <button type="button">Login</button>
+                    </a>
+
+                    <a id="nav-register-link" href="register.html">
+                        <button type="button">Register</button>
+                    </a>
+
+                    <a id="nav-add-question-link" href="questionAdd.html" style="display:none;">
+                        <button type="button">Add Question</button>
+                    </a>
+
+                    <a id="nav-question-set-create-link" href="questionSetCreate.html" style="display:none;">
+                        <button type="button">Create Question Set</button>
+                    </a>
+
+                    <a id="nav-question-set-edit-link" href="questionSetEdit.html" style="display:none;">
+                        <button type="button">Edit Question Set</button>
+                    </a>
+
+                    <button type="button" id="nav-logout-button" style="display:none;">Logout</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="game-quiz-container page-form-layout">
+                    <section class="hero-panel question-set-hero-panel">
+                        <p class="hero-kicker">BUILD A NEW QUIZ EXPERIENCE</p>
+                        <h2 class="hero-title hero-title-small">Create Question Set</h2>
+                        <p class="hero-description question-set-description">
+                            Pick questions, track your selection live, and launch a fresh challenge for players.
+                        </p>
+                    </section>
+
+                    <form id="question-set-create-form" class="question-set-builder-layout">
+                        <section class="question-set-builder-sidebar">
+                            <div class="question-set-summary-card">
+                                <p class="question-set-summary-label">Set Name</p>
+                                <input
+                                    type="text"
+                                    id="question-set-create-name-input"
+                                    name="gameConfigName"
+                                    placeholder="Enter question set name"
+                                >
+
+                                <div class="question-set-live-count-card">
+                                    <span class="question-set-live-count-label">Selected Questions</span>
+                                    <span class="question-set-live-count-value" id="question-set-create-count-text">0</span>
+                                    <span class="question-set-live-count-note">This updates automatically as you select or remove questions.</span>
+                                </div>
+
+                                <label class="question-set-toggle-card">
+                                    <input type="checkbox" id="question-set-create-make-active-input">
+                                    <span>Make this question set active now</span>
+                                </label>
+                            </div>
+
+                            <div class="next-button-container question-set-submit-row">
+                                <button type="submit">Create Question Set</button>
+                            </div>
+
+                            <p id="question-set-create-message-text" class="page-inline-message"></p>
+                        </section>
+
+                        <section class="question-set-builder-main">
+                            <div class="question-set-section-card">
+                                <div class="question-set-section-header">
+                                    <div>
+                                        <p class="hero-kicker">QUESTION LIBRARY</p>
+                                        <h3 class="question-set-section-title">Choose Questions</h3>
+                                    </div>
+                                </div>
+
+                                <div id="question-set-create-question-list-container" class="question-set-question-grid">
+                                    <!-- TypeScript will insert paginated question list here -->
+                                </div>
+
+                                <div class="next-button-container question-set-pagination-row">
+                                    <button type="button" id="question-set-create-prev-button">Previous Questions</button>
+                                    <button type="button" id="question-set-create-next-button">Next Questions</button>
+                                </div>
+                            </div>
+                        </section>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="questionSetCreate.js"></script>
+</body>
+</html>

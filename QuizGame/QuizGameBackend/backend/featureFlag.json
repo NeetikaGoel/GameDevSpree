@@ -1,0 +1,15 @@
+
+
+{
+  "questionOrdering": {
+    "enabled": true,
+    "owner": "Neetika Goel",
+    "description": "Randomizes quiz question order for starting a new quiz session!",
+    "rolloutScope": "Local project for Internship Purpose",
+    "defaultState": false,
+    "killSwitchBehavior": "When it is disabled, new quiz sessions will use QuizData default order!!",
+    "creationDate": "06/04/2026",
+    "plannedRemovalDate": "",
+    "temporary": false
+  }
+}

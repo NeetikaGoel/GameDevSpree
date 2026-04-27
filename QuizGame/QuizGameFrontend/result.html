@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIZ RESULT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="page-shell">
+            <div class="page-top-bar">
+                <div class="page-title-block">
+                    <h1 class="heading">QUIZ RESULT</h1>
+                    <div class="page-user-text" id="nav-user-text">Not logged in</div>
+                </div>
+
+                <div class="page-nav">
+                    <a id="nav-login-link" href="login.html">
+                        <button type="button">Login</button>
+                    </a>
+
+                    <a id="nav-register-link" href="register.html">
+                        <button type="button">Register</button>
+                    </a>
+
+                    <a id="nav-add-question-link" href="questionAdd.html" style="display:none;">
+                        <button type="button">Add Question</button>
+                    </a>
+
+                    <a id="nav-question-set-create-link" href="questionSetCreate.html" style="display:none;">
+                        <button type="button">Create Question Set</button>
+                    </a>
+
+                    <a id="nav-question-set-edit-link" href="questionSetEdit.html" style="display:none;">
+                        <button type="button">Edit Question Set</button>
+                    </a>
+
+                    <button type="button" id="nav-logout-button" style="display:none;">Logout</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="game-quiz-container">
+                    <section class="result-hero-panel">
+                        <p class="hero-kicker">MISSION COMPLETE</p>
+                        <h2 class="hero-title">Quiz Finished</h2>
+                        <p id="quiz-result-game-config-name" class="page-inline-message">Loading question set...</p>
+                        <p id="quiz-result-text" class="result-highlight-text">Loading result...</p>
+
+                        <div class="result-stats-grid">
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Score</span>
+                                <span class="result-stat-value" id="quiz-result-score">0</span>
+                            </div>
+
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Highest Score</span>
+                                <span class="result-stat-value" id="quiz-result-score-highest">0</span>
+                            </div>
+
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Play Count</span>
+                                <span class="result-stat-value" id="quiz-result-play-count">0</span>
+                            </div>
+
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Questions Done</span>
+                                <span class="result-stat-value" id="quiz-result-questions-done">0</span>
+                            </div>
+
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Total Questions</span>
+                                <span class="result-stat-value" id="quiz-result-question-count-total">0</span>
+                            </div>
+
+                            <div class="result-stat-card">
+                                <span class="result-stat-label">Wrong Answers</span>
+                                <span class="result-stat-value" id="quiz-result-answer-count-wrong">0</span>
+                            </div>
+
+                            <div class="result-stat-card result-stat-card-wide">
+                                <span class="result-stat-label">Score Percentage</span>
+                                <div class="result-stat-value-row">
+                                    <span class="result-stat-value" id="quiz-result-score-percentage">0</span>
+                                    <span class="result-stat-suffix">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="next-button-container hero-button-row">
+                            <button type="button" id="quiz-result-play-again-button">Play Again</button>
+                            <a href="questionSetShowToUser.html">
+                                <button type="button">Back To Question Sets</button>
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLAY QUESTION SETS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="page-shell page-shell-wide">
+            <div class="page-top-bar">
+                <div class="page-title-block">
+                    <h1 class="heading">PLAY QUESTION SETS</h1>
+                    <div class="page-user-text" id="nav-user-text">Not logged in</div>
+                </div>
+
+                <div class="page-nav">
+                    <a id="nav-login-link" href="login.html">
+                        <button type="button">Login</button>
+                    </a>
+
+                    <a id="nav-register-link" href="register.html">
+                        <button type="button">Register</button>
+                    </a>
+
+                    <a id="nav-add-question-link" href="questionAdd.html" style="display:none;">
+                        <button type="button">Add Question</button>
+                    </a>
+
+                    <a id="nav-question-set-create-link" href="questionSetCreate.html" style="display:none;">
+                        <button type="button">Create Question Set</button>
+                    </a>
+
+                    <a id="nav-question-set-edit-link" href="questionSetEdit.html" style="display:none;">
+                        <button type="button">Edit Question Set</button>
+                    </a>
+
+                    <button type="button" id="nav-logout-button" style="display:none;">Logout</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="game-quiz-container page-form-layout">
+                    <section class="hero-panel question-set-hero-panel">
+                        <p class="hero-kicker">CHOOSE YOUR NEXT CHALLENGE</p>
+                        <h2 class="hero-title hero-title-small">Active Question Sets</h2>
+                        <p class="hero-description question-set-description">
+                            Pick a live question set, resume where you left off, or reset a played set and jump back in!!
+                        </p>
+                    </section>
+
+                    <section class="question-set-section-card question-set-user-dashboard-card">
+                        <div class="question-set-section-header">
+                            <div>
+                                <p class="hero-kicker">LIVE GAME CONFIGS</p>
+                                <h3 class="question-set-section-title">Available To Play</h3>
+                            </div>
+                        </div>
+
+                        <div id="question-set-show-to-user-list-container" class="question-set-user-grid">
+                            <!-- TypeScript will render user question set cards here -->
+                        </div>
+
+                        <p id="question-set-show-to-user-message-text" class="page-inline-message"></p>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="questionSetShowToUser.js"></script>
+</body>
+</html>

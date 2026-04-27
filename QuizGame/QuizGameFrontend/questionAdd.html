@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADD QUESTION</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="page-shell page-shell-wide">
+            <div class="page-top-bar">
+                <div class="page-title-block">
+                    <h1 class="heading">ADD QUESTION</h1>
+                    <div class="page-user-text" id="nav-user-text">Not logged in</div>
+                </div>
+
+                <div class="page-nav">
+                    <a id="nav-login-link" href="login.html">
+                        <button type="button">Login</button>
+                    </a>
+
+                    <a id="nav-register-link" href="register.html">
+                        <button type="button">Register</button>
+                    </a>
+
+                    <a id="nav-add-question-link" href="questionAdd.html" style="display:none;">
+                        <button type="button">Add Question</button>
+                    </a>
+
+                    <a id="nav-question-set-create-link" href="questionSetCreate.html" style="display:none;">
+                        <button type="button">Create Question Set</button>
+                    </a>
+
+                    <a id="nav-question-set-edit-link" href="questionSetEdit.html" style="display:none;">
+                        <button type="button">Edit Question Set</button>
+                    </a>
+
+                    <button type="button" id="nav-logout-button" style="display:none;">Logout</button>
+                </div>
+            </div>
+
+            <div class="page-content">
+                <div class="game-quiz-container page-form-layout">
+                    <div class="game-question-container">
+                        <h1>Add a new quiz question below</h1>
+                    </div>
+
+                    <form id="question-add-form">
+                        <div class="form-row">
+                            <h1>Question Text</h1>
+                            <input
+                                type="text"
+                                id="question-text-input"
+                                name="questionText"
+                                placeholder="Enter the quiz question here"
+                            >
+                        </div>
+
+                        <div class="form-row">
+                            <h1>Question Type</h1>
+                            <select id="question-type-input" name="questionType">
+                                <option value="mcq">MCQ</option>
+                                <option value="true/false">True / False</option>
+                            </select>
+                        </div>
+
+                        <div id="question-add-mcq-section">
+                            <div class="game-question-container">
+                                <h1>MCQ Answer Options</h1>
+                            </div>
+                        
+                            <div class="question-add-option-grid">
+                                <div class="question-add-option-card">
+                                    <div class="form-row">
+                                        <h1>Option 1</h1>
+                                        <input type="text" id="answer-option-1-text-input" name="answerOption1Text" placeholder="Enter option 1">
+                                    </div>
+                        
+                                    <div class="form-row question-add-correct-row">
+                                        <label>
+                                            <input type="radio" name="answerOptionCorrectIndex" value="0">
+                                            Mark Option 1 as Correct
+                                        </label>
+                                    </div>
+                                </div>
+                        
+                                <div class="question-add-option-card">
+                                    <div class="form-row">
+                                        <h1>Option 2</h1>
+                                        <input type="text" id="answer-option-2-text-input" name="answerOption2Text" placeholder="Enter option 2">
+                                    </div>
+                        
+                                    <div class="form-row question-add-correct-row">
+                                        <label>
+                                            <input type="radio" name="answerOptionCorrectIndex" value="1">
+                                            Mark Option 2 as Correct
+                                        </label>
+                                    </div>
+                                </div>
+                        
+                                <div class="question-add-option-card">
+                                    <div class="form-row">
+                                        <h1>Option 3</h1>
+                                        <input type="text" id="answer-option-3-text-input" name="answerOption3Text" placeholder="Enter option 3">
+                                    </div>
+                        
+                                    <div class="form-row question-add-correct-row">
+                                        <label>
+                                            <input type="radio" name="answerOptionCorrectIndex" value="2">
+                                            Mark Option 3 as Correct
+                                        </label>
+                                    </div>
+                                </div>
+                        
+                                <div class="question-add-option-card">
+                                    <div class="form-row">
+                                        <h1>Option 4</h1>
+                                        <input type="text" id="answer-option-4-text-input" name="answerOption4Text" placeholder="Enter option 4">
+                                    </div>
+                        
+                                    <div class="form-row question-add-correct-row">
+                                        <label>
+                                            <input type="radio" name="answerOptionCorrectIndex" value="3">
+                                            Mark Option 4 as Correct
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="question-add-true-false-section" class="ui-hidden">
+                            <div class="game-question-container">
+                                <h1>Mark the Correct Answer</h1>
+                            </div>
+                            
+                            <div class="form-row question-add-correct-row">
+                                <label>
+                                    <input type="radio" name="trueFalseCorrectValue" value="true">
+                                    True
+                                </label>
+                            </div>
+                            
+                            <div class="form-row question-add-correct-row">
+                                <label>
+                                    <input type="radio" name="trueFalseCorrectValue" value="false">
+                                    False
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="next-button-container">
+                            <button type="submit">Add Question</button>
+                        </div>
+                    </form>
+
+                    <div class="compact-info-box ui-hidden" id="question-add-message-box">
+                        <h1 id="question-add-message-text"></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="questionAdd.js"></script>
+</body>
+</html>
