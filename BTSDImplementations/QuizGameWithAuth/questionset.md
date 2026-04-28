@@ -18,15 +18,15 @@ Edit question set api
 1. load existing configs from db that r present there
 2. admin selects one config that he wants to update
 3. admin will see what??:: 
--> config name
--> question count target
--> selected question ids
--> active/inactive state of that game config
+    -> config name
+    -> question count target
+    -> selected question ids
+    -> active/inactive state of that game config
 4. admin can change what?? lets see:
--> question count target
--> selected questions
--> whether this config should become active
--> he should also can see what questions are part of that game config and then all questions that is same as create question set thing so he can again choose through checkbox feature which to select and which to deselect and ques list order will then should be automatically created based on what the admin selected and he could also update the game config name hehe
+    -> question count target
+    -> selected questions
+    -> whether this config should become active
+    -> he should also can see what questions are part of that game config and then all questions that is same as create question set thing so he can again choose through checkbox feature which to select and which to deselect and ques list order will then should be automatically created based on what the admin selected and he could also update the game config name hehe
 
 
 Now how to do this active config selection
