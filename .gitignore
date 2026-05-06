@@ -10,7 +10,7 @@
 *.userosscache
 *.sln.docstates
 *.env
-
+*.pid
 
 .DS_Store
 
