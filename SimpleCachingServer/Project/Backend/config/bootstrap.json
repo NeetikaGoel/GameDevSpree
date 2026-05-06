@@ -1,0 +1,16 @@
+{
+    "config": {
+        "ttlDefault": 7200,
+        "ttlMax": 604800,
+        "host": "127.0.0.1",
+        "port": 8080,
+        "logFile": "logs/cache-server.log"
+    },
+    "items": [
+        {
+            "key": "config.mode",
+            "value": "classic",
+            "ttl": 3600
+        }
+    ]
+}

@@ -22,27 +22,32 @@ class Logger
     private static function writeLog(string $level,string $component,string $message,?string $errorCode,?Throwable $exception,array $context):void
     {
         $logMessage = [
-            'timestamp'=>gmdate('c'),
-            'level'=>$level,
-            'component'=>$component,
-            'message'=>$message,
-            'errorCode'=>$errorCode,
-            'stackTrace'=>$exception ? $exception->getTraceAsString() :null,
-            'context'=>$context
+            'timestamp' => gmdate('c'),
+            'level' => $level,
+            'service' => 'simple-cache-server',
+            'component' => $component,
+            'correlationId' => '00000',
+            'message' => $message,
+            'errorCode' => $errorCode,
+            'durationMs' => 0,
+            'stackTrace' => $exception ? $exception->getTraceAsString() : null,
+            'context' => $context
         ];
 
         $filePath = __DIR__ . '/../logs/cache-server.log';
 
         $logDir = dirname($filePath);
 
-        if (!is_dir($logDir)) {
-            mkdir($logDir,0777,true);
-        }
+        if (!is_dir($logDir)) 
+            {
+                mkdir($logDir,0777,true);
+            }
 
-        if (!file_exists($filePath)) {
-            touch($filePath);
-            chmod($filePath,0666);
-        }
+        if (!file_exists($filePath)) 
+            {
+                touch($filePath);
+                chmod($filePath,0666);
+            }
 
         file_put_contents($filePath,json_encode($logMessage) . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
