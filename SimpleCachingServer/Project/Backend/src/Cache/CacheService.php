@@ -63,10 +63,10 @@ class CacheService
 
     public function set(string $key, mixed $value, ?int $ttl = null): CacheItem
     {
-        $this->validateKey($key);
-        $this->validateValue($value);
+        // $this->validateKey($key);
+        // $this->validateValue($value);
 
-        $ttl = $this->validateTtl($ttl);
+        // $ttl = $this->validateTtl($ttl);
 
         //what if already set now
         if (isset($this->_cacheItemsMap[$key])) {

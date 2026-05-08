@@ -8,7 +8,7 @@ class Role
     public const ADMIN='admin';
 
 
-    public function __construct()
+    private function __construct()
     {
         //nothing
     }
