@@ -15,6 +15,13 @@ class AdminCacheController
     // also a response factory obj
     private ResponseFactory $_responseFactory;
 
+    private const CACHE_KEY_LENGTH_MAX = 255;
+    private const CACHE_VALUE_STRING_LENGTH_MAX = 1024;
+    private const CACHE_TTL_SECONDS_DEFAULT = 7200;
+    private const CACHE_TTL_SECONDS_MAX = 604800;
+    private const CACHE_LIST_LIMIT_DEFAULT = 50;
+    private const CACHE_LIST_LIMIT_MAX = 1000;
+
 
     public function __construct(CacheService $_cacheService, ResponseFactory $_responseFactory)
     {
@@ -45,30 +52,41 @@ class AdminCacheController
     // Boundary function for POST /v1/admin/cache/bulk-set
     public function bulkSet(Request $request): JsonResponse
     {
-        // Validate method
-        if ($request->getMethod() !== 'POST') {
+        try {
+            // Validate method
+            if ($request->getMethod() !== 'POST') {
+                throw new InvalidArgumentException('POST method required');
+            }
+        } catch (InvalidArgumentException $exception) {
             // Return 405 if wrong method
-            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4051', 'POST method required', [], 405);
+            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4051', $exception->getMessage(), [], 405);
         }
 
-        // Validate JSON
-        if ($request->getHasInvalidJson() === true) {
+        try {
+            // Validate JSON
+            if ($request->getHasInvalidJson() === true) {
+                throw new InvalidArgumentException('Malformed JSON body');
+            }
+        } catch (InvalidArgumentException $exception) {
             $this->adminCacheAuditLog('admin_cache_bulk_set_invalid_json', []);
 
             // return 400
-            return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4001', 'Malformed JSON body', [], 400);
+            return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4001', $exception->getMessage(), [], 400);
         }
 
         // get items from request body
         $items = $request->getBodyField('items');
 
-        // Validate items array!!!!
-        if (!is_array($items)) {
-
+        try {
+            // Validate items array!!!!
+            if (!is_array($items)) {
+                throw new InvalidArgumentException('items must be an array');
+            }
+        } catch (InvalidArgumentException $exception) {
             $this->adminCacheAuditLog('admin_cache_bulk_set_validation_failed', ['reason' => 'items missing or invalid']);
 
             // return 400
-            return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4002', 'items must be an array', ['items' => 'array required'], 400);
+            return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4002', $exception->getMessage(), ['items' => 'array required'], 400);
         }
 
         // rate-limit placeholder
@@ -101,10 +119,14 @@ class AdminCacheController
 
         //loop over all submitted items now
         foreach ($items as $index => $item) {
-            //item must be arr/obj
-            if (!is_array($item)) {
+            try {
+                //item must be arr/obj
+                if (!is_array($item)) {
+                    throw new InvalidArgumentException('Item must be an object');
+                }
+            } catch (InvalidArgumentException $exception) {
                 $skipped++;
-                $itemErrors[] = ['index' => $index, 'message' => 'Item must be an object'];
+                $itemErrors[] = ['index' => $index, 'message' => $exception->getMessage()];
                 continue;
             }
 
@@ -120,52 +142,72 @@ class AdminCacheController
             //get ttl now
             $ttl = $item['ttl'] ?? null;
 
-            //Validate key presence and type!!!!
-            if (!is_string($key) || $key === '') {
-
+            try {
+                //Validate key presence and type!!!!
+                if (!is_string($key) || $key === '') {
+                    throw new InvalidArgumentException('key is required and must be string');
+                }
+            } catch (InvalidArgumentException $exception) {
                 $skipped++;
-                $itemErrors[] = ['index' => $index, 'message' => 'key is required and must be string'];
+                $itemErrors[] = ['index' => $index, 'message' => $exception->getMessage()];
                 continue;
             }
 
-            // sanitize key now
-            $key = trim($key);
+            try {
+                // sanitize key now
+                $key = trim($key);
 
-            // validate value existence
-            if ($hasValue !== true) {
+                if ($key === '' || strlen($key) > self::CACHE_KEY_LENGTH_MAX || preg_match('/^[A-Za-z0-9._:-]+$/', $key) !== 1) {
+                    throw new InvalidArgumentException('key must be 1 to 255 chars and contain only A-Z a-z 0-9 dot underscore colon hyphen');
+                }
+            } catch (InvalidArgumentException $exception) {
                 $skipped++;
-                $itemErrors[] = ['index' => $index, 'key' => $key, 'message' => 'value is required'];
+                $itemErrors[] = ['index' => $index, 'key' => is_string($key) ? $key : null, 'message' => $exception->getMessage()];
                 continue;
             }
 
-            // validate ttl if provided
-            if ($ttl !== null && !is_int($ttl)) {
+            try {
+                // validate value existence
+                if ($hasValue !== true) {
+                    throw new InvalidArgumentException('value is required');
+                }
 
+                if (is_string($value) && strlen($value) > self::CACHE_VALUE_STRING_LENGTH_MAX) {
+                    throw new InvalidArgumentException('value string must not exceed 1024 characters');
+                }
+            } catch (InvalidArgumentException $exception) {
                 $skipped++;
-                $itemErrors[] = ['index' => $index, 'key' => $key, 'message' => 'ttl must be integer'];
-                continue;
-            }
-
-            try 
-            {
-                //delegation now
-                $storedItem = $this->_cacheService->set($key, $value, $ttl);
-
-                //increasing stored count
-                $stored++;
-
-                //adding stored item in final list
-                $itemResults[] = $storedItem->toArray();
-            } 
-            
-            catch (Exception $exception) 
-            {
-                //skip item if service rejects
-                $skipped++;
-
-                //add item level error
                 $itemErrors[] = ['index' => $index, 'key' => $key, 'message' => $exception->getMessage()];
+                continue;
             }
+
+            try {
+                // validate ttl if provided
+                if ($ttl !== null && !is_int($ttl)) {
+                    throw new InvalidArgumentException('ttl must be integer');
+                }
+
+                if ($ttl === null) {
+                    $ttl = self::CACHE_TTL_SECONDS_DEFAULT;
+                }
+
+                if ($ttl < 1 || $ttl > self::CACHE_TTL_SECONDS_MAX) {
+                    throw new InvalidArgumentException('ttl must be between 1 and 604800');
+                }
+            } catch (InvalidArgumentException $exception) {
+                $skipped++;
+                $itemErrors[] = ['index' => $index, 'key' => $key, 'message' => $exception->getMessage()];
+                continue;
+            }
+
+            //delegation now
+            $storedItem = $this->_cacheService->set($key, $value, $ttl);
+
+            //increasing stored count
+            $stored++;
+
+            //adding stored item in final list
+            $itemResults[] = $storedItem->toArray();
         }
 
         // audit success!!!!!!!
@@ -184,30 +226,41 @@ class AdminCacheController
     // Boundary function for POST /v1/admin/cache/purge-selected
     public function purgeSelected(Request $request): JsonResponse
     {
-        // Validate method
-        if ($request->getMethod() !== 'POST') {
+        try {
+            // Validate method
+            if ($request->getMethod() !== 'POST') {
+                throw new InvalidArgumentException('POST method required');
+            }
+        } catch (InvalidArgumentException $exception) {
             // Return 405 if wrong method
-            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4052', 'POST method required', [], 405);
+            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4052', $exception->getMessage(), [], 405);
         }
 
-        // Validate JSON
-        if ($request->getHasInvalidJson() === true) {
+        try {
+            // Validate JSON
+            if ($request->getHasInvalidJson() === true) {
+                throw new InvalidArgumentException('Malformed JSON body');
+            }
+        } catch (InvalidArgumentException $exception) {
             $this->adminCacheAuditLog('admin_cache_purge_selected_invalid_json', []);
 
             // return 400
-            return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4003', 'Malformed JSON body', [], 400);
+            return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4003', $exception->getMessage(), [], 400);
         }
 
         // get keys from request body
         $keys = $request->getBodyField('keys');
 
-        // Validate keys array!!!!
-        if (!is_array($keys)) {
-
+        try {
+            // Validate keys array!!!!
+            if (!is_array($keys)) {
+                throw new InvalidArgumentException('keys must be an array');
+            }
+        } catch (InvalidArgumentException $exception) {
             $this->adminCacheAuditLog('admin_cache_purge_selected_validation_failed', ['reason' => 'keys missing or invalid']);
 
             // return 400
-            return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4004', 'keys must be an array', ['keys' => 'array required'], 400);
+            return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4004', $exception->getMessage(), ['keys' => 'array required'], 400);
         }
 
         // rate-limit placeholder
@@ -237,34 +290,36 @@ class AdminCacheController
 
         //loop over all keys now
         foreach ($keys as $index => $key) {
-            // key must be string
-            if (!is_string($key) || $key === '') {
-                $errors[] = ['index' => $index, 'message' => 'key must be non-empty string'];
+            try {
+                // key must be string
+                if (!is_string($key) || $key === '') {
+                    throw new InvalidArgumentException('key must be non-empty string');
+                }
+            } catch (InvalidArgumentException $exception) {
+                $errors[] = ['index' => $index, 'message' => $exception->getMessage()];
                 continue;
             }
 
-            // sanitize key now
-            $key = trim($key);
-
             try {
-                // delegation now
-                $deleteResult = $this->_cacheService->delete($key);
+                // sanitize key now
+                $key = trim($key);
 
-                // check if actually removed
-                if ($deleteResult['deleted'] === true) 
-                {
-                    $removed++;
-                } 
-                else 
-                {
-                    $notFound++;
+                if ($key === '' || strlen($key) > self::CACHE_KEY_LENGTH_MAX || preg_match('/^[A-Za-z0-9._:-]+$/', $key) !== 1) {
+                    throw new InvalidArgumentException('key must be 1 to 255 chars and contain only A-Z a-z 0-9 dot underscore colon hyphen');
                 }
-            } 
-            
-            catch (Exception $exception) 
-            {
-                // add error if service rejects key
-                $errors[] = ['index' => $index, 'key' => $key, 'message' => $exception->getMessage()];
+            } catch (InvalidArgumentException $exception) {
+                $errors[] = ['index' => $index, 'key' => is_string($key) ? $key : null, 'message' => $exception->getMessage()];
+                continue;
+            }
+
+            // delegation now
+            $deleteResult = $this->_cacheService->delete($key);
+
+            // check if actually removed
+            if ($deleteResult['deleted'] === true) {
+                $removed++;
+            } else {
+                $notFound++;
             }
         }
 
@@ -283,10 +338,14 @@ class AdminCacheController
     // Boundary function for POST /v1/admin/cache/purge-all
     public function purgeAll(Request $request): JsonResponse
     {
-        // Validate method
-        if ($request->getMethod() !== 'POST') {
+        try {
+            // Validate method
+            if ($request->getMethod() !== 'POST') {
+                throw new InvalidArgumentException('POST method required');
+            }
+        } catch (InvalidArgumentException $exception) {
             // Return 405 if wrong method
-            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4053', 'POST method required', [], 405);
+            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4053', $exception->getMessage(), [], 405);
         }
 
         // rate-limit placeholder
@@ -302,22 +361,8 @@ class AdminCacheController
             return $this->_responseFactory->error('Duplicate request', 'ADMIN-CACHE-4093', 'Duplicate request detected', [], 409);
         }
 
-        try {
-            // delegation now
-            $removed = $this->_cacheService->purgeAll();
-        } catch (Exception $exception) {
-            $this->adminCacheAuditLog('admin_cache_purge_all_service_failed', [
-                'errorMessage' => $exception->getMessage()
-            ]);
-
-            return $this->_responseFactory->error(
-                'Internal error',
-                'ADMIN-CACHE-5001',
-                $exception->getMessage(),
-                [],
-                500
-            );
-        }
+        // delegation now
+        $removed = $this->_cacheService->purgeAll();
 
         // audit success!!!!!!!
         $this->adminCacheAuditLog('admin_cache_purge_all_completed', ['removed' => $removed]);
@@ -329,32 +374,40 @@ class AdminCacheController
     // Boundary function for GET /v1/admin/cache/list
     public function list(Request $request): JsonResponse
     {
-        // Validate method
-        if ($request->getMethod() !== 'GET') {
+        try {
+            // Validate method
+            if ($request->getMethod() !== 'GET') {
+                throw new InvalidArgumentException('GET method required');
+            }
+        } catch (InvalidArgumentException $exception) {
             // Return 405 if wrong method
-            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4054', 'GET method required', [], 405);
+            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4054', $exception->getMessage(), [], 405);
         }
 
         // get limit from query params
         $limitRaw = $request->getQueryParam('limit');
 
         // default limit
-        $limit = 50;
+        $limit = self::CACHE_LIST_LIMIT_DEFAULT;
 
-        // validate limit only if provided
-        if ($limitRaw !== null) {
-            // limit should be numeric
-            if (!is_numeric($limitRaw)) {
-                return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4005', 'limit must be numeric', ['limit' => 'numeric required'], 400);
+        try {
+            // validate limit only if provided
+            if ($limitRaw !== null) {
+                // limit should be numeric
+                if (!is_numeric($limitRaw)) {
+                    throw new InvalidArgumentException('limit must be numeric');
+                }
+
+                // convert limit to int
+                $limit = (int)$limitRaw;
+
+                // limit should be in allowed range
+                if ($limit < 1 || $limit > self::CACHE_LIST_LIMIT_MAX) {
+                    throw new InvalidArgumentException('limit must be between 1 and 1000');
+                }
             }
-
-            // convert limit to int
-            $limit = (int)$limitRaw;
-
-            // limit should be in allowed range
-            if ($limit < 1 || $limit > 1000) {
-                return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4006', 'limit must be between 1 and 1000', ['limit' => '1 to 1000'], 400);
-            }
+        } catch (InvalidArgumentException $exception) {
+            return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4005', $exception->getMessage(), ['limit' => 'numeric 1 to 1000'], 400);
         }
 
         // rate-limit placeholder
@@ -369,22 +422,8 @@ class AdminCacheController
             return $this->_responseFactory->error('Duplicate request', 'ADMIN-CACHE-4094', 'Duplicate request detected', [], 409);
         }
 
-        try {
-            // delegation now
-            $items = $this->_cacheService->list($limit);
-        } catch (Exception $exception) {
-            $this->adminCacheAuditLog('admin_cache_list_service_failed', [
-                'errorMessage' => $exception->getMessage()
-            ]);
-
-            return $this->_responseFactory->error(
-                'Internal error',
-                'ADMIN-CACHE-5002',
-                $exception->getMessage(),
-                [],
-                500
-            );
-        }
+        // delegation now
+        $items = $this->_cacheService->list($limit);
 
         // audit success!!!!!!!
         $this->adminCacheAuditLog('admin_cache_list_success', ['limit' => $limit, 'count' => count($items)]);
@@ -400,10 +439,14 @@ class AdminCacheController
     // Boundary function for GET /v1/admin/cache/uptime
     public function uptime(Request $request): JsonResponse
     {
-        // Validate method
-        if ($request->getMethod() !== 'GET') {
+        try {
+            // Validate method
+            if ($request->getMethod() !== 'GET') {
+                throw new InvalidArgumentException('GET method required');
+            }
+        } catch (InvalidArgumentException $exception) {
             // Return 405 if wrong method
-            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4055', 'GET method required', [], 405);
+            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4055', $exception->getMessage(), [], 405);
         }
 
         // rate-limit placeholder
@@ -419,22 +462,8 @@ class AdminCacheController
             return $this->_responseFactory->error('Duplicate request', 'ADMIN-CACHE-4095', 'Duplicate request detected', [], 409);
         }
 
-        try {
-            // delegation now
-            $data = $this->_cacheService->uptime();
-        } catch (Exception $exception) {
-            $this->adminCacheAuditLog('admin_cache_uptime_service_failed', [
-                'errorMessage' => $exception->getMessage()
-            ]);
-
-            return $this->_responseFactory->error(
-                'Internal error',
-                'ADMIN-CACHE-5003',
-                $exception->getMessage(),
-                [],
-                500
-            );
-        }
+        // delegation now
+        $data = $this->_cacheService->uptime();
 
         // audit success!!!!!!!
         $this->adminCacheAuditLog('admin_cache_uptime_success', []);
@@ -446,10 +475,14 @@ class AdminCacheController
     // Boundary function for GET /v1/admin/cache/size
     public function size(Request $request): JsonResponse
     {
-        // Validate method
-        if ($request->getMethod() !== 'GET') {
+        try {
+            // Validate method
+            if ($request->getMethod() !== 'GET') {
+                throw new InvalidArgumentException('GET method required');
+            }
+        } catch (InvalidArgumentException $exception) {
             // Return 405 if wrong method
-            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4056', 'GET method required', [], 405);
+            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4056', $exception->getMessage(), [], 405);
         }
 
         // rate-limit placeholder
@@ -465,22 +498,8 @@ class AdminCacheController
             return $this->_responseFactory->error('Duplicate request', 'ADMIN-CACHE-4096', 'Duplicate request detected', [], 409);
         }
 
-        try {
-            // delegation now
-            $data = $this->_cacheService->size();
-        } catch (Exception $exception) {
-            $this->adminCacheAuditLog('admin_cache_size_service_failed', [
-                'errorMessage' => $exception->getMessage()
-            ]);
-
-            return $this->_responseFactory->error(
-                'Internal error',
-                'ADMIN-CACHE-5004',
-                $exception->getMessage(),
-                [],
-                500
-            );
-        }
+        // delegation now
+        $data = $this->_cacheService->size();
 
         // audit success!!!!!!!
         $this->adminCacheAuditLog('admin_cache_size_success', []);
@@ -492,10 +511,14 @@ class AdminCacheController
     // Boundary function for GET /v1/admin/cache/health
     public function health(Request $request): JsonResponse
     {
-        // Validate method
-        if ($request->getMethod() !== 'GET') {
+        try {
+            // Validate method
+            if ($request->getMethod() !== 'GET') {
+                throw new InvalidArgumentException('GET method required');
+            }
+        } catch (InvalidArgumentException $exception) {
             // Return 405 if wrong method
-            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4057', 'GET method required', [], 405);
+            return $this->_responseFactory->error('Method not allowed', 'ADMIN-CACHE-4057', $exception->getMessage(), [], 405);
         }
 
         // rate-limit placeholder
@@ -511,22 +534,8 @@ class AdminCacheController
             return $this->_responseFactory->error('Duplicate request', 'ADMIN-CACHE-4097', 'Duplicate request detected', [], 409);
         }
 
-        try {
-            // delegation now
-            $data = $this->_cacheService->health();
-        } catch (Exception $exception) {
-            $this->adminCacheAuditLog('admin_cache_health_service_failed', [
-                'errorMessage' => $exception->getMessage()
-            ]);
-
-            return $this->_responseFactory->error(
-                'Internal error',
-                'ADMIN-CACHE-5005',
-                $exception->getMessage(),
-                [],
-                500
-            );
-        }
+        // delegation now
+        $data = $this->_cacheService->health();
 
         // audit success!!!!!!!
         $this->adminCacheAuditLog('admin_cache_health_success', []);

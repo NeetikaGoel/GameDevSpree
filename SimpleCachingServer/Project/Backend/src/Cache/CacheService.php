@@ -91,7 +91,7 @@ class CacheService
 
     public function get(string $key): ?CacheItem
     {
-        $this->validateKey($key);
+        // $this->validateKey($key);
 
         //what if is nowhere now
         if (!isset($this->_cacheItemsMap[$key])) {
@@ -115,7 +115,7 @@ class CacheService
 
     public function delete(string $key): array
     {
-        $this->validateKey($key);
+        // $this->validateKey($key);
         if (isset($this->_cacheItemsMap[$key])) {
             $value = $this->_cacheItemsMap[$key]->getValue();
             unset($this->_cacheItemsMap[$key]);

@@ -20,8 +20,7 @@ $serverAddress = 'tcp://' . $host . ':' . $port;
 $serverSocket = stream_socket_server($serverAddress, $errorCode, $errorMessage);
 
 //if server socket was not created then stop startup
-if ($serverSocket === false) 
-{
+if ($serverSocket === false) {
     Logger::logError('Server', 'Failed to start socket server', 'SERVER_SOCKET_START_FAILED', null, [
         'errorCode' => $errorCode,
         'errorMessage' => $errorMessage
@@ -29,6 +28,29 @@ if ($serverSocket === false)
 
     echo "Failed to start cache server: " . $errorMessage . PHP_EOL;
     exit(1);
+}
+
+//shutdown flag starts as false because server should keep running
+$serverShouldStop = false;
+
+//enable signal handling if pcntl exists
+if (function_exists('pcntl_async_signals') && function_exists('pcntl_signal')) {
+    //enable automatic signal handling
+    pcntl_async_signals(true);
+
+    //listen for SIGTERM graceful shutdown
+    pcntl_signal(SIGTERM, function () use (&$serverShouldStop) {
+        Logger::logInfo('Server', 'SIGTERM received graceful shutdown started', []);
+
+        $serverShouldStop = true;
+    });
+
+    //listen for SIGINT graceful shutdown like ctrl c
+    pcntl_signal(SIGINT, function () use (&$serverShouldStop) {
+        Logger::logInfo('Server', 'SIGINT received graceful shutdown started', []);
+
+        $serverShouldStop = true;
+    });
 }
 
 //create application object with backend root path ONLY ONCE
@@ -43,11 +65,10 @@ Logger::logInfo('Server', 'Cache server started', [
 //show success message in terminal/log
 echo "Cache server started on http://" . $host . ":" . $port . PHP_EOL;
 
-//keep server alive forever
-while (true) 
-{
+//keep server alive until graceful shutdown signal comes
+while ($serverShouldStop === false) {
     //wait for a client request
-    $clientSocket = @stream_socket_accept($serverSocket); //This waits for curl/Postman/browser to connect
+    $clientSocket = @stream_socket_accept($serverSocket, 1); //This waits for curl/Postman/browser to connect
 
     //if client was not accepted then continue waiting
     if ($clientSocket === false) {
@@ -75,10 +96,7 @@ while (true)
 
         //send response back to client
         fwrite($clientSocket, $rawHttpResponse);
-    } 
-    
-    catch (Throwable $exception) 
-    {
+    } catch (Throwable $exception) {
         //logging unhandled exception at top boundary
         Logger::logError('Server', 'Unhandled server exception', 'SERVER_UNHANDLED_EXCEPTION', $exception, []);
 
@@ -99,6 +117,14 @@ while (true)
     fclose($clientSocket);
 }
 
+//close main server socket after loop exits
+fclose($serverSocket);
+
+//log graceful shutdown completed
+Logger::logInfo('Server', 'Cache server stopped gracefully', []);
+
+echo "Cache server stopped gracefully" . PHP_EOL;
+
 //function to read complete raw http request from client socket
 function serverHttpRequestRead($clientSocket): string
 {
@@ -106,8 +132,7 @@ function serverHttpRequestRead($clientSocket): string
     $requestData = '';
 
     //read until headers end
-    while (strpos($requestData, "\r\n\r\n") === false) 
-    {
+    while (strpos($requestData, "\r\n\r\n") === false) {
         //read chunk from socket
         $chunk = fread($clientSocket, 1024);
 

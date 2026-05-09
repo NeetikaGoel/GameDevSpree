@@ -25,13 +25,20 @@ fi
 # send graceful stop signal
 kill "$PID"
 
-# wait for process to stop
-sleep 1
+# wait maximum 5 seconds for graceful shutdown
+for i in {1..5}; do
+    # if process already stopped then break
+    if ! kill -0 "$PID" 2>/dev/null; then
+        break
+    fi
 
-# check if process is still running
+    sleep 1
+done
+
+# if still alive after waiting then force kill as last resort
 if kill -0 "$PID" 2>/dev/null; then
     echo "Process still running, forcing stop"
-    kill -9 "$PID" #do not do forceful shutdown, always try to do graceful shutdown, maybe -3 or something else
+    kill -9 "$PID"
 fi
 
 # remove pid file
