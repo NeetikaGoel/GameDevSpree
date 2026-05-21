@@ -547,3 +547,129 @@ php -d pcov.enabled=1 ./vendor/bin/phpunit --coverage
 
 
 ---
+
+
+
+//left and why
+
+RouterTest.php becoz router is pure function and easy to test
+ApplicationTest.php as integration-ish becoz it loads real config and wires dependencies
+LoggerTest.php only if required, becoz it writes actual files
+JsonResponseTest.php only getters easily, but send() is harder becoz it sends headers
+shell scripts should be tested manually or with integration tests, not PHPUnit unit tests
+
+
+TO RUN ALL::
+
+./vendor/bin/phpunit
+
+
+
+
+
+
+##########################################################################################################
+
+
+
+`D` means **deprecation warning**, not test failure. Something in code/tests/PHPUnit config is using syntax or behavior that PHPUnit/PHP says may be removed later.
+
+Run these to find exact files and lines:
+
+```bash
+./vendor/bin/phpunit --display-deprecations
+```
+
+More detailed:
+
+```bash
+./vendor/bin/phpunit --display-all-issues
+```
+
+Run individual test files:
+
+```bash
+./vendor/bin/phpunit tests/Unit/AuthServiceTest.php --display-deprecations
+```
+
+```bash
+./vendor/bin/phpunit tests/Unit/RequestTest.php --display-deprecations
+```
+
+```bash
+./vendor/bin/phpunit tests/Unit/ResponseFactoryTest.php --display-deprecations
+```
+
+```bash
+./vendor/bin/phpunit tests/Unit/CacheItemTest.php --display-deprecations
+```
+
+```bash
+./vendor/bin/phpunit tests/Unit/CacheServiceTest.php --display-deprecations
+```
+
+```bash
+./vendor/bin/phpunit tests/Unit/BootstrapLoaderTest.php --display-deprecations
+```
+
+```bash
+./vendor/bin/phpunit tests/Unit/CacheControllerTest.php --display-deprecations
+```
+
+```bash
+./vendor/bin/phpunit tests/Unit/AdminCacheControllerTest.php --display-deprecations
+```
+
+To stop immediately when deprecation appears:
+
+```bash
+./vendor/bin/phpunit --stop-on-deprecation --display-deprecations
+```
+
+To check only one test method:
+
+```bash
+./vendor/bin/phpunit --filter testMethodName
+```
+
+Example:
+
+```bash
+./vendor/bin/phpunit --filter testSetCreatesNewCacheItem --display-deprecations
+```
+
+##############################################################################################################
+
+FOR TEST COVERAGE::::
+
+
+Run this from Project/Backend:
+
+./vendor/bin/phpunit --coverage-text
+
+If it says no coverage driver, check:
+
+php -m | grep -E "pcov|xdebug"
+
+For PCOV coverage:
+
+php -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text
+
+For HTML coverage report:
+
+php -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-html coverage-report
+
+Then open:
+
+open coverage-report/index.html
+
+
+
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+Useful commands:
+
+php -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text
+php -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-html coverage-report
+open coverage-report/index.html

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>  
+<?xml version="1.0" encoding="UTF-8"?>
 <phpunit
     bootstrap="tests/LoadFiles.php"
     colors="true"
@@ -9,4 +9,14 @@
             <directory>tests/Unit</directory>
         </testsuite>
     </testsuites>
+
+    <source>
+        <include>
+            <directory>Auth</directory>
+            <directory>Controller</directory>
+            <directory>Http</directory>
+            <directory>Logging</directory>
+            <directory>src</directory>
+        </include>
+    </source>
 </phpunit>
