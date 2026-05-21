@@ -194,10 +194,8 @@ class CacheService
     // CLEANUP OF EXPIRED _cacheItemsMap
     private function cleanupExpired(): void
     {
-        foreach ($this->_cacheItemsMap as $key => $item) 
-        {
-            if ($item->isExpired()) 
-            {
+        foreach ($this->_cacheItemsMap as $key => $item) {
+            if ($item->isExpired()) {
                 unset($this->_cacheItemsMap[$key]);
             }
         }

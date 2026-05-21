@@ -17,7 +17,7 @@ final class RequestTest extends TestCase
             'POST',
             '/v1/cache/set',
             ['X-API-Key' => 'abc'],
-            ['key' => 'test.name'],
+            ['key' => 'testName'],
             ['value' => 'Neetika'],
             '{"value":"Neetika"}',
             false
@@ -26,7 +26,7 @@ final class RequestTest extends TestCase
         $this->assertSame('POST', $request->getMethod());
         $this->assertSame('/v1/cache/set', $request->getPath());
         $this->assertSame(['X-API-Key' => 'abc'], $request->getHeaders());
-        $this->assertSame(['key' => 'test.name'], $request->getQueryParams());
+        $this->assertSame(['key' => 'testName'], $request->getQueryParams());
         $this->assertSame(['value' => 'Neetika'], $request->getBody());
         $this->assertSame('{"value":"Neetika"}', $request->getRawBody());
         $this->assertFalse($request->getHasInvalidJson());
@@ -66,9 +66,9 @@ final class RequestTest extends TestCase
     //now checking whether query params returned nicely or not
     public function testGetQueryParamWhenPresentReturnsValue(): void
     {
-        $request = new Request('GET', '/', [], ['key' => 'test.name'], [], '', false);
+        $request = new Request('GET', '/', [], ['key' => 'testName'], [], '', false);
         //asserting same now
-        $this->assertSame('test.name', $request->getQueryParam('key'));
+        $this->assertSame('testName', $request->getQueryParam('key'));
     }
 
     //now checking whether query params returned null when missing or not
@@ -82,9 +82,9 @@ final class RequestTest extends TestCase
     //now chekcing whether body field is returning correctly or not
     public function testGetBodyFieldWhenPresentReturnsValue(): void
     {
-        $request = new Request('POST', '/', [], [], ['key' => 'test.name'], '', false);
+        $request = new Request('POST', '/', [], [], ['key' => 'testName'], '', false);
         //asserting same now
-        $this->assertSame('test.name', $request->getBodyField('key'));
+        $this->assertSame('testName', $request->getBodyField('key'));
     }
 
     //now checking if body field is missing so is it returning null or not
@@ -99,13 +99,13 @@ final class RequestTest extends TestCase
     public function testCreateRequestFromRawHttpParsesGetPathAndQueryParams(): void
     {
         //this will need some raw request first but
-        $rawHttpRequest = "GET /v1/cache/get?key=test.name HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n";
+        $rawHttpRequest = "GET /v1/cache/get?key=testName HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n";
         //then calling the fucntion
         $request = Request::createRequestFromRawHttp($rawHttpRequest);
         //now chekc using getters if it was correct or not???
         $this->assertSame('GET', $request->getMethod());
         $this->assertSame('/v1/cache/get', $request->getPath());
-        $this->assertSame('test.name', $request->getQueryParam('key'));
+        $this->assertSame('testName', $request->getQueryParam('key'));
     }
 
     //now what is left lets see
@@ -126,13 +126,13 @@ final class RequestTest extends TestCase
     public function testCreateRequestFromRawHttpParsesValidJsonBody(): void
     {
         //another request raw
-        $rawHttpRequest = "POST /v1/cache/set HTTP/1.1\r\nContent-Type: application/json\r\n\r\n{\"key\":\"test.name\",\"value\":\"Neetika\",\"ttl\":60}";
+        $rawHttpRequest = "POST /v1/cache/set HTTP/1.1\r\nContent-Type: application/json\r\n\r\n{\"key\":\"testName\",\"value\":\"Neetika\",\"ttl\":60}";
         //call function here tooo now dear
         $request = Request::createRequestFromRawHttp($rawHttpRequest);
         //hehe now finally assert all now with getters use assert same
         $this->assertSame('POST', $request->getMethod());
         $this->assertSame('/v1/cache/set', $request->getPath());
-        $this->assertSame('test.name', $request->getBodyField('key'));
+        $this->assertSame('testName', $request->getBodyField('key'));
         $this->assertSame('Neetika', $request->getBodyField('value'));
         $this->assertSame(60, $request->getBodyField('ttl'));
         $this->assertFalse($request->getHasInvalidJson());
@@ -142,7 +142,7 @@ final class RequestTest extends TestCase
     public function testCreateRequestFromRawHttpWhenJsonInvalidMarksInvalidJson(): void
     {
         //so raw http req again girl
-        $rawHttpRequest = "POST /v1/cache/set HTTP/1.1\r\nContent-Type: application/json\r\n\r\n{\"key\":\"test.name\",";
+        $rawHttpRequest = "POST /v1/cache/set HTTP/1.1\r\nContent-Type: application/json\r\n\r\n{\"key\":\"testName\",";
         //then call function here tooo now dear
         $request = Request::createRequestFromRawHttp($rawHttpRequest);
         //finally asserting now 
@@ -167,6 +167,19 @@ final class RequestTest extends TestCase
         $this->assertSame('', $request->getRawBody());
         //now invalidjson must be false since empty doesnt mean invalid 
         $this->assertFalse($request->getHasInvalidJson());
+    }
+
+
+
+    //now checking if request uri is bad then path should fallback to /
+    public function testCreateRequestFromRawHttpWhenPathCannotBeParsedUsesRootPath(): void
+    {
+        //using bad uri so parse_url path can fail
+        $rawHttpRequest = "GET http://[bad-url HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n";
+        //calling the function now
+        $request = Request::createRequestFromRawHttp($rawHttpRequest);
+        //path should fallback to root so assering that
+        $this->assertSame('/', $request->getPath());
     }
 
 }

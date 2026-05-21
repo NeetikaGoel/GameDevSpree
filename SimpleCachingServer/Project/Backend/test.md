@@ -202,7 +202,7 @@ $item = new CacheItem('test.key', 'value', 1);
 
 sleep(1);
 
-$this->assertTrue($item->isExpired());
+$this->assertTrue($item->isExpired();
 
 
 For non-expired:
@@ -232,8 +232,7 @@ Class under test:
 
 CacheService
 
-
-This is core business logic.
+This is core business logic!!!
 
 Test paths:
 
@@ -275,9 +274,6 @@ health()
 21. returns status ok
 22. returns itemCount
 23. returns uptimeSeconds
-
-
-Important note: your current `CacheService` has validation commented out. So do **not** test invalid key/invalid ttl in `CacheServiceTest` now. Those belong in controller tests after your latest architecture decision.
 
 Example checks:
 
