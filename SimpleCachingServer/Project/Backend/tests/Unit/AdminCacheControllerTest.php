@@ -254,50 +254,5 @@ final class AdminCacheControllerTest extends TestCase
         //asserting 400 now
         $this->assertSame(400, $response->getStatusCode());
     }
-
-    //uptime time!!!!!!!
-    //so now checking uptime returns uptime data or not
-    public function testUptimeReturnsData(): void
-    {
-        //always creating controller first
-        $controller = $this->createController();
-        //creating request
-        $request = $this->createRequest('GET');
-        //calling uptime func
-        $response = $controller->uptime($request);
-        //assertions now
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertArrayHasKey('startedAt', $response->getBody()['data']);
-        $this->assertArrayHasKey('uptimeSeconds', $response->getBody()['data']);
-    }
-
-    //now checking size returns item count and memory which it should!!!!!!!
-    public function testSizeReturnsData(): void
-    {
-        //always creating controller first
-        $controller = $this->createController();
-        //creating request
-        $request = $this->createRequest('GET');
-        //calling size func
-        $response = $controller->size($request);
-        //assertion time!!!
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertArrayHasKey('itemCount', $response->getBody()['data']);
-        $this->assertArrayHasKey('processMemoryBytes', $response->getBody()['data']);
-    }
-
-    //checking whether health returns ok status or not, if not- bad!!!
-    public function testHealthReturnsOkStatus(): void
-    {
-        //always creating controller first
-        $controller = $this->createController();
-        //creating request
-        $request = $this->createRequest('GET');
-        //call health func finallyyyy
-        $response = $controller->health($request);
-        //asserting health hehehehehhe
-        $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('ok', $response->getBody()['data']['status']);
-    }
 }
 

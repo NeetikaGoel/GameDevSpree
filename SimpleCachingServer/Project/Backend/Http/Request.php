@@ -169,11 +169,9 @@ class Request
                 $body = $decodedBody;
             }
         }
-
         //return final request object
         return new Request($method, $path, $headers, $queryParams, $body, $rawBody, $hasInvalidJson);
     }
-
 
     //all the getters now
     public function getMethod(): string

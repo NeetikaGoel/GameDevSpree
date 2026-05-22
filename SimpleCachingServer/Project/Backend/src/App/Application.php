@@ -32,6 +32,7 @@ class Application
     //now both controllers
     private CacheController $_cacheController;
     private AdminCacheController $_adminCacheController;
+    private AdminCacheMetricsController $_adminCacheMetricsController;
 
     //bootstrap load result lets say
     private array $_bootstrapResult;
@@ -56,6 +57,7 @@ class Application
         //now creating both controllers
         $this->_cacheController = new CacheController($this->_cacheService, $this->_responseFactory);
         $this->_adminCacheController = new AdminCacheController($this->_cacheService, $this->_responseFactory);
+        $this->_adminCacheMetricsController = new AdminCacheMetricsController($this->_cacheService, $this->_responseFactory);
 
         // log application startup
         Logger::logInfo('Application', 'Application initialized', []);
@@ -69,6 +71,7 @@ class Application
             $this->_authService,
             $this->_cacheController,
             $this->_adminCacheController,
+            $this->_adminCacheMetricsController,
             $this->_responseFactory
         );
     }

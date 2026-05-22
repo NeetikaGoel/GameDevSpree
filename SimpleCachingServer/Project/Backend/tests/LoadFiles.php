@@ -13,3 +13,4 @@ require_once __DIR__ . '/../src/Cache/CacheService.php';
 require_once __DIR__ . '/../src/Bootstrap/BootstrapLoader.php';
 require_once __DIR__ . '/../Controller/CacheController.php';
 require_once __DIR__ . '/../Controller/AdminCacheController.php';
+require_once __DIR__ . '/../Controller/AdminCacheMetricsController.php';
