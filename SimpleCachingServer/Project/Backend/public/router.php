@@ -10,9 +10,10 @@ require_once __DIR__ . '/../Auth/AuthService.php';
 
 require_once __DIR__ . '/../Controller/CacheController.php';
 require_once __DIR__ . '/../Controller/AdminCacheController.php';
+require_once __DIR__ . '/../Controller/AdminCacheMetricsController.php';
 require_once __DIR__ . '/../Logging/Logger.php';
 
-function cacheRouterDispatch(Request $request, AuthService $authService, CacheController $cacheController, AdminCacheController $adminCacheController, ResponseFactory $responseFactory): JsonResponse
+function cacheRouterDispatch(Request $request, AuthService $authService, CacheController $cacheController, AdminCacheController $adminCacheController, AdminCacheMetricsController $adminCacheMetricsController, ResponseFactory $responseFactory): JsonResponse
 {
     //authenticate caller first
     $userRole = $authService->authenticate($request);
@@ -138,7 +139,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
         }
 
         // call admin uptime controller
-        return $adminCacheController->uptime($request);
+        return $adminCacheMetricsController->uptime($request);
     }
 
     // route admin size endpoint
@@ -151,7 +152,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
         }
 
         // call admin size controller
-        return $adminCacheController->size($request);
+        return $adminCacheMetricsController->size($request);
     }
 
     // route admin health endpoint
@@ -164,7 +165,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
         }
 
         // call admin health controller
-        return $adminCacheController->health($request);
+        return $adminCacheMetricsController->health($request);
     }
 
     // now what if unknown route???

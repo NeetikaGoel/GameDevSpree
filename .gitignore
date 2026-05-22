@@ -17,6 +17,13 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+
+SimpleCachingServer/Project/Backend/.phpunit.cache/**/
+SimpleCachingServer/Project/Backend/vendor/
+SimpleCachingServer/Project/Backend/vendor/**/
+
+
+
 # Mono auto generated files
 mono_crash.*
 SimpleCachingServer/Project/Backend/config/auth.local.php
@@ -420,3 +427,4 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+SimpleCachingServer/Project/Backend/.phpunit.cache/test-results

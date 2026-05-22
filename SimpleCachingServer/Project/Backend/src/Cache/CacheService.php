@@ -12,6 +12,7 @@ class CacheService
 
     private const CACHE_TTL_SECONDS_DEFAULT = 7200;
     private const CACHE_TTL_SECONDS_MAX = 604800;
+    private const VALUE_LENGTH_MAX = 1024;
 
     private int $_serverStartedAt;
 
@@ -50,7 +51,7 @@ class CacheService
     private function validateValue(mixed $value): void
     {
         //is it str and len check ofc
-        if (is_string($value) && strlen($value) > 1024) {
+        if (is_string($value) && strlen($value) > self::VALUE_LENGTH_MAX) {
             throw new Exception('Value too large!!');
         }
     }
@@ -193,10 +194,8 @@ class CacheService
     // CLEANUP OF EXPIRED _cacheItemsMap
     private function cleanupExpired(): void
     {
-        foreach ($this->_cacheItemsMap as $key => $item) 
-        {
-            if ($item->isExpired()) 
-            {
+        foreach ($this->_cacheItemsMap as $key => $item) {
+            if ($item->isExpired()) {
                 unset($this->_cacheItemsMap[$key]);
             }
         }
