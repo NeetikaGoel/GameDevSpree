@@ -23,7 +23,7 @@ class CacheService
     public function validateKey(string $key): void
     {
         //not empty, len check and preg check
-        if (empty($key) || strlen($key) > KEY_LENGTH_MAX || !preg_match(KEY_REGEX, $key)) {
+        if (empty($key) || strlen($key) > CACHE_ITEM_KEY_LENGTH_MAX || !preg_match(CACHE_ITEM_KEY_REGEX, $key)) {
             //great now we throw error hehe
             throw new Exception('Invalid key!!');
         }
@@ -47,7 +47,7 @@ class CacheService
     private function validateValue(mixed $value): void
     {
         //is it str and len check ofc
-        if (is_string($value) && strlen($value) > VALUE_LENGTH_MAX) {
+        if (is_string($value) && strlen($value) > CACHE_ITEM_VALUE_LENGTH_MAX) {
             throw new Exception('Value too large!!');
         }
     }

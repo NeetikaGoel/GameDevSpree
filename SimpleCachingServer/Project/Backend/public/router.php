@@ -7,6 +7,7 @@ require_once __DIR__ . '/../Http/Request.php';
 require_once __DIR__ . '/../Http/JsonResponse.php';
 require_once __DIR__ . '/../Http/ResponseFactory.php';
 require_once __DIR__ . '/../Auth/AuthService.php';
+require_once __DIR__ . '/../config/constants.php';
 
 require_once __DIR__ . '/../Controller/CacheController.php';
 require_once __DIR__ . '/../Controller/AdminCacheController.php';
@@ -37,7 +38,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     $method = $request->getMethod();
 
     //route normal set endpoint
-    if ($path === '/v1/cache/set') 
+    if ($path === ENDPOINT_NORMAL_SET) 
     {
         // normal role required
         if ($authService->authorize($userRole, Role::NORMAL) !== true) {
@@ -50,7 +51,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     }
 
     // route normal get endpoint
-    if ($path === '/v1/cache/get') 
+    if ($path === ENDPOINT_NORMAL_GET) 
     {
         // normal role required
         if ($authService->authorize($userRole, Role::NORMAL) !== true) {
@@ -63,7 +64,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     }
 
     // route normal delete endpoint
-    if ($path === '/v1/cache/delete')
+    if ($path === ENDPOINT_NORMAL_DELETE)
     {
         // normal role required
         if ($authService->authorize($userRole, Role::NORMAL) !== true) {
@@ -78,7 +79,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     // now about admin operations hehe
     // lets see 
     // route admin bulk set endpoint
-    if ($path === '/v1/admin/cache/bulk-set') 
+    if ($path === ENDPOINT_ADMIN_BULKSET) 
     {
         // admin role required
         if ($authService->authorize($userRole, Role::ADMIN) !== true) {
@@ -91,7 +92,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     }
 
     // route admin purge selected endpoint
-    if ($path === '/v1/admin/cache/purge-selected') 
+    if ($path === ENDPOINT_ADMIN_PURGESELECTED) 
     {
         // admin role required
         if ($authService->authorize($userRole, Role::ADMIN) !== true) {
@@ -104,7 +105,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     }
 
     // route admin purge all endpoint
-    if ($path === '/v1/admin/cache/purge-all') 
+    if ($path === ENDPOINT_ADMIN_PURGEALL) 
     {
         // admin role required
         if ($authService->authorize($userRole, Role::ADMIN) !== true) {
@@ -117,7 +118,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     }
 
     // route admin list endpoint
-    if ($path === '/v1/admin/cache/list') 
+    if ($path === ENDPOINT_ADMIN_LIST) 
     {
         // admin role required
         if ($authService->authorize($userRole, Role::ADMIN) !== true) {
@@ -130,7 +131,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     }
 
     // route admin uptime endpoint
-    if ($path === '/v1/admin/cache/uptime') 
+    if ($path === ENDPOINT_ADMIN_UPTIME) 
     {
         // admin role required
         if ($authService->authorize($userRole, Role::ADMIN) !== true) {
@@ -143,7 +144,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     }
 
     // route admin size endpoint
-    if ($path === '/v1/admin/cache/size') 
+    if ($path === ENDPOINT_ADMIN_SIZE) 
     {
         // admin role required
         if ($authService->authorize($userRole, Role::ADMIN) !== true) {
@@ -156,7 +157,7 @@ function cacheRouterDispatch(Request $request, AuthService $authService, CacheCo
     }
 
     // route admin health endpoint
-    if ($path === '/v1/admin/cache/health') 
+    if ($path === ENDPOINT_ADMIN_HEALTH) 
     {
         // admin role required
         if ($authService->authorize($userRole, Role::ADMIN) !== true) {

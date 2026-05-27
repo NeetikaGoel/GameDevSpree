@@ -178,6 +178,6 @@ class BootstrapLoader
     private function isValidKey(string $key): bool
     {
         //Only allows letters, nums, . , _ , : , -
-        return $key !== '' && strlen($key) <= KEY_LENGTH_MAX && preg_match(KEY_REGEX, $key) === 1;
+        return $key !== '' && strlen($key) <= CACHE_ITEM_KEY_LENGTH_MAX && preg_match(CACHE_ITEM_KEY_REGEX, $key) === 1;
     }
 }
