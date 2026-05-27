@@ -2,17 +2,11 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../config/Constants.php';
 require_once __DIR__ . '/../../Logging/Logger.php';
 
 class BootstrapLoader
 {
-    //first defining the constants that are there that will be used if bootstrap file is missing
-    private const TTL_SECONDS_DEFAULT = 7200;
-    private const TTL_SECONDS_MAX = 604800;
-    private const HOST_DEFAULT = '127.0.0.1';
-    private const PORT_DEFAULT = 8080;
-    private const LOG_FILE_DEFAULT = 'logs/cache-server.log';
-
     private string $bootstrapFilePath; //path where bootstrap file will be there if config file is missing
 
     //now we need a constructor ofc
@@ -77,11 +71,11 @@ class BootstrapLoader
     {
         //just fill in the default values and we r done!!!
         return [
-            'ttlDefault' => self::TTL_SECONDS_DEFAULT,
-            'ttlMax' => self::TTL_SECONDS_MAX,
-            'host' => self::HOST_DEFAULT,
-            'port' => self::PORT_DEFAULT,
-            'logFile' => self::LOG_FILE_DEFAULT
+            'ttlDefault' => CACHE_TTL_SECONDS_DEFAULT,
+            'ttlMax' => CACHE_TTL_SECONDS_MAX,
+            'host' => HOST_DEFAULT,
+            'port' => PORT_DEFAULT,
+            'logFile' => LOG_FILE_DEFAULT
         ];
     }
 
@@ -164,7 +158,7 @@ class BootstrapLoader
             }
 
             //ttl optional but still atleast valid
-            if (isset($item['ttl']) && (!is_int($item['ttl']) || $item['ttl'] < 1 || $item['ttl'] > self::TTL_SECONDS_MAX)) {
+            if (isset($item['ttl']) && (!is_int($item['ttl']) || $item['ttl'] < 1 || $item['ttl'] > CACHE_TTL_SECONDS_MAX)) {
                 Logger::logWarn('BootstrapLoader', 'Invalid preload item TTL skipped.', 'BOOTSTRAP_ITEM_TTL_INVALID');
                 continue;
             }
@@ -184,6 +178,6 @@ class BootstrapLoader
     private function isValidKey(string $key): bool
     {
         //Only allows letters, nums, . , _ , : , -
-        return $key !== '' && strlen($key) <= 255 && preg_match('/^[A-Za-z0-9._:-]+$/', $key) === 1;
+        return $key !== '' && strlen($key) <= KEY_LENGTH_MAX && preg_match(REGEX_FOR_KEY, $key) === 1;
     }
 }

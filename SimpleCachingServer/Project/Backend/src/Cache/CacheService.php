@@ -10,10 +10,6 @@ class CacheService
     //so we need to save all cache in memory , like such as lets say array of cacheItemsMap
     private array $_cacheItemsMap = []; //array of key-value pairs i.e. item
 
-    private const CACHE_TTL_SECONDS_DEFAULT = 7200;
-    private const CACHE_TTL_SECONDS_MAX = 604800;
-    private const VALUE_LENGTH_MAX = 1024;
-
     private int $_serverStartedAt;
 
 
@@ -27,7 +23,7 @@ class CacheService
     public function validateKey(string $key): void
     {
         //not empty, len check and preg check
-        if (empty($key) || strlen($key) > 255 || !preg_match('/^[A-Za-z0-9._:-]+$/', $key)) {
+        if (empty($key) || strlen($key) > KEY_LENGTH_MAX || !preg_match(REGEX_FOR_KEY, $key)) {
             //great now we throw error hehe
             throw new Exception('Invalid key!!');
         }
@@ -37,11 +33,11 @@ class CacheService
     {
         //if null then give default hehe
         if ($ttl === null) {
-            return self::CACHE_TTL_SECONDS_DEFAULT;
+            return CACHE_TTL_SECONDS_DEFAULT;
         }
 
         //not null but absurdly incorrect bad bad
-        if ($ttl < 1 || $ttl > self::CACHE_TTL_SECONDS_MAX) {
+        if ($ttl < 1 || $ttl > CACHE_TTL_SECONDS_MAX) {
             throw new Exception('Invalid TTL!!');
         }
 
@@ -51,7 +47,7 @@ class CacheService
     private function validateValue(mixed $value): void
     {
         //is it str and len check ofc
-        if (is_string($value) && strlen($value) > self::VALUE_LENGTH_MAX) {
+        if (is_string($value) && strlen($value) > VALUE_LENGTH_MAX) {
             throw new Exception('Value too large!!');
         }
     }
