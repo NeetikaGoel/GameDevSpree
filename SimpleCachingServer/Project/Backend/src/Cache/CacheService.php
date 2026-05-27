@@ -23,7 +23,7 @@ class CacheService
     public function validateKey(string $key): void
     {
         //not empty, len check and preg check
-        if (empty($key) || strlen($key) > KEY_LENGTH_MAX || !preg_match(REGEX_FOR_KEY, $key)) {
+        if (empty($key) || strlen($key) > KEY_LENGTH_MAX || !preg_match(KEY_REGEX, $key)) {
             //great now we throw error hehe
             throw new Exception('Invalid key!!');
         }

@@ -11,7 +11,7 @@ class SanitizationUtilities
         //sanitize key now
         $key = trim($key);
 
-        if ($key === '' || strlen($key) > CACHE_KEY_LENGTH_MAX || preg_match(REGEX_FOR_KEY, $key) !== 1) {
+        if ($key === '' || strlen($key) > CACHE_KEY_LENGTH_MAX || preg_match(KEY_REGEX, $key) !== 1) {
             throw new InvalidArgumentException('key must be 1 to 255 chars and contain only A-Z a-z 0-9 dot underscore colon hyphen');
         }
 

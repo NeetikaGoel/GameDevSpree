@@ -10,7 +10,7 @@ const CACHE_TTL_SECONDS_MAX = 604800;
 const CACHE_LIST_LIMIT_DEFAULT = 50;
 const CACHE_LIST_LIMIT_MAX = 1000;
 
-const REGEX_FOR_KEY= '/^[A-Za-z0-9._:-]+$/';
+const KEY_REGEX= '/^[A-Za-z0-9._:-]+$/';
 
 
 const VALUE_LENGTH_MAX = 1024;
