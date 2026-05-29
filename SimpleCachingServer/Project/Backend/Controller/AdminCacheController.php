@@ -83,10 +83,10 @@ class AdminCacheController
         //loop over all submitted items now
         foreach ($items as $index => $item) {
             try {
-                ValidationUtilities::validateItemsArray($items);
+                ValidationUtilities::validateItemArray($item);
             } catch (InvalidArgumentException $exception) {
                 $skipped++;
-                $itemErrors[] = ['index' => $index, 'message' => $exception->getMessage()];
+                $itemErrors[] = ['index' => $index, 'message' => 'Item must be an array!!'];
                 continue;
             }
 
@@ -116,7 +116,7 @@ class AdminCacheController
             }
 
             try {
-                ValidationUtilities::validateValue($value, $request);
+                ValidationUtilities::validateValue($value, $hasValue);
             } catch (InvalidArgumentException $exception) {
                 $skipped++;
                 $itemErrors[] = ['index' => $index, 'key' => $key, 'message' => $exception->getMessage()];
@@ -288,7 +288,7 @@ class AdminCacheController
         $limit = CACHE_LIST_LIMIT_DEFAULT;
 
         try {
-            ValidationUtilities::validateLimit($limit,$limitRaw);
+            $limit = ValidationUtilities::validateLimit($limitRaw);
         } catch (InvalidArgumentException $exception) {
             return $this->_responseFactory->error('Validation failed', 'ADMIN-CACHE-4005', $exception->getMessage(), ['limit' => 'numeric 1 to 1000'], 400);
         }

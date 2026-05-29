@@ -12,6 +12,8 @@
 *.env
 *.pid
 
+
+
 .DS_Store
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -19,9 +21,10 @@
 
 
 SimpleCachingServer/Project/Backend/.phpunit.cache/**/
-SimpleCachingServer/Project/Backend/vendor/
 SimpleCachingServer/Project/Backend/vendor/**/
 
+SimpleCachingServer/Project/Backend/vendor/
+SimpleCachingServer/Project/Backend/.phpunit.cache/
 
 
 # Mono auto generated files

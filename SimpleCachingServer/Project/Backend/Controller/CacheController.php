@@ -76,7 +76,7 @@ class CacheController
         }
 
         try {
-            ValidationUtilities::validateValue($value, $request);
+            ValidationUtilities::validateValue($value, array_key_exists('value', $request->getBody()));
         } catch (InvalidArgumentException $exception) {
             AuditLoggerUtilities::cacheAuditLog('cache_set_validation_failed', ['reason' => 'value invalid', 'key' => $key]);
 
