@@ -30,6 +30,8 @@ SimpleCachingServer/Project/Backend/.phpunit.cache/
 # Mono auto generated files
 mono_crash.*
 SimpleCachingServer/Project/Backend/config/auth.local.php
+SimpleCachingServer/Project/Backend/coverage-report/**/
+
 
 # Build results
 [Dd]ebug/

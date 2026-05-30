@@ -172,6 +172,21 @@ final class CacheControllerTest extends TestCase
         $this->assertSame(404, $response->getStatusCode());
     }
 
+    //here addition like getting invalid key
+    public function testGetWithInvalidKeyFormatReturns400(): void
+    {
+        //so ofc creating controller first
+        $controller = $this->createController();
+        //create get request
+        $request = $this->createRequest('GET', [
+            'key' => 'bad key'
+        ]);
+        //calling get function
+        $response = $controller->get($request);
+        //asserting 400
+        $this->assertSame(400, $response->getStatusCode());
+    }
+
     //now also checking that getting missing query key gives 400
     public function testGetWithoutKeyQueryParamReturns400(): void
     {
@@ -230,4 +245,49 @@ final class CacheControllerTest extends TestCase
         //asserting 400
         $this->assertSame(400, $response->getStatusCode());
     }
+
+    //deleting wrong method check
+    public function testDeleteWithWrongMethodReturns405(): void
+    {
+        //so ofc creating controller first
+        $controller = $this->createController();
+        //creating delete request with wrong method now lets say get
+        $request = $this->createRequest('GET', [], ['key' => 'testKey']);
+        //calling function
+        $response = $controller->delete($request);
+        //assserting 405
+        $this->assertSame(405, $response->getStatusCode());
+    }
+
+    //delete function can have invalid json too so lets say that case
+    public function testDeleteWithInvalidJsonReturns400(): void
+    {
+        //so ofc creating controller first
+        $controller = $this->createController();
+        //creating delete request
+        $request = $this->createRequest('DELETE', [], [], true);
+        //calling function again
+        $response = $controller->delete($request);
+        //assserting 400 coz json error
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('CACHE-4008', $response->getBody()['error']['id']);
+    }
+
+    //deleting key but its invalid
+    public function testDeleteWithInvalidKeyFormatReturns400(): void
+    {
+        //so ofc creating controller first
+        $controller = $this->createController();
+        //creating delete request
+        $request = $this->createRequest('DELETE', [], [
+            'key' => 'bad key'
+        ]);
+        //calling function again
+        $response = $controller->delete($request);
+        //assserting 400 coz key error
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('CACHE-4010', $response->getBody()['error']['id']);
+    }
+
+
 }

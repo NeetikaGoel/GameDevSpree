@@ -41,6 +41,33 @@ final class AdminCacheMetricsControllerTest extends TestCase
         $this->assertArrayHasKey('uptimeSeconds', $response->getBody()['data']);
     }
 
+    //bad path addition here
+    public function testUptimeWithWrongMethodReturns405(): void
+    {
+        //always creating controller first
+        $controller = $this->createController();
+        //creating request
+        $request = $this->createRequest('POST');
+        //calling uptime func
+        $response = $controller->uptime($request);
+        //assertions now
+        $this->assertSame(405, $response->getStatusCode());
+    }
+
+    //size sad path addition
+    public function testSizeWithWrongMethodReturns405(): void
+    {
+        //always creating controller first
+        $controller = $this->createController();
+        //creating request
+        $request = $this->createRequest('POST');
+        //calling size func
+        $response = $controller->size($request);
+        //assertion time!!!
+        $this->assertSame(405, $response->getStatusCode());
+    }
+
+
     //now checking size returns item count and memory which it should!!!!!!!
     public function testSizeReturnsData(): void
     {
@@ -68,5 +95,18 @@ final class AdminCacheMetricsControllerTest extends TestCase
         //asserting health hehehehehhe
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('ok', $response->getBody()['data']['status']);
+    }
+
+    //addition of wrong method here sad path
+    public function testHealthWithWrongMethodReturns405(): void
+    {
+        //always creating controller first
+        $controller = $this->createController();
+        //creating request
+        $request = $this->createRequest('POST');
+        //call health func finallyyyy
+        $response = $controller->health($request);
+        //asserting health hehehehehhe
+        $this->assertSame(405, $response->getStatusCode());
     }
 }

@@ -182,4 +182,28 @@ final class RequestTest extends TestCase
         $this->assertSame('/', $request->getPath());
     }
 
+
+    //additon of invalid json in create request method test
+    public function testCreateRequestFromRawHttpWhenJsonIsNotArrayMarksInvalidJson(): void
+    {
+        //request creation first
+        $rawHttpRequest = "POST /v1/cache/set HTTP/1.1\r\nContent-Type: application/json\r\n\r\n\"plain string\"";
+        //calling method then
+        $request = Request::createRequestFromRawHttp($rawHttpRequest);
+        //assertions!!
+        $this->assertTrue($request->getHasInvalidJson());
+        $this->assertSame([], $request->getBody());
+    }
+
+    //header issue
+    public function testCreateRequestFromRawHttpIgnoresMalformedHeaderLines(): void
+    {
+        //creating request
+        $rawHttpRequest = "GET /v1/cache/get?key=testKey HTTP/1.1\r\nBadHeaderWithoutColon\r\nX-API-Key: abc123\r\n\r\n";
+        //calling of the function
+        $request = Request::createRequestFromRawHttp($rawHttpRequest);
+        //asssetions!!
+        $this->assertSame('abc123', $request->getHeader('X-API-Key'));
+        $this->assertNull($request->getHeader('BadHeaderWithoutColon'));
+    }
 }

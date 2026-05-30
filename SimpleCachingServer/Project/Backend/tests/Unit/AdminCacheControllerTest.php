@@ -169,6 +169,91 @@ final class AdminCacheControllerTest extends TestCase
         $this->assertSame(1, $response->getBody()['data']['notFound']);
     }
 
+    //purgeselected wrong method check
+    public function testPurgeSelectedWithWrongMethodReturns405(): void
+    {
+        //creating controller ofc
+        $controller = $this->createController();
+        //creating request
+        $request = $this->createRequest('GET', [], ['keys' => ['key1']]);
+        //calling func
+        $response = $controller->purgeSelected($request);
+        //assertions!!!
+        $this->assertSame(405, $response->getStatusCode());
+    }
+
+    //purge selected with invalid json
+    public function testPurgeSelectedWithInvalidJsonReturns400(): void
+    {
+        //creating controller firsst
+        $controller = $this->createController();
+        //creating reqeust tehn
+        $request = $this->createRequest('POST', [], [], true);
+        //calling the func then
+        $response = $controller->purgeSelected($request);
+        //ofc assertions
+        $this->assertSame(400, $response->getStatusCode());
+    }
+
+    //another test of key invalid now in purge selected
+    public function testPurgeSelectedSkipsInvalidKeyFormat(): void
+    {
+        //creating controller first
+        $controller = $this->createController();
+        //creating request
+        $request = $this->createRequest('POST', [], [
+            'keys' => ['validKey', 'bad key']
+        ]);
+        //calling the func
+        $response = $controller->purgeSelected($request);
+        //assertions time
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertCount(1, $response->getBody()['data']['errors']);
+    }
+
+
+    // purge all wrong method
+    public function testPurgeAllWithWrongMethodReturns405(): void
+    {
+        //creating controller first
+        $controller = $this->createController();
+        //creating request
+        $request = $this->createRequest('GET');
+        //calling the func
+        $response = $controller->purgeAll($request);
+        //assertions time
+        $this->assertSame(405, $response->getStatusCode());
+    }
+
+
+    //list with wrong method case
+    public function testListWithWrongMethodReturns405(): void
+    {
+        //creating controller first
+        $controller = $this->createController();
+        //creating request
+        $request = $this->createRequest('POST');
+        //calling the func
+        $response = $controller->list($request);
+        //assertions time
+        $this->assertSame(405, $response->getStatusCode());
+    }
+
+    //test limit out of bound
+    public function testListWithLimitOutOfBoundReturns400(): void
+    {
+        //creating controller first
+        $controller = $this->createController();
+        //creating request
+        $request = $this->createRequest('GET', [
+            'limit' => '1001'
+        ]);
+        //calling the function
+        $response = $controller->list($request);
+        //assertions now!!
+        $this->assertSame(400, $response->getStatusCode());
+    }
+
     //checking that purge selected without keys gives 400 actually or not!!
     public function testPurgeSelectedWithoutKeysReturns400(): void
     {

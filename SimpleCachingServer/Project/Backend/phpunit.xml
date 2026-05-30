@@ -17,6 +17,7 @@
             <directory>Http</directory>
             <directory>Logging</directory>
             <directory>src</directory>
+            <directory>Utility</directory>
         </include>
     </source>
 </phpunit>
