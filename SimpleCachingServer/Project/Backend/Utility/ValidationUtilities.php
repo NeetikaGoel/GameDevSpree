@@ -58,14 +58,16 @@ class ValidationUtilities
         return $ttl;
     }
 
-    public static function validateValue($value, $request):void
+    //THIS ALSO UPDATED ITS FAILING CASSE
+    public static function validateValue($value, bool $hasValue = true): void
     {
-        //validate value existence
-        if (!array_key_exists('value', $request->getBody())) {
+        if ($hasValue === false) 
+        {
             throw new InvalidArgumentException('value is required');
         }
 
-        if (is_string($value) && strlen($value) > CACHE_VALUE_STRING_LENGTH_MAX) {
+        if (is_string($value) && strlen($value) > CACHE_VALUE_STRING_LENGTH_MAX) 
+        {
             throw new InvalidArgumentException('value string must not exceed 1024 characters');
         }
     }
@@ -78,24 +80,35 @@ class ValidationUtilities
         }
     }
 
-
-    public static function validateLimit($limit, $limitRaw):void
+    public static function validateItemArray($item): void
     {
-        // validate limit only if provided
+        // Validate items array EACH ITEM THIS TIME!!!!
+        if (!is_array($item)) {
+            throw new InvalidArgumentException('items must be an array');
+        }
+    }
+
+
+
+   //need tp update this -test is failing
+    public static function validateLimit($limitRaw): int
+    {
+        $limit = CACHE_LIST_LIMIT_DEFAULT;
+
+        //same
         if ($limitRaw !== null) {
-            // limit should be numeric
             if (!is_numeric($limitRaw)) {
                 throw new InvalidArgumentException('limit must be numeric');
             }
 
-            // convert limit to int
             $limit = (int)$limitRaw;
 
-            // limit should be in allowed range
             if ($limit < 1 || $limit > CACHE_LIST_LIMIT_MAX) {
                 throw new InvalidArgumentException('limit must be between 1 and 1000');
             }
         }
+        //added this
+        return $limit;
     }
 
 }

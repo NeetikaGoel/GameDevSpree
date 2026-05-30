@@ -76,7 +76,7 @@ class CacheController
         }
 
         try {
-            ValidationUtilities::validateValue($value, $request);
+            ValidationUtilities::validateValue($value, array_key_exists('value', $request->getBody()));
         } catch (InvalidArgumentException $exception) {
             AuditLoggerUtilities::cacheAuditLog('cache_set_validation_failed', ['reason' => 'value invalid', 'key' => $key]);
 
@@ -171,11 +171,19 @@ class CacheController
     //Boundary function for POST or DELETE /v1/cache/delete.
     public function delete(Request $request): JsonResponse
     {
+        ///need to be updated now coz failures there
         try {
-            //Validate method
-            ValidationUtilities::validateMethodPost($request) && ValidationUtilities::validateMethodDelete($request);
-        } catch (InvalidArgumentException $exception) {
-            //Return 405 if wrong method
+            ///direct method if , lets see
+            $method = $request->getMethod();
+
+            if ($method !== 'POST' && $method !== 'DELETE') 
+            {
+                throw new InvalidArgumentException('POST or DELETE method required');
+            }
+        } 
+        
+        catch (InvalidArgumentException $exception) 
+        {
             return $this->_responseFactory->error('Method not allowed', 'CACHE-4053', $exception->getMessage(), [], 405);
         }
 
